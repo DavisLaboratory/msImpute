@@ -17,7 +17,7 @@ library(msImpute)
 
 msImpute(xna)
 
-``
+```
 
 See `?msImpute` for help. 
 
