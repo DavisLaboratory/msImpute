@@ -1,4 +1,4 @@
-# msImpute
+# msImpute [![Github All Releases](https://img.shields.io/github/downloads/DavisLaboratory/msImpute/total.svg)]()
 Methods for mass spectrometry label-free proteomics imputation
 
 **Download**
