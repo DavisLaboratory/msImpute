@@ -2,7 +2,7 @@
 
 Methods for mass spectrometry label-free proteomics imputation
 
-**Download**
+**Install (R)**
 
 ```
 devtools::install_github("DavisLaboratory/msImpute")
@@ -22,4 +22,8 @@ msImpute(xna)
 
 See `?msImpute` for help. 
 
+
+**Reference**
+
+Manuscript under preparation
 
