@@ -14,10 +14,8 @@ devtools::install_github("DavisLaboratory/msImpute")
 ```
 library(msImpute)
 
-# xna is a numeric matrix with NAs
-
-msImpute(xna)
-
+msImpute(xna) # xna is a numeric matrix with NAs
+msImpute(xna, rank.max = 2) # rank 2 approximaiton
 ```
 
 See `?msImpute` for help. 
