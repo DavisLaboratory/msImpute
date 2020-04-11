@@ -45,20 +45,20 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   }
 
   if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
-  cat("bi-scaling")
+  cat("bi-scaling ...\n")
   xnas <- softImpute::biScale(x)
-  cat("data scaled")
+  cat("data scaled \n")
   if(is.null(rank.max)) rank.max <- min(dim(x) - 1)
-  cat("maximum rank is", rank.max)
-  cat("computing lambda0")
+  cat("maximum rank is", rank.max, "\n")
+  cat("computing lambda0 ... \n")
   if(is.null(lambda)) lambda <- softImpute::lambda0(x)
-  cat("lambda0 is", lambda)
-  cat("fit the low-rank model")
+  cat("lambda0 is", lambda, "\n")
+  cat("fit the low-rank model ... \n")
   fit <- softImpute::softImpute(xnas,rank=rank.max,lambda=lambda, type = "als", thresh = thresh,
                   maxit = maxit, trace.it = trace.it, warm.start = warm.start, final.svd = final.svd)
-  cat("model fitted. Imputting missing entries")
+  cat("model fitted. \nImputting missing entries ... \n")
   ximp <- softImpute::complete(x, fit)
-  cat("Imputation completed")  # need to print out final rank model fitted
+  cat("Imputation completed \n")  # need to print out final rank model fitted
 
   if(is(object,"MAList")) {
     object$E <- ximp
