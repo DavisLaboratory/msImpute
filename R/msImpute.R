@@ -1,8 +1,9 @@
 #' Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation
 #'
-#' \code{msImpute} returns a completed peptide intensity matrix where missing values (NAs) are imputated
+#' Returns a completed peptide intensity matrix where missing values (NAs) are imputated
 #' by low-rank approximation of the input matrix. Non-NA entries remain unmodified. \code{msImpute} requires at least 4
-#' non-missing measurements per peptide across all samples.
+#' non-missing measurements per peptide across all samples. It is assumed that peptide intensities  (DDA), or MS1/MS2 normalised peak areas (DIA),
+#' are log2-transformed and normalised (e.g. quantile normalisation).
 #'
 #' \code{msImpute} operates on the softImpute-ALS algorithm.
 #' For more details on the underlying algorithm, please see \code{\link[softImpute]{softImpute}} package.

@@ -4,16 +4,9 @@
 \alias{msImpute}
 \title{Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation}
 \usage{
-msImpute(
-  object,
-  rank.max = NULL,
-  lambda = NULL,
-  thresh = 1e-05,
-  maxit = 100,
-  trace.it = FALSE,
-  warm.start = NULL,
-  final.svd = TRUE
-)
+msImpute(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
+  maxit = 100, trace.it = FALSE, warm.start = NULL,
+  final.svd = TRUE)
 }
 \arguments{
 \item{object}{Numeric matrix or \code{MAList} object from \link{limma} where missing values are denoted by NA. Rows are peptides, columns are samples.}
@@ -40,9 +33,10 @@ a numeric matrix of identical dimensions is returned. If \code{x} is a \code{MAL
 replaced with the completed matrix, and the updated \code{MAList} object is returned. Non-NA entries remain unmodified.
 }
 \description{
-\code{msImpute} returns a completed peptide intensity matrix where missing values (NAs) are imputated
+Returns a completed peptide intensity matrix where missing values (NAs) are imputated
 by low-rank approximation of the input matrix. Non-NA entries remain unmodified. \code{msImpute} requires at least 4
-non-missing measurements per peptide across all samples.
+non-missing measurements per peptide across all samples. It is assumed that peptide intensities  (DDA), or MS1/MS2 normalised peak areas (DIA),
+are log2-transformed and normalised (e.g. quantile normalisation).
 }
 \details{
 \code{msImpute} operates on the softImpute-ALS algorithm.
