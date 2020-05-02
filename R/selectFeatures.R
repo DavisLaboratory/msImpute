@@ -1,4 +1,4 @@
-#' Select features with high dropout rate
+#' Select features with high biological dropout rate
 #'
 #' Fits a linear model to peptide dropout rate against peptide abundance. The selected features (peptides) can be
 #' used to determine if data is Missing Not At Random (MNAR). Users should note that \code{msImpute} assumes peptides
