@@ -6,7 +6,7 @@
 #' @param xorigin numeric matrix. The original data. Can contain missing values.
 #' @param ximputed numeric matrix. The imputed data.
 #' @param class factor. A vector of length number of columns (samples) in the data specifying the class of each sample.
-#' @param k  number of nearest class means.
+#' @param k  number of nearest class means. default to k=3.
 #'
 #' @return numeric  The proportion of preserved k-nearest class means in imputed data.
 #'

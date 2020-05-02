@@ -5,7 +5,7 @@
 #'
 #' @param xorigin numeric matrix. The original data. Can not contain missing values.
 #' @param ximputed numeric matrix. The imputed data. Can not contain missing values.
-#' @param k  number of nearest neighbours
+#' @param k  number of nearest neighbours. default to k=3.
 #'
 #' @return numeric  The proportion of preserved k-nearest neighbours in imputed data.
 #'

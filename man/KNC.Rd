@@ -13,7 +13,7 @@ KNC(xorigin, ximputed, class, k = 3)
 
 \item{class}{factor. A vector of length number of columns (samples) in the data specifying the class of each sample.}
 
-\item{k}{number of nearest class means.}
+\item{k}{number of nearest class means. default to k=3.}
 }
 \value{
 numeric  The proportion of preserved k-nearest class means in imputed data.

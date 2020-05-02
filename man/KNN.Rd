@@ -11,7 +11,7 @@ KNN(xorigin, ximputed, class, k = 3)
 
 \item{ximputed}{numeric matrix. The imputed data. Can not contain missing values.}
 
-\item{k}{number of nearest neighbours}
+\item{k}{number of nearest neighbours. default to k=3.}
 }
 \value{
 numeric  The proportion of preserved k-nearest neighbours in imputed data.
