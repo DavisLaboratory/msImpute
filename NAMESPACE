@@ -2,5 +2,6 @@
 
 export(CPD)
 export(KNC)
+export(KNN)
 export(msImpute)
 export(selectFeatures)
