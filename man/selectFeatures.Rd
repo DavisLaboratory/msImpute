@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectFeatures.R
 \name{selectFeatures}
 \alias{selectFeatures}
-\title{Select features with high dropout rate}
+\title{Select features with high biological dropout rate}
 \usage{
 selectFeatures(object, n_features = 500, suppress_plot = FALSE)
 }
