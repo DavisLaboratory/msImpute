@@ -10,7 +10,7 @@
 #' @return numeric  The proportion of preserved k-nearest neighbours in imputed data.
 #'
 #' @export
-KNN <- function(xorigin, ximputed, class, k=3){
+KNN <- function(xorigin, ximputed, k=3){
   
   NN_org <- FNN::get.knn(t(xorigin), k = k)
   KNC_org <- NN_org$nn.index
