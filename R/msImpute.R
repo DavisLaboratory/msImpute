@@ -59,7 +59,11 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
                   maxit = maxit, trace.it = trace.it, warm.start = warm.start, final.svd = final.svd)
   cat("model fitted. \nImputting missing entries ... \n")
   ximp <- softImpute::complete(x, fit)
-  cat("Imputation completed \n")  # need to print out final rank model fitted
+  cat("Imputation completed \n")  # need to define a print method for final rank model fitted
+
+  if(any(object < 0)){
+    warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
+  }
 
   if(is(object,"MAList")) {
     object$E <- ximp
