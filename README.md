@@ -21,7 +21,7 @@ msImpute(xna)
 msImpute(xna, rank.max = 2) # rank 2 approximaiton
 ```
 
-See user manual for help. 
+See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpute_1.2.0.pdf) for help. 
 
 
 **Reference**
