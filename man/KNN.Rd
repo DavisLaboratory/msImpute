@@ -4,7 +4,7 @@
 \alias{KNN}
 \title{k-nearest neighbour (KNN)}
 \usage{
-KNN(xorigin, ximputed, class, k = 3)
+KNN(xorigin, ximputed, k = 3)
 }
 \arguments{
 \item{xorigin}{numeric matrix. The original data. Can not contain missing values.}
@@ -19,4 +19,5 @@ numeric  The proportion of preserved k-nearest neighbours in imputed data.
 \description{
 The fraction of k-nearest neighbours in the original data that are preserved as k-nearest neighbours in imputed data.
 KNN quantifies preservation of the local, or microscopic structure.
+Requires complete datasets - for developers/use in benchmark studies only.
 }

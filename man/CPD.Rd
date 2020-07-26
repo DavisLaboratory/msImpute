@@ -15,6 +15,7 @@ CPD(xorigin, ximputed)
 numeric
 }
 \description{
-Spearman correlation between pairwise distances in the original data and imputed data. 
+Spearman correlation between pairwise distances in the original data and imputed data.
 CPD quantifies preservation of the global structure after imputation.
+Requires complete datasets - for developers/use in benchmark studies only.
 }

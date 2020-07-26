@@ -11,7 +11,7 @@ KNC(xorigin, ximputed, class, k = 3)
 
 \item{ximputed}{numeric matrix. The imputed data.}
 
-\item{class}{factor. A vector of length number of columns (samples) in the data specifying the class of each sample.}
+\item{class}{factor. A vector of length number of columns (samples) in the data specifying the class/label (i.e. experimental group) of each sample.}
 
 \item{k}{number of nearest class means. default to k=3.}
 }
@@ -19,6 +19,7 @@ KNC(xorigin, ximputed, class, k = 3)
 numeric  The proportion of preserved k-nearest class means in imputed data.
 }
 \description{
-The fraction of k-nearest class means in the original data that are preserved as k-nearest class means in imputed data. KNC 
+The fraction of k-nearest class means in the original data that are preserved as k-nearest class means in imputed data. KNC
 quantifies preservation of the mesoscopic structure after imputation.
+Requires complete datasets - for developers/use in benchmark studies only.
 }

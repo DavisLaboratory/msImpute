@@ -34,5 +34,32 @@ ix=seq(np)
 imiss=sample(ix,np*missfrac,replace=FALSE)
 xna=x
 xna[imiss]=NA
-selectFeatures(xna, n_features=500,  suppress_plot=FALSE)
+rownames(xna) <- 1:nrow(xna)
+hdp <- selectFeatures(xna, n_features=50,  suppress_plot=FALSE)
+# construct matrix M to capture missing entries
+M <- ifelse(is.na(xna),1,0)
+M <- M[hdp$msImpute_feature,]
+# plot a heatmap of missingness patterns for the selected peptides
+library(ComplexHeatmap)
+hm <- Heatmap(M,
+column_title = "dropout pattern, columns ordered by dropout similarity",
+              name = "",
+              col = c("#8FBC8F", "#FFEFDB"),
+              show_row_names = FALSE,
+              show_column_names = TRUE,
+              cluster_rows = TRUE,
+              cluster_columns = TRUE,
+              show_column_dend = FALSE,
+              show_row_dend = FALSE,
+              row_names_gp =  gpar(fontsize = 7),
+              column_names_gp = gpar(fontsize = 8),
+              heatmap_legend_param = list(#direction = "horizontal",
+              heatmap_legend_side = "bottom",
+              labels = c("observed","missing"),
+              legend_width = unit(6, "cm")),
+         )
+hm <- draw(hm, heatmap_legend_side = "left")
+}
+\seealso{
+scaleData, msImpute
 }

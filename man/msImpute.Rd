@@ -9,7 +9,7 @@ msImpute(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   final.svd = TRUE)
 }
 \arguments{
-\item{object}{Numeric matrix or \code{MAList} object from \link{limma} where missing values are denoted by NA. Rows are peptides, columns are samples.}
+\item{object}{Numeric matrix  where missing values are denoted by NA. Rows are peptides, columns are samples.}
 
 \item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{object})-1) by default.}
 
@@ -54,5 +54,9 @@ ix=seq(np)
 imiss=sample(ix,np*missfrac,replace=FALSE)
 xna=x
 xna[imiss]=NA
-msImpute(object=xna)
+xna <- scaleData(xna)
+xcomplete <- msImpute(object=xna)
+}
+\seealso{
+selectFeatures, scaleData
 }

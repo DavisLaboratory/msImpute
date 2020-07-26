@@ -8,7 +8,7 @@
 #' \code{msImpute} operates on the softImpute-ALS algorithm.
 #' For more details on the underlying algorithm, please see \code{\link[softImpute]{softImpute}} package.
 #'
-#' @param object Numeric matrix or \code{MAList} object from \link{limma} where missing values are denoted by NA. Rows are peptides, columns are samples.
+#' @param object Numeric matrix  where missing values are denoted by NA. Rows are peptides, columns are samples.
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{object})-1) by default.
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -34,21 +34,32 @@
 #' imiss=sample(ix,np*missfrac,replace=FALSE)
 #' xna=x
 #' xna[imiss]=NA
-#' msImpute(object=xna)
+#' xna <- scaleData(xna)
+#' xcomplete <- msImpute(object=xna)
+#' @seealso selectFeatures, scaleData
 #' @export
 msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL, final.svd = TRUE) {
-
-  if(is(object,"MAList")){
+  # data scaled by biScale
+  if(is(object,"list")) {
     x <- object$E
-  }else{
-    x <- object
+    xnas <- object$E.scaled
   }
 
+  # data is not scaled by biscale
+  if(is(object, "matrix")) {
+    x <- object
+    xnas <- x
+    }
+  # MAList object
+  # or \code{MAList} object from \link{limma}
+  # if(is(object,"MAList")) x <- object$E
+
+
   if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
-  cat("bi-scaling ...\n")
-  xnas <- softImpute::biScale(x)
-  cat("data scaled \n")
+  if(any(x < 0)){
+    warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
+  }
   if(is.null(rank.max)) rank.max <- min(dim(x) - 1)
   cat("maximum rank is", rank.max, "\n")
   cat("computing lambda0 ... \n")
@@ -61,16 +72,14 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   ximp <- softImpute::complete(x, fit)
   cat("Imputation completed \n")  # need to define a print method for final rank model fitted
 
-  if(any(object < 0)){
-    warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
-  }
-
-  if(is(object,"MAList")) {
-    object$E <- ximp
-    return(object)
-  }else{
-    return(ximp)
-  }
+  return(ximp)
+#
+#   if(is(object,"MAList")) {
+#     object$E <- ximp
+#     return(object)
+#   }else{
+#     return(ximp)
+#   }
 
 
 }

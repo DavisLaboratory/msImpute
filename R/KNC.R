@@ -1,11 +1,12 @@
 #' k-nearest class means (KNC)
 #'
-#' The fraction of k-nearest class means in the original data that are preserved as k-nearest class means in imputed data. KNC 
+#' The fraction of k-nearest class means in the original data that are preserved as k-nearest class means in imputed data. KNC
 #' quantifies preservation of the mesoscopic structure after imputation.
+#' Requires complete datasets - for developers/use in benchmark studies only.
 #'
 #' @param xorigin numeric matrix. The original data. Can contain missing values.
 #' @param ximputed numeric matrix. The imputed data.
-#' @param class factor. A vector of length number of columns (samples) in the data specifying the class of each sample.
+#' @param class factor. A vector of length number of columns (samples) in the data specifying the class/label (i.e. experimental group) of each sample.
 #' @param k  number of nearest class means. default to k=3.
 #'
 #' @return numeric  The proportion of preserved k-nearest class means in imputed data.
@@ -18,12 +19,12 @@ KNC <- function(xorigin, ximputed, class, k=3){
   }
   NN_org <- FNN::get.knn(t(data.frame(class_means_org)), k = k)
   KNC_org <- NN_org$nn.index
-  
+
   class_means_amp <- list()
   for(G in unique(class)){
     class_means_amp[[G]] <- rowMeans(ximputed[,class==G])
   }
-  
+
   NN_amp <- FNN::get.knn(t(data.frame(class_means_amp)), k = k)
   KNC_amp <- NN_amp$nn.index
   pmeans <- c()
