@@ -46,7 +46,8 @@ scaleData <- function(object, maxit = 20, thresh = 1e-09, row.center = TRUE, row
   }
 
   cat("bi-scaling ...\n")
-  xnas <- softImpute::biScale(x)
+  xnas <- softImpute::biScale(x, maxit = maxit, thresh = thresh, row.center = row.center, row.scale =row.scale,
+                              col.center = col.center, col.scale = col.scale, trace = trace)
   cat("data scaled \n")
 
   return(list(E = object, E.scaled = xnas))

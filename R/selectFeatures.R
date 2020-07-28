@@ -4,7 +4,7 @@
 #' used to determine if data is Missing Not At Random (MNAR). Users should note that \code{msImpute} assumes peptides
 #' are Missing At Random (MAR).
 #'
-#' @param object Numeric matrix or \code{MAList} object from \link{limma} where missing values are denoted by NA.
+#' @param object Numeric matrix where missing values are denoted by NA.
 #' Rows are peptides, columns are samples.
 #' @param n_features Numeric, number of features with high dropout rate. 500 by default.
 #' @param suppress_plot Logical show plot of dropouts vs abundances.
@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' set.seed(101)
-#' n=200
+#' n=800
 #' p=100
 #' J=50
 #' np=n*p
@@ -24,7 +24,7 @@
 #' xna=x
 #' xna[imiss]=NA
 #' rownames(xna) <- 1:nrow(xna)
-#' hdp <- selectFeatures(xna, n_features=50,  suppress_plot=FALSE)
+#' hdp <- selectFeatures(xna, n_features=500,  suppress_plot=FALSE)
 #' # construct matrix M to capture missing entries
 #' M <- ifelse(is.na(xna),1,0)
 #' M <- M[hdp$msImpute_feature,]
