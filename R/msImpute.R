@@ -57,7 +57,7 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
 
 
   if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
-  if(any(x < 0)){
+  if(any(x < 0, na.rm = TRUE)){
     warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
   }
   if(is.null(rank.max)) rank.max <- min(dim(x) - 1)
