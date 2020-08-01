@@ -7,7 +7,6 @@ Methods for label-free mass spectrometry proteomics imputation
 ```
 install.packages("devtools") # devtools is required to download and install the package
 devtools::install_github("DavisLaboratory/msImpute")
-
 ```
 
 **Quick Start**
@@ -21,7 +20,6 @@ xna <- scaleData(xna)
 msImpute(xna, rank.max = 2) # rank 2 approximaiton
 xcomplete <- msImpute(xna)  # optimal rank determined by msImpute
 computeStructuralMetrics(xcomplete, group, xna$E) # "group" denotes experimental condition (e.g. control, treatment etc). Requires python. See Manual for more information.
-
 ```
 
 See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpute_1.2.0.pdf) for help. 
