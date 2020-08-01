@@ -34,7 +34,8 @@
 #' library(reticulate)
 #' # create a virtual environment
 #' virtualenv_create('r-reticulate')
-#' py_available() # if this returns TRUE, you've access to python from R. See reticulate if you need to troubleshoot
+#' py_available() # if this returns TRUE, you've access to python from R.
+#' # See reticulate if you need to troubleshoot
 #' # install scipy and POT python modules in this virtual environment
 #' virtualenv_install("msImpute-reticulate","scipy")
 #' # if this runs successfully, the installation has been successful:
@@ -44,7 +45,8 @@
 #' # load the virtual environment that you've created using:
 #' library(reticulate)
 #' use_virtualenv("msImpute-reticulate")
-#' # you can then run the computeStructuralMetrics() function. Note that the reticulate package should be loaded before loading msImpute.
+#' # you can then run the computeStructuralMetrics() function.
+#' # Note that the reticulate package should be loaded before loading msImpute.
 #' set.seed(101)
 #' n=200
 #' p=100
