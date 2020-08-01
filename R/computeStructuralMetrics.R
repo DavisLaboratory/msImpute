@@ -101,7 +101,7 @@ betweenness <- function(x, class_label){
 
 #' @export
 gromov_wasserstein <- function(xna, ximputed){
-  reticulate::source_python("inst/python/gw.py")
+  reticulate::source_python("python/gw.py")
   xna <- apply(xna, 2, FUN=function(x) {x[is.na(x)] <- mean(x, na.rm=TRUE); return(x)})
   return(gw(t(xna), t(ximputed), ncol(xna)))
 }
