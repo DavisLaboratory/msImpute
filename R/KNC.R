@@ -4,8 +4,8 @@
 #' quantifies preservation of the mesoscopic structure after imputation.
 #' Requires complete datasets - for developers/use in benchmark studies only.
 #'
-#' @param xorigin numeric matrix. The original data. Can contain missing values.
-#' @param ximputed numeric matrix. The imputed data.
+#' @param xorigin numeric matrix. The original log-intensity data. Can contain missing values.
+#' @param ximputed numeric matrix. The imputed log-intensity data.
 #' @param class factor. A vector of length number of columns (samples) in the data specifying the class/label (i.e. experimental group) of each sample.
 #' @param k  number of nearest class means. default to k=3.
 #'

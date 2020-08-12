@@ -4,8 +4,8 @@
 #' KNN quantifies preservation of the local, or microscopic structure.
 #' Requires complete datasets - for developers/use in benchmark studies only.
 #'
-#' @param xorigin numeric matrix. The original data. Can not contain missing values.
-#' @param ximputed numeric matrix. The imputed data. Can not contain missing values.
+#' @param xorigin numeric matrix. The original log-intensity data. Can not contain missing values.
+#' @param ximputed numeric matrix. The imputed log-intensity data. Can not contain missing values.
 #' @param k  number of nearest neighbours. default to k=3.
 #'
 #' @return numeric  The proportion of preserved k-nearest neighbours in imputed data.

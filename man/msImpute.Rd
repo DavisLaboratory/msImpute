@@ -9,7 +9,7 @@ msImpute(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   final.svd = TRUE)
 }
 \arguments{
-\item{object}{Numeric matrix  where missing values are denoted by NA. Rows are peptides, columns are samples.}
+\item{object}{Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
 
 \item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{object})-1) by default.}
 
@@ -44,16 +44,19 @@ For more details on the underlying algorithm, please see \code{\link[softImpute]
 }
 \examples{
 set.seed(101)
-n=200
-p=100
-J=50
+n=12000
+p=10
+J=5
 np=n*p
 missfrac=0.3
-x=matrix(rnorm(n*J),n,J)\%*\%matrix(rnorm(J*p),J,p)+matrix(rnorm(np),n,p)/5
+x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)\%*\%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
+  matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
 ix=seq(np)
 imiss=sample(ix,np*missfrac,replace=FALSE)
 xna=x
 xna[imiss]=NA
+keep <- (rowSums(!is.na(xna)) >= 4)
+xna <- xna[keep,]
 xna <- scaleData(xna)
 xcomplete <- msImpute(object=xna)
 }

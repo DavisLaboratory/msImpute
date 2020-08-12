@@ -7,9 +7,9 @@
 KNN(xorigin, ximputed, k = 3)
 }
 \arguments{
-\item{xorigin}{numeric matrix. The original data. Can not contain missing values.}
+\item{xorigin}{numeric matrix. The original log-intensity data. Can not contain missing values.}
 
-\item{ximputed}{numeric matrix. The imputed data. Can not contain missing values.}
+\item{ximputed}{numeric matrix. The imputed log-intensity data. Can not contain missing values.}
 
 \item{k}{number of nearest neighbours. default to k=3.}
 }

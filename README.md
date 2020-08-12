@@ -19,10 +19,20 @@ selectFeatures(xna)  # xna is a numeric matrix with NAs (for MAR/MNAR diagnosis 
 xna <- scaleData(xna) 
 msImpute(xna, rank.max = 2) # rank 2 approximaiton
 xcomplete <- msImpute(xna)  # optimal rank determined by msImpute
-computeStructuralMetrics(xcomplete, group, xna$E) # "group" denotes experimental condition (e.g. control, treatment etc). Requires python. See Manual for more information.
+
+
+# Requires python. See Manual for more information.
+top.hvp <- findVariableFeatures(xna$E)
+computeStructuralMetrics(xcomplete, 
+                         # "group" denotes experimental condition (e.g. control, treatment etc).
+                         group, 
+                         xna$E[rownames(top.hvp)[1:50],], 
+                         k = 2) 
+
+
 ```
 
-See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpute_1.2.0.pdf) for help. 
+See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpute_1.3.0.pdf) for help. 
 
 
 **Reference**

@@ -7,9 +7,9 @@
 KNC(xorigin, ximputed, class, k = 3)
 }
 \arguments{
-\item{xorigin}{numeric matrix. The original data. Can contain missing values.}
+\item{xorigin}{numeric matrix. The original log-intensity data. Can contain missing values.}
 
-\item{ximputed}{numeric matrix. The imputed data.}
+\item{ximputed}{numeric matrix. The imputed log-intensity data.}
 
 \item{class}{factor. A vector of length number of columns (samples) in the data specifying the class/label (i.e. experimental group) of each sample.}
 

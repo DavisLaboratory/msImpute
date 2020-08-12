@@ -9,7 +9,7 @@ scaleData(object, maxit = 20, thresh = 1e-09, row.center = TRUE,
   trace = FALSE)
 }
 \arguments{
-\item{object}{numeric matrix where missing values are denoted by NA. Rows are peptides, columns are samples.}
+\item{object}{numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
 
 \item{maxit}{numeric. maximum iteration for the algorithm to converge (default to 20). When both row and column centering/scaling is requested, iteration may be necessary.}
 
@@ -33,19 +33,23 @@ Standardize a matrix to have optionally row means zero and variances one, and/or
 }
 \details{
 Standardizes rows and/or columns of a matrix with missing values, according to the \code{biScale} algorithm in Hastie et al. 2015.
+Data is assumed to be normalised and log-transformed.
 }
 \examples{
 set.seed(101)
-n=200
-p=100
-J=50
+n=12000
+p=10
+J=5
 np=n*p
 missfrac=0.3
-x=matrix(rnorm(n*J),n,J)\%*\%matrix(rnorm(J*p),J,p)+matrix(rnorm(np),n,p)/5
+x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)\%*\%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
+  matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
 ix=seq(np)
 imiss=sample(ix,np*missfrac,replace=FALSE)
 xna=x
 xna[imiss]=NA
+keep <- (rowSums(!is.na(xna)) >= 4)
+xna <- xna[keep,]
 xna <- scaleData(xna)
 }
 \seealso{

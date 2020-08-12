@@ -4,7 +4,7 @@
 #' used to determine if data is Missing Not At Random (MNAR). Users should note that \code{msImpute} assumes peptides
 #' are Missing At Random (MAR).
 #'
-#' @param object Numeric matrix where missing values are denoted by NA.
+#' @param object Numeric matrix giving log-intensity where missing values are denoted by NA.
 #' Rows are peptides, columns are samples.
 #' @param n_features Numeric, number of features with high dropout rate. 500 by default.
 #' @param suppress_plot Logical show plot of dropouts vs abundances.
@@ -13,16 +13,19 @@
 #'
 #' @examples
 #' set.seed(101)
-#' n=800
-#' p=100
-#' J=50
+#' n=12000
+#' p=10
+#' J=5
 #' np=n*p
 #' missfrac=0.3
-#' x=matrix(rnorm(n*J),n,J)%*%matrix(rnorm(J*p),J,p)+matrix(rnorm(np),n,p)/5
+#' x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)%*%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
+#'   matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
 #' ix=seq(np)
 #' imiss=sample(ix,np*missfrac,replace=FALSE)
 #' xna=x
 #' xna[imiss]=NA
+#' keep <- (rowSums(!is.na(xna)) >= 4)
+#' xna <- xna[keep,]
 #' rownames(xna) <- 1:nrow(xna)
 #' hdp <- selectFeatures(xna, n_features=500,  suppress_plot=FALSE)
 #' # construct matrix M to capture missing entries
@@ -59,6 +62,8 @@ selectFeatures <- function(object, n_features=500, suppress_plot = FALSE) {
   }
 
   if(is.null(rownames(x))) stop("No row names in input. Please provide input with named rows.")
+  if(any(is.nan(x) | is.infinite(x))) stop("Inf or NaN values encountered.")
+
   AveExpr <- rowMeans(x, na.rm = TRUE)
   dropout <- rowMeans(is.na(x))
 

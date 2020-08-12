@@ -8,7 +8,7 @@
 #' \code{msImpute} operates on the softImpute-ALS algorithm.
 #' For more details on the underlying algorithm, please see \code{\link[softImpute]{softImpute}} package.
 #'
-#' @param object Numeric matrix  where missing values are denoted by NA. Rows are peptides, columns are samples.
+#' @param object Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{object})-1) by default.
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -24,16 +24,19 @@
 #'
 #' @examples
 #' set.seed(101)
-#' n=200
-#' p=100
-#' J=50
+#' n=12000
+#' p=10
+#' J=5
 #' np=n*p
 #' missfrac=0.3
-#' x=matrix(rnorm(n*J),n,J)%*%matrix(rnorm(J*p),J,p)+matrix(rnorm(np),n,p)/5
+#' x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)%*%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
+#'   matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
 #' ix=seq(np)
 #' imiss=sample(ix,np*missfrac,replace=FALSE)
 #' xna=x
 #' xna[imiss]=NA
+#' keep <- (rowSums(!is.na(xna)) >= 4)
+#' xna <- xna[keep,]
 #' xna <- scaleData(xna)
 #' xcomplete <- msImpute(object=xna)
 #' @seealso selectFeatures, scaleData
@@ -50,12 +53,13 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   if(is(object, "matrix")) {
     x <- object
     xnas <- x
+    warning("Input is not scaled. Data scaling is recommended for msImpute optimal performance.")
     }
   # MAList object
   # or \code{MAList} object from \link{limma}
   # if(is(object,"MAList")) x <- object$E
 
-
+  if(any(is.nan(x) | is.infinite(x))) stop("Inf or NaN values encountered.")
   if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
   if(any(x < 0, na.rm = TRUE)){
     warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
@@ -63,7 +67,7 @@ msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   if(is.null(rank.max)) rank.max <- min(dim(x) - 1)
   cat("maximum rank is", rank.max, "\n")
   cat("computing lambda0 ... \n")
-  if(is.null(lambda)) lambda <- softImpute::lambda0(x)
+  if(is.null(lambda)) lambda <- softImpute::lambda0(xnas)
   cat("lambda0 is", lambda, "\n")
   cat("fit the low-rank model ... \n")
   fit <- softImpute::softImpute(xnas,rank=rank.max,lambda=lambda, type = "als", thresh = thresh,

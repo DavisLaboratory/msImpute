@@ -4,8 +4,8 @@
 #' CPD quantifies preservation of the global structure after imputation.
 #' Requires complete datasets - for developers/use in benchmark studies only.
 #'
-#' @param xorigin numeric matrix. The original data. Can not contain missing values.
-#' @param ximputed numeric matrix. The imputed data. Can not contain missing values.
+#' @param xorigin numeric matrix. The original log-intensity data. Can not contain missing values.
+#' @param ximputed numeric matrix. The imputed log-intensity data. Can not contain missing values.
 #'
 #' @return numeric
 #'
