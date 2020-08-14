@@ -37,5 +37,5 @@ See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpu
 
 **Reference**
 
-Manuscript in preparation
+Cite our [preprint](https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1)
 
