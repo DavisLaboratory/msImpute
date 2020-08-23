@@ -31,8 +31,7 @@ computeStructuralMetrics(xcomplete,
 
 
 ```
-
-See [user manual](https://github.com/DavisLaboratory/msImpute/blob/master/msImpute_1.3.0.pdf) for help. 
+ 
 
 
 **Reference**
