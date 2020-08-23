@@ -40,6 +40,11 @@
 #' xna <- scaleData(xna)
 #' xcomplete <- msImpute(object=xna)
 #' @seealso selectFeatures, scaleData
+#' @references
+#' Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
+#' @references
+#' Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+#' @importFrom methods is
 #' @export
 msImpute <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL, final.svd = TRUE) {

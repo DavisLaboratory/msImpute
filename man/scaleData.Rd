@@ -52,6 +52,11 @@ keep <- (rowSums(!is.na(xna)) >= 4)
 xna <- xna[keep,]
 xna <- scaleData(xna)
 }
+\references{
+Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
+
+Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+}
 \seealso{
 selectFeatures, msImpute
 }

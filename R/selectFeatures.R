@@ -32,7 +32,7 @@
 #' M <- ifelse(is.na(xna),1,0)
 #' M <- M[hdp$msImpute_feature,]
 #' # plot a heatmap of missingness patterns for the selected peptides
-#' library(ComplexHeatmap)
+#' require(ComplexHeatmap)
 #' hm <- Heatmap(M,
 #' column_title = "dropout pattern, columns ordered by dropout similarity",
 #'               name = "",
@@ -52,6 +52,11 @@
 #'          )
 #' hm <- draw(hm, heatmap_legend_side = "left")
 #' @seealso scaleData, msImpute
+#' @references
+#' Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+#' @importFrom stats lm residuals
+#' @importFrom methods is
+#' @importFrom graphics abline plot
 #' @export
 selectFeatures <- function(object, n_features=500, suppress_plot = FALSE) {
 

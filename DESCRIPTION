@@ -1,7 +1,7 @@
 Package: msImpute
 Type: Package
 Title: Peptide imputation in label-free proteomics
-Version: 1.3.0
+Version: 0.99.0
 Authors@R: 
     person(given = "Soroor",
            family = "Hediyeh-zadeh",
@@ -12,10 +12,12 @@ Description: msImpute provides tools for matrix completion in label-free
     proteomics quantification at the peptide-level. Currently, msImpute
     completes missing values by low-rank approximation of the underlying 
     data matrix.
-Imports:
-    softImpute
-License: MIT
+Imports: softImpute, methods, stats, graphics, pdist, reticulate, scran, data.table, FNN, matrixStats
+License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 BugReports: https://github.com/DavisLaboratory/msImpute/issues
 RoxygenNote: 7.0.2
+Suggests: BiocStyle, knitr, rmarkdown, limma, ComplexHeatmap, imputeLCMD, tidyr
+VignetteBuilder: knitr
+biocViews: MassSpectrometry, Proteomics, Software

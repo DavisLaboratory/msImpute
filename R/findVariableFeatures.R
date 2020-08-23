@@ -12,6 +12,7 @@
 #'
 #' @export
 #' @importFrom scran trendVar decomposeVar
+#' @importFrom graphics lines plot
 findVariableFeatures <- function(y){
   fit <- trendVar(y)
   results <- decomposeVar(y, fit)

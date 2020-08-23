@@ -88,3 +88,6 @@ G <- as.factor(sample(1:3, p, replace = TRUE))
 top.hvp <- findVariableFeatures(y)
 computeStructuralMetrics(xcomplete, G, y[rownames(top.hvp)[1:50],], k = 2)
 }
+\references{
+Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+}

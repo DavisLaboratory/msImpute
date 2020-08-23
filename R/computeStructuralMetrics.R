@@ -33,7 +33,8 @@
 #' betweenness (sum of squared distances between the phenotypes), and gromov-wasserstein distance (if \code{xna} is not NULL).
 #' if \code{group} is NULL only the GW distance is returned. All metrics are on log scale.
 #'
-#'
+#' @references
+#' Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
 #' @examples
 #' # To compute the GW distance you need to have python installed
 #' # then install the reticulate R package from CRAN
@@ -91,7 +92,15 @@ computeStructuralMetrics <- function(x, group=NULL, y = NULL, k=2){
 }
 
 
-
+#'Withinness
+#'
+#' This function is called internally by \code{computeStructuralMetrics}.
+#' Users should not need to call this function directly.
+#'
+#' @param x numeric matrix
+#' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
+#'
+#'
 #' @export
 withinness <- function(x, class_label){
   within_class_dist <- list()
@@ -102,6 +111,15 @@ withinness <- function(x, class_label){
   return(unlist(within_class_dist))
 }
 
+#' Betweenness
+#'
+#' This function is called internally by \code{computeStructuralMetrics}.
+#' Users should not need to call this function directly.
+#'
+#' @param x numeric matrix
+#' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
+#'
+#' @importFrom stats dist
 #' @export
 betweenness <- function(x, class_label){
   centroids <- sapply(unique(class_label), FUN=function(class){
@@ -113,7 +131,17 @@ betweenness <- function(x, class_label){
 
 }
 
-
+#' Gromov-Wasserstein distance
+#'
+#' This function is called internally by \code{computeStructuralMetrics}.
+#' Users should not need to call this function directly.
+#'
+#' @param x numeric matrix
+#' @param y numeric matrix
+#' @param k number of Principal Components used to compute Gromov-Wasserstein distance
+#' @param min.mean numeric. Minimum mean log-intensity for peptides to be retained
+#'
+#' @importFrom stats prcomp
 #' @export
 gromov_wasserstein <- function(x, y, k, min.mean = 0.1){
   if (k > ncol(x)) stop("Number of Principal Components cannot be greater than number of columns (samples) in the data.")
@@ -137,7 +165,7 @@ gromov_wasserstein <- function(x, y, k, min.mean = 0.1){
   C2 <- xt_pca$x[,1:k]
 
 
-  cat("Computing GW distance using k=", k, "Principal Components")
+  cat("Computing GW distance using k=", k, "Principal Components\n")
   reticulate::source_python(system.file("python", "gw.py", package = "msImpute"))
   return(gw(C1,C2, ncol(x)))
 }

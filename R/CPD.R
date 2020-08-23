@@ -9,6 +9,7 @@
 #'
 #' @return numeric
 #'
+#' @importFrom stats cor dist
 #' @export
 CPD <- function(xorigin, ximputed){
   return(cor(x=as.numeric(dist(t(xorigin))),
