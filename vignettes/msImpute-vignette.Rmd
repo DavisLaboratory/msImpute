@@ -38,7 +38,7 @@ _Since the proteomics quantification data (tables) are typically too large to be
 
 # Quick Start
 
-The package consists of main functions:
+The package consists of the following main functions:
 
 - `selectFeatures`: identifies peptides with high biological dropout rate. These peptides have a high abundance and high dropout. Their missingness pattern is used as a diagnostic for MAR/MNAR missigness type, which can then inform later decisions around imputation of the data.
 
