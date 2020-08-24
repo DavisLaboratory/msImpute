@@ -35,7 +35,7 @@
 #' require(ComplexHeatmap)
 #' hm <- Heatmap(M,
 #' column_title = "dropout pattern, columns ordered by dropout similarity",
-#'               name = "",
+#'               name = "Intensity",
 #'               col = c("#8FBC8F", "#FFEFDB"),
 #'               show_row_names = FALSE,
 #'               show_column_names = TRUE,

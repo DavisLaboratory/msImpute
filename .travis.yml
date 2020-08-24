@@ -1,0 +1,10 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+r:
+ - bioc-devel
+ - bioc-release
+
+cache: packages
+warnings_are_erros: true
+bioc_check: true

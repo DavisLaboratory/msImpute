@@ -1,4 +1,7 @@
 # msImpute [![DOI](https://zenodo.org/badge/239129382.svg)](https://zenodo.org/badge/latestdoi/239129382)
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/DavisLaboratory/msImpute.svg?branch=master)](https://travis-ci.org/DavisLaboratory/msImpute)
+<!-- badges: end -->
 
 Methods for label-free mass spectrometry proteomics imputation
 

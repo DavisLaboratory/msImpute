@@ -160,7 +160,7 @@ ha_column <- HeatmapAnnotation(batch = batch,
 
 hm <- Heatmap(M,
 column_title = "dropout pattern, columns ordered by dropout similarity",
-              name = "",
+              name = "Intensity",
               col = c("#8FBC8F", "#FFEFDB"),
               show_row_names = FALSE,
               show_column_names = FALSE,
@@ -307,7 +307,7 @@ ha_column <- HeatmapAnnotation(group = as.factor(sample_annot$group))
 
 hm <- Heatmap(M,
 column_title = "dropout pattern, columns ordered by dropout similarity",
-              name = "",
+              name = "Intensity",
               col = c("#8FBC8F", "#FFEFDB"),
               show_row_names = FALSE,
               show_column_names = FALSE,
@@ -492,7 +492,7 @@ ha_column <- HeatmapAnnotation(group = group)
 
 hm <- Heatmap(M,
 column_title = "dropout pattern, columns ordered by dropout similarity",
-              name = "",
+              name = "Intensity",
               col = c("#8FBC8F", "#FFEFDB"),
               show_row_names = FALSE,
               show_column_names = FALSE,
