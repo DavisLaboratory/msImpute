@@ -56,6 +56,7 @@ py_available() # if this returns TRUE, you've access to python from R.
 # See reticulate if you need to troubleshoot
 # install scipy and POT python packages in this virtual environment
 virtualenv_install("msImpute-reticulate","scipy")
+virtualenv_install("msImpute-reticulate","cython")
 virtualenv_install("msImpute-reticulate","POT")
 # if this runs successfully, the installation has been successful:
 scipy <- import("scipy")

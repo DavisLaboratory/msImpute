@@ -19,3 +19,11 @@ Spearman correlation between pairwise distances in the original data and imputed
 CPD quantifies preservation of the global structure after imputation.
 Requires complete datasets - for developers/use in benchmark studies only.
 }
+\examples{
+data(pxd007959)
+y <- pxd007959$y
+y <- y[complete.cases(y),]
+# for demonstration we use same y for xorigin and ximputed
+CPD(y, y)
+
+}

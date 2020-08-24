@@ -11,7 +11,18 @@ betweenness(x, class_label)
 
 \item{class_label}{factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)}
 }
+\value{
+numeric Sum of the squared distances between group centroids
+}
 \description{
 This function is called internally by \code{computeStructuralMetrics}.
 Users should not need to call this function directly.
+}
+\examples{
+data(pxd007959)
+y <- pxd007959$y
+y <- y[complete.cases(y),]
+betweenness(y, as.factor(pxd007959$samples$group))
+
+
 }

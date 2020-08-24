@@ -9,6 +9,13 @@
 #' @param k  number of nearest neighbours. default to k=3.
 #'
 #' @return numeric  The proportion of preserved k-nearest neighbours in imputed data.
+#' @examples
+#' data(pxd007959)
+#' y <- pxd007959$y
+#' y <- y[complete.cases(y),]
+#' # for demonstration we use same y for xorigin and ximputed
+#' KNN(y, y)
+#'
 #'
 #' @export
 KNN <- function(xorigin, ximputed, k=3){

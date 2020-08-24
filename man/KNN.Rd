@@ -21,3 +21,12 @@ The fraction of k-nearest neighbours in the original data that are preserved as 
 KNN quantifies preservation of the local, or microscopic structure.
 Requires complete datasets - for developers/use in benchmark studies only.
 }
+\examples{
+data(pxd007959)
+y <- pxd007959$y
+y <- y[complete.cases(y),]
+# for demonstration we use same y for xorigin and ximputed
+KNN(y, y)
+
+
+}

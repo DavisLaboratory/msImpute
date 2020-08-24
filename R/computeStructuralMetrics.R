@@ -46,6 +46,7 @@
 #' # See reticulate if you need to troubleshoot
 #' # install scipy and POT python packages in this virtual environment
 #' virtualenv_install("msImpute-reticulate","scipy")
+#' virtualenv_install("msImpute-reticulate","cython")
 #' virtualenv_install("msImpute-reticulate","POT")
 #' # if this runs successfully, the installation has been successful:
 #' scipy <- import("scipy")
@@ -100,6 +101,13 @@ computeStructuralMetrics <- function(x, group=NULL, y = NULL, k=2){
 #' @param x numeric matrix
 #' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
 #'
+#' @return numeric. Sum of the squared distances of all samples within an experimental group from group centroid
+#'
+#' @examples
+#' data(pxd007959)
+#' y <- pxd007959$y
+#' y <- y[complete.cases(y),]
+#' withinness(y, as.factor(pxd007959$samples$group))
 #'
 #' @export
 withinness <- function(x, class_label){
@@ -118,6 +126,14 @@ withinness <- function(x, class_label){
 #'
 #' @param x numeric matrix
 #' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
+#'
+#' @return numeric Sum of the squared distances between group centroids
+#' @examples
+#' data(pxd007959)
+#' y <- pxd007959$y
+#' y <- y[complete.cases(y),]
+#' betweenness(y, as.factor(pxd007959$samples$group))
+#'
 #'
 #' @importFrom stats dist
 #' @export
@@ -140,6 +156,8 @@ betweenness <- function(x, class_label){
 #' @param y numeric matrix
 #' @param k number of Principal Components used to compute Gromov-Wasserstein distance
 #' @param min.mean numeric. Minimum mean log-intensity for peptides to be retained
+#'
+#' @return numeric GW distance
 #'
 #' @importFrom stats prcomp
 #' @export

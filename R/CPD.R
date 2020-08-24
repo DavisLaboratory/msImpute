@@ -8,6 +8,12 @@
 #' @param ximputed numeric matrix. The imputed log-intensity data. Can not contain missing values.
 #'
 #' @return numeric
+#' @examples
+#' data(pxd007959)
+#' y <- pxd007959$y
+#' y <- y[complete.cases(y),]
+#' # for demonstration we use same y for xorigin and ximputed
+#' CPD(y, y)
 #'
 #' @importFrom stats cor dist
 #' @export

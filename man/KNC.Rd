@@ -23,3 +23,11 @@ The fraction of k-nearest class means in the original data that are preserved as
 quantifies preservation of the mesoscopic structure after imputation.
 Requires complete datasets - for developers/use in benchmark studies only.
 }
+\examples{
+data(pxd007959)
+y <- pxd007959$y
+y <- y[complete.cases(y),]
+# for demonstration we use same y for xorigin and ximputed
+KNC(y, y, class = as.factor(pxd007959$samples$group))
+
+}

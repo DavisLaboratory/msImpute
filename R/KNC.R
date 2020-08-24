@@ -11,6 +11,13 @@
 #'
 #' @return numeric  The proportion of preserved k-nearest class means in imputed data.
 #'
+#' @examples
+#' data(pxd007959)
+#' y <- pxd007959$y
+#' y <- y[complete.cases(y),]
+#' # for demonstration we use same y for xorigin and ximputed
+#' KNC(y, y, class = as.factor(pxd007959$samples$group))
+#'
 #' @export
 KNC <- function(xorigin, ximputed, class, k=3){
   class_means_org <- list()

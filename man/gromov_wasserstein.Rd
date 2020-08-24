@@ -15,6 +15,9 @@ gromov_wasserstein(x, y, k, min.mean = 0.1)
 
 \item{min.mean}{numeric. Minimum mean log-intensity for peptides to be retained}
 }
+\value{
+numeric GW distance
+}
 \description{
 This function is called internally by \code{computeStructuralMetrics}.
 Users should not need to call this function directly.

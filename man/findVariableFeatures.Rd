@@ -19,6 +19,11 @@ For each peptide, the total variance is decomposed into biological and technical
 A loess trend is fitted to total sample variances and mean intensities. For each peptide, the biological variance is then
 computed by subtracting the estimated technical variance from the loess fit from the total sample variance.
 }
+\examples{
+data(pxd007959)
+findVariableFeatures(pxd007959$y)
+
+}
 \seealso{
 computeStructuralMetrics
 }
