@@ -46,27 +46,27 @@ in the data (i.e. the number of columns in the intensity matrix).
 GW distance estimation requires \code{python}. See example. All metrics are on log scale.
 }
 \examples{
-# To compute the GW distance you need to have python installed
-# then install the reticulate R package from CRAN
+## To compute the GW distance you need to have python installed
+## then install the reticulate R package from CRAN
 # install.packages("reticulate")
-library(reticulate)
-# create a virtual environment
-virtualenv_create('r-reticulate')
-py_available() # if this returns TRUE, you've access to python from R.
-# See reticulate if you need to troubleshoot
-# install scipy and POT python packages in this virtual environment
-virtualenv_install("msImpute-reticulate","scipy")
-virtualenv_install("msImpute-reticulate","cython")
-virtualenv_install("msImpute-reticulate","POT")
-# if this runs successfully, the installation has been successful:
-scipy <- import("scipy")
-# You can now run the computeStructuralMetrics() function to compute GW distance.
-# This setup should only be done for the first use. For all subsequent usages
-# load the virtual environment that you've created using:
-library(reticulate)
-use_virtualenv("msImpute-reticulate")
-# you can then run the computeStructuralMetrics() function.
-# Note that the reticulate package should be loaded before loading msImpute.
+# library(reticulate)
+## create a virtual environment
+# virtualenv_create('r-reticulate')
+# py_available() # if this returns TRUE, you've access to python from R.
+## See reticulate if you need to troubleshoot
+## install scipy and POT python packages in this virtual environment
+# virtualenv_install("msImpute-reticulate","scipy")
+# virtualenv_install("msImpute-reticulate","cython")
+# virtualenv_install("msImpute-reticulate","POT")
+## if this runs successfully, the installation has been successful:
+# scipy <- import("scipy")
+## You can now run the computeStructuralMetrics() function to compute GW distance.
+## This setup should only be done for the first use. For all subsequent usages
+## load the virtual environment that you've created using:
+# library(reticulate)
+# use_virtualenv("msImpute-reticulate")
+## you can then run the computeStructuralMetrics() function.
+## Note that the reticulate package should be loaded before loading msImpute.
 set.seed(101)
 n=12000
 p=10
@@ -87,7 +87,9 @@ xna <- scaleData(xna)
 xcomplete <- msImpute(object=xna)
 G <- as.factor(sample(1:3, p, replace = TRUE))
 top.hvp <- findVariableFeatures(y)
-computeStructuralMetrics(xcomplete, G, y[rownames(top.hvp)[1:50],], k = 2)
+#computeStructuralMetrics(xcomplete, G, y[rownames(top.hvp)[1:50],], k = 2)
+computeStructuralMetrics(xcomplete, G, y=NULL) # gw_dist is not computed if y is null
+
 }
 \references{
 Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
