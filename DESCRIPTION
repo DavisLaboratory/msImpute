@@ -18,7 +18,7 @@ License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 BugReports: https://github.com/DavisLaboratory/msImpute/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests: BiocStyle, knitr, rmarkdown, limma, ComplexHeatmap, imputeLCMD, tidyr
 VignetteBuilder: knitr
 biocViews: MassSpectrometry, Proteomics, Software

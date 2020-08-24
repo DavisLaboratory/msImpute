@@ -4,9 +4,16 @@
 \alias{scaleData}
 \title{Standardize a matrix to have optionally row means zero and variances one, and/or column means zero and variances one.}
 \usage{
-scaleData(object, maxit = 20, thresh = 1e-09, row.center = TRUE,
-  row.scale = TRUE, col.center = TRUE, col.scale = TRUE,
-  trace = FALSE)
+scaleData(
+  object,
+  maxit = 20,
+  thresh = 1e-09,
+  row.center = TRUE,
+  row.scale = TRUE,
+  col.center = TRUE,
+  col.scale = TRUE,
+  trace = FALSE
+)
 }
 \arguments{
 \item{object}{numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}

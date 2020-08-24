@@ -10,16 +10,15 @@
 #'
 #' @examples
 #' data(pxd007959)
-#' findVariableFeatures(pxd007959$y)
+#' findVariableFeatures(data.matrix(log2(pxd007959$y)))
 #'
 #' @seealso computeStructuralMetrics
 #'
 #' @export
-#' @importFrom scran trendVar decomposeVar
+#' @importFrom scran modelGeneVar
 #' @importFrom graphics lines plot
 findVariableFeatures <- function(y){
-  fit <- trendVar(y)
-  results <- decomposeVar(y, fit)
+  results <- modelGeneVar(y)
   plot(results$mean, results$total)
   o <- order(results$mean)
   lines(results$mean[o], results$tech[o], col="red", lwd=2)

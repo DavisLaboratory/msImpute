@@ -4,9 +4,16 @@
 \alias{msImpute}
 \title{Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation}
 \usage{
-msImpute(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
-  maxit = 100, trace.it = FALSE, warm.start = NULL,
-  final.svd = TRUE)
+msImpute(
+  object,
+  rank.max = NULL,
+  lambda = NULL,
+  thresh = 1e-05,
+  maxit = 100,
+  trace.it = FALSE,
+  warm.start = NULL,
+  final.svd = TRUE
+)
 }
 \arguments{
 \item{object}{Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
@@ -29,8 +36,7 @@ the algorithm reverts to "hardImputation", where the convergence will be slower.
 }
 \value{
 Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
-a numeric matrix of identical dimensions is returned. If \code{x} is a \code{MAList} object, the \code{E} component is
-replaced with the completed matrix, and the updated \code{MAList} object is returned. Non-NA entries remain unmodified.
+a numeric matrix of identical dimensions is returned.
 }
 \description{
 Returns a completed peptide intensity matrix where missing values (NAs) are imputated

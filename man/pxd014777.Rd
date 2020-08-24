@@ -4,7 +4,9 @@
 \name{pxd014777}
 \alias{pxd014777}
 \title{Processed peptide intensity matrix from PXD014777 study}
-\format{A matrix}
+\format{
+A matrix
+}
 \source{
 \url{http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD014777}
 }

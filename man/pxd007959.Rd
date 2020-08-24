@@ -4,7 +4,9 @@
 \name{pxd007959}
 \alias{pxd007959}
 \title{Processed peptide intensity matrix and experimental design table from PXD007959 study}
-\format{A list of two: samples (data frame of sample descriptions), and y (numeric matrix of peptide intensity values)}
+\format{
+A list of two: samples (data frame of sample descriptions), and y (numeric matrix of peptide intensity values)
+}
 \source{
 \url{http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD007959}
 }

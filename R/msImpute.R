@@ -19,8 +19,7 @@
 #' @param warm.start List. A SVD object can be used to initialize the algorithm instead of random initialization.
 #' @param final.svd  Logical. Shall final SVD object be saved? The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
 #' @return Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
-#' a numeric matrix of identical dimensions is returned. If \code{x} is a \code{MAList} object, the \code{E} component is
-#' replaced with the completed matrix, and the updated \code{MAList} object is returned. Non-NA entries remain unmodified.
+#' a numeric matrix of identical dimensions is returned.
 #'
 #' @examples
 #' set.seed(101)

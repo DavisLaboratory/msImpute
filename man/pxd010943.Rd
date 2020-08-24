@@ -4,7 +4,9 @@
 \name{pxd010943}
 \alias{pxd010943}
 \title{SWATH-MS Analysis of Gfi1-mutant bone marrow neutrophils}
-\format{A matrix}
+\format{
+A matrix
+}
 \source{
 \url{http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD010943}
 }

@@ -21,7 +21,7 @@ computed by subtracting the estimated technical variance from the loess fit from
 }
 \examples{
 data(pxd007959)
-findVariableFeatures(pxd007959$y)
+findVariableFeatures(data.matrix(log2(pxd007959$y)))
 
 }
 \seealso{
