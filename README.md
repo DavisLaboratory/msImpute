@@ -34,7 +34,8 @@ computeStructuralMetrics(xcomplete,
 
 
 ```
- 
+
+Need more help to start? We have collected a number of case studies [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImpute_user_guide.pdf)
 
 
 **Reference**
