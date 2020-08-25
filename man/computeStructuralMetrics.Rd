@@ -51,14 +51,14 @@ GW distance estimation requires \code{python}. See example. All metrics are on l
 # install.packages("reticulate")
 # library(reticulate)
 ## create a virtual environment
-# virtualenv_create('r-reticulate')
+# virtualenv_create('msImpute-reticulate')
 # py_available() # if this returns TRUE, you've access to python from R.
 ## See reticulate if you need to troubleshoot
 ## install scipy and POT python packages in this virtual environment
 # virtualenv_install("msImpute-reticulate","scipy")
 # virtualenv_install("msImpute-reticulate","cython")
 # virtualenv_install("msImpute-reticulate","POT")
-## if this runs successfully, the installation has been successful:
+## if this runs successfully, the installations have been successful:
 # scipy <- import("scipy")
 ## You can now run the computeStructuralMetrics() function to compute GW distance.
 ## This setup should only be done for the first use. For all subsequent usages

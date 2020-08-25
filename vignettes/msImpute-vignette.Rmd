@@ -1,5 +1,5 @@
 ---
-title: "msImpute: imputation of peptide intensity by low-rank approximation"
+title: "msImpute: Imputation of peptide intensity by low-rank approximation"
 author: 
 - name: Soroor Hediyeh-zadeh
   affiliation: &id The Walter and Eliza Hall Institute of Medical Research
@@ -33,7 +33,7 @@ library(ComplexHeatmap)
 ```
 
 
-_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vingnette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
+_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vignette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
 
 
 # Quick Start
@@ -44,7 +44,7 @@ The package consists of the following main functions:
 
 - `scaleData`: _msImpute_ first scales the data before training a low-rank model
 
-- `msImpute`: Main function that imputes missingg values by learning a low-rank approximation of the data
+- `msImpute`: Main function that imputes missing values by learning a low-rank approximation of the data
 
 - `findVariableFeatures`: finds peptide with high biological variance. We use this in `computeStructuralMetrics()`
 
@@ -56,7 +56,7 @@ These functions overall are designed to inform user's decision on adopting an im
 
 # TIMS Case Study: Blood plasma 
 
-The aim is to assess the missing patterns in ion mobility data by Prianichnikov et al. (2020), available from PXD014777. The `evidence` table of MaxQuant output was processed as described below. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. For peptides with multiple identification types, the intensity is considered to be the median of reported intensity values. Reverse complememts and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained. 
+The aim is to assess the missing patterns in ion mobility data by Prianichnikov et al. (2020), available from PXD014777. The `evidence` table of MaxQuant output was processed as described below. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. For peptides with multiple identification types, the intensity is considered to be the median of reported intensity values. Reverse complements and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained. 
 
 The data was acquired in two batches (over two days). We are interested to know if missing values are evenly distributed across batches, or there is a batch-specific dropout trend. The runs are also labeled by S1, S2 and S4 (source unknown). The aim is to use this information to work out if missing values occur due to technical or biological effects.  
 
@@ -327,7 +327,7 @@ hm <- draw(hm, heatmap_legend_side = "left")
 ```
 As it can be seen, samples from the control group cluster together. There is a structured, block-wise pattern of missing values (i.e. missing values occur in all samples from control individuals, but are measured in disease group). This suggests that missing in not at random. This is an example of **MNAR** dataset. Given this knowledge, we impute using `KNN`, `QRILC` and `msImpute`. We then compare these methods by preservation of local (within experimental group) and global (between experimental group) similarities.
 
-## Imputaion
+## Imputation
 ```{r}
 # imputation
 
@@ -344,7 +344,7 @@ group <- as.factor(sample_annot$group)
 
 ## Assessment of preservation of local and global structures 
 
-If you've installed python, and have set up a python environment in your seesion, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics()` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see `?computeStructuralMetrics` for setup instruction. 
+If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics()` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see `?computeStructuralMetrics` for setup instruction. 
 
 **Withinness, betweenness and Gromov-Wasserstein (GW) distance**
 
