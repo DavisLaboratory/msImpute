@@ -1,7 +1,7 @@
 Package: msImpute
 Type: Package
 Title: Imputation of label-free mass spectrometry peptides
-Version: 0.99.5
+Version: 0.99.6
 Authors@R: 
     person(given = "Soroor",
            family = "Hediyeh-zadeh",
@@ -13,7 +13,7 @@ Description: MsImpute is a package for imputation of peptide intensity in proteo
     distribution of the data post imputation.  Currently, msImpute completes missing values by low-rank approximation of the underlying 
     data matrix.
 Depends: R (>= 4.0)
-Imports: softImpute, methods, stats, graphics, pdist, reticulate, scran, data.table, FNN, matrixStats, rdetools
+Imports: softImpute, methods, stats, graphics, pdist, reticulate, scran, data.table, FNN, matrixStats, rdetools, limma
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true

@@ -36,55 +36,8 @@ library(ComplexHeatmap)
 _Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vignette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
 
 # Installation
-### Install from GitHub
 
-```{r eval=FALSE}
-install.packages("devtools") # devtools is required to download and install the package
-devtools::install_github("DavisLaboratory/msImpute")
-```
-
-### Set up a python environment in R
-
-The python environment is only required if you're willing to compute `gw_dist`, which is a distributional discrepancy measure (this is explained more in later sections). The environment is set up using the `reticulate` package.
-
-```{r eval=FALSE}
-install.packages("reticulate")
-library(reticulate)
-```
-
-Create a virtual environment
-```{r eval=FALSE}
-virtualenv_create('msImpute-reticulate')
-py_available() # if this returns TRUE, you've access to python from R.
-```
-
-you can additionally run `py_config()` to find out what python version you (or the virtual environment you've set-up) are using. See `reticulate` package if you need to troubleshoot.
-
-Install `scipy`, `cython` and `POT` python packages in this virtual environment
-
-```{r eval=FALSE}
-virtualenv_install("msImpute-reticulate","scipy")
-virtualenv_install("msImpute-reticulate","cython")
-virtualenv_install("msImpute-reticulate","POT")
-```
-
-
-If this runs successfully, the installations have been successful:
-```{r eval=FALSE}
-scipy <- import("scipy")
-```
-
-You can now run the `computeStructuralMetrics()` function to compute GW distance.
-This setup should only be done for the first use. For all subsequent usages, load the virtual environment that you've created using:
-
-```{r eval=FALSE}
-library(reticulate)
-use_virtualenv("msImpute-reticulate")
-```
-
-you can then run the `computeStructuralMetrics()` function. Note that the `reticulate` package should be loaded before loading `msImpute`.
-
-
+A complete step-by-step installation guide is provided in the User's guide. Please consult this document for instructions.
 
 # Quick Start
 
