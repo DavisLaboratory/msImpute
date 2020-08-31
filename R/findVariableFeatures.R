@@ -1,7 +1,7 @@
 #' Find highly variable peptides
 #'
 #' For each peptide, the total variance is decomposed into biological and technical variance using package \code{scran}
-#' @param y numeric matrix giving log-intensity. Can contain NA values.
+#' @param y numeric matrix giving log-intensity. Can contain NA values. Peptides with insufficient observations will be ignored.
 #'
 #' @return A data frame where rows are peptides and columns contain estimates of biological and technical variances. Peptides are ordered by biological variance.
 #'
@@ -18,6 +18,7 @@
 #' @importFrom scran modelGeneVar
 #' @importFrom graphics lines plot
 findVariableFeatures <- function(y){
+  if(any(colMeans(is.na(y)) > 0.90)){message("Samples with more than 90% missing values detected")}
   results <- modelGeneVar(y)
   plot(results$mean, results$total)
   o <- order(results$mean)

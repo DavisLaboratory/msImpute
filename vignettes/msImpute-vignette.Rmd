@@ -15,7 +15,7 @@ output:
     toc_float: true
   BiocStyle::pdf_document: default
 vignette: >
-  %\VignetteIndexEntry{msImpute-vignette}
+  %\VignetteIndexEntry{msImpute: proteomics missing values imputation and diagnosis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -35,12 +35,62 @@ library(ComplexHeatmap)
 
 _Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vignette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
 
+# Installation
+### Install from GitHub
+
+```{r eval=FALSE}
+install.packages("devtools") # devtools is required to download and install the package
+devtools::install_github("DavisLaboratory/msImpute")
+```
+
+### Set up a python environment in R
+
+The python environment is only required if you're willing to compute `gw_dist`, which is a distributional discrepancy measure (this is explained more in later sections). The environment is set up using the `reticulate` package.
+
+```{r eval=FALSE}
+install.packages("reticulate")
+library(reticulate)
+```
+
+Create a virtual environment
+```{r eval=FALSE}
+virtualenv_create('msImpute-reticulate')
+py_available() # if this returns TRUE, you've access to python from R.
+```
+
+you can additionally run `py_config()` to find out what python version you (or the virtual environment you've set-up) are using. See `reticulate` package if you need to troubleshoot.
+
+Install `scipy`, `cython` and `POT` python packages in this virtual environment
+
+```{r eval=FALSE}
+virtualenv_install("msImpute-reticulate","scipy")
+virtualenv_install("msImpute-reticulate","cython")
+virtualenv_install("msImpute-reticulate","POT")
+```
+
+
+If this runs successfully, the installations have been successful:
+```{r eval=FALSE}
+scipy <- import("scipy")
+```
+
+You can now run the `computeStructuralMetrics()` function to compute GW distance.
+This setup should only be done for the first use. For all subsequent usages, load the virtual environment that you've created using:
+
+```{r eval=FALSE}
+library(reticulate)
+use_virtualenv("msImpute-reticulate")
+```
+
+you can then run the `computeStructuralMetrics()` function. Note that the `reticulate` package should be loaded before loading `msImpute`.
+
+
 
 # Quick Start
 
 The package consists of the following main functions:
 
-- `selectFeatures`: identifies peptides with high biological dropout rate. These peptides have a high abundance and high dropout. Their missingness pattern is used as a diagnostic for MAR/MNAR missigness type, which can then inform later decisions around imputation of the data.
+- `selectFeatures`: identifies peptides with high biological dropout rate. These peptides have a high abundance and high dropout. Their missingness pattern is used as a diagnostic for MAR/MNAR missingness type, which can then inform later decisions around imputation of the data.
 
 - `scaleData`: _msImpute_ first scales the data before training a low-rank model
 
@@ -156,7 +206,12 @@ experiment <- as.factor(gsub(".*(S[1-9]).*","\\1", colnames(y)))
 
 ```{r fig.cap="Heatmap of missing value patterns for top 500 high dropout peptides", fig.align="center"}
 ha_column <- HeatmapAnnotation(batch = batch,
-                               experiment = experiment)
+                               experiment = experiment,
+                               col = list(batch = c('20181023' = "#B24745FF",
+                                                    '20181024'= "#00A1D5FF"),
+                                          experiment=c("S1"="#DF8F44FF",
+                                                       "S2"="#374E55FF",
+                                                       "S4"="#79AF97FF")))
 
 hm <- Heatmap(M,
 column_title = "dropout pattern, columns ordered by dropout similarity",
@@ -245,7 +300,7 @@ y <- log2(y)
 
 ```
 
-To help us determine the best normalization method, we use `MA plots` in a diagnostic approach. For each sample (run) in the study, log fold-change of peptides in that versus all other samples (`M values`) in plotted against peptide average log-intensity (`A values`). The blue line represent median log-intensity for the peptides, and the red line is a loess fit to `M` and `A` values. One can see that in some samples, there is a (mean-) trended bias: M values are higher (or lower) for high abundance peptides. This indicates a compositional bias. We apply `cyclic loess` normalisation from `limma` to correct for this trended bias.
+To help us determine the best normalization method, we use `MA plots` in a diagnostic approach. For each sample (run) in the study, log fold-change of peptides in that versus all other samples (`M values`) in plotted against peptide average log-intensity (`A values`). The blue line represent median log-intensity for the peptides, and the red line is a loess fit to `M` and `A` values. One can see that in some samples, there is a (mean-) trended bias: M values are higher (or lower) for high abundance peptides. This indicates a composition bias. We apply `cyclic loess` normalisation from `limma` to correct for this trended bias.
 ````{r fig.width=8, fig.height=8, fig.cap="MA plots before normalisation", fig.align = "center"}
 A <- rowMeans(y, na.rm = TRUE)
 o <- order(A)
@@ -258,7 +313,7 @@ for(i in 1:ncol(y)){
  
   abline(h=median(M, na.rm = TRUE), col = "blue")
   fit <- loessFit(x=A, y=M)
-  lines(A[o], fit$fitted[o], col="red")
+  lines(A[o], fit$fitted[o], col="red", lwd=2)
 }
 
 ```
@@ -280,7 +335,7 @@ for(i in 1:ncol(y)){
  
   abline(h=median(M, na.rm = TRUE), col = "blue")
   fit <- loessFit(x=A, y=M)
-  lines(A[o], fit$fitted[o], col="red")
+  lines(A[o], fit$fitted[o], col="red", lwd=2)
 }
 ```
 It can be seen that the trend disappears after `cyclic loess` normalisation.
@@ -302,8 +357,11 @@ M <- M[hdp$msImpute_feature,]
 
 
 # plot a heatmap of missingness patterns for the selected peptides
-
-ha_column <- HeatmapAnnotation(group = as.factor(sample_annot$group))
+ha_column <- HeatmapAnnotation(group = as.factor(sample_annot$group),
+                               col=list(group=c('Control' = "#E64B35FF",
+                                                'Mild' = "#3C5488FF",
+                                                'Moderate' = "#00A087FF",
+                                                'Severe'="#F39B7FFF")))
 
 hm <- Heatmap(M,
 column_title = "dropout pattern, columns ordered by dropout similarity",
@@ -417,7 +475,7 @@ $gw_dist
 
 ```
 
-`Withinness` is smaller by `msImpute` and `knn`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasoable choice, as missing values are likely to be left-censored MNAR.
+`Withinness` is smaller by `msImpute` and `knn`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasonable choice, as missing values are likely to be left-censored MNAR.
 
 
 
@@ -510,7 +568,7 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
          )
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
-It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missigness is likely to be **MAR**.
+It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
 
 ```{r eval=FALSE}
 top.hvp <- findVariableFeatures(y)
@@ -589,7 +647,7 @@ $gw_dist
 [1] 0.09621171
 ```
 
-Note `withinness` tend to be smaller in `KNN` and `msImpute`, while `gw_dist` is almost equal to three approaches selected here (up to 3 decimal place). Note that since such a small proportion of peptides are missing, and the dominant missigness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.
+Note `withinness` tend to be smaller in `KNN` and `msImpute`, while `gw_dist` is almost equal to three approaches selected here (up to 3 decimal place). Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.
 
 # References
 

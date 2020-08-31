@@ -7,7 +7,7 @@
 findVariableFeatures(y)
 }
 \arguments{
-\item{y}{numeric matrix giving log-intensity. Can contain NA values.}
+\item{y}{numeric matrix giving log-intensity. Can contain NA values. Peptides with insufficient observations will be ignored.}
 }
 \value{
 A data frame where rows are peptides and columns contain estimates of biological and technical variances. Peptides are ordered by biological variance.
