@@ -22,22 +22,18 @@ vignette: >
 
 
 
-```{r setup, message=FALSE}
-library(msImpute)
-library(limma)
-library(tidyr)
-library(imputeLCMD)
-library(impute)
-library(reticulate)
-library(ComplexHeatmap)
-```
-
 
 _Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vignette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
 
 # Installation
 
-A complete step-by-step installation guide is provided in the User's guide. Please consult this document for instructions.
+
+```{r eval=FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("msImpute")
+```
+
 
 # Quick Start
 
@@ -62,6 +58,17 @@ These functions overall are designed to inform user's decision on adopting an im
 The aim is to assess the missing patterns in ion mobility data by Prianichnikov et al. (2020), available from PXD014777. The `evidence` table of MaxQuant output was processed as described below. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. For peptides with multiple identification types, the intensity is considered to be the median of reported intensity values. Reverse complements and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained. 
 
 The data was acquired in two batches (over two days). We are interested to know if missing values are evenly distributed across batches, or there is a batch-specific dropout trend. The runs are also labeled by S1, S2 and S4 (source unknown). The aim is to use this information to work out if missing values occur due to technical or biological effects.  
+
+
+```{r setup, message=FALSE}
+library(msImpute)
+library(limma)
+library(tidyr)
+library(imputeLCMD)
+library(impute)
+#library(reticulate)
+library(ComplexHeatmap)
+```
 
 ## Data processing
 
@@ -113,7 +120,6 @@ y<- y[keep,]
 
 The processed data can be accessed via `data(pxd014777)`
 ```{r}
-
 data(pxd014777)
 y <- pxd014777
 ```
@@ -126,11 +132,7 @@ table(is.infinite(data.matrix(log2(y))))
 
 There are zero values that will be converted to Inf/-Inf after log- transformation. Add a small offset to avoid infinite values:
 ```{r}
-
 y <- log2(y+0.25)
-
-# can explore the data by boxplots
-#boxplot(y , las = 2, outline = FALSE)
 ```
 
 ### Normalization
@@ -241,7 +243,6 @@ y <- y[keep3,]
 ## Normalization
 The sample descriptions can be accessed via `pxd007959$samples`. Intensity values are stored in `pxd007959$y`.
 ```{r}
-
 data(pxd007959)
 
 sample_annot <- pxd007959$samples
@@ -250,48 +251,14 @@ y <- pxd007959$y
 
 
 y <- log2(y)
-
-```
-
-To help us determine the best normalization method, we use `MA plots` in a diagnostic approach. For each sample (run) in the study, log fold-change of peptides in that versus all other samples (`M values`) in plotted against peptide average log-intensity (`A values`). The blue line represent median log-intensity for the peptides, and the red line is a loess fit to `M` and `A` values. One can see that in some samples, there is a (mean-) trended bias: M values are higher (or lower) for high abundance peptides. This indicates a composition bias. We apply `cyclic loess` normalisation from `limma` to correct for this trended bias.
-````{r fig.width=8, fig.height=8, fig.cap="MA plots before normalisation", fig.align = "center"}
-A <- rowMeans(y, na.rm = TRUE)
-o <- order(A)
- 
- 
-par(mfrow=c(4,4))
-for(i in 1:ncol(y)){
-  limma::plotMA(y, array = i, ylab="M", x="A", cex=0.6)
-  M <- y[,i]-rowMeans(y[,-i], na.rm = TRUE)
- 
-  abline(h=median(M, na.rm = TRUE), col = "blue")
-  fit <- loessFit(x=A, y=M)
-  lines(A[o], fit$fitted[o], col="red", lwd=2)
-}
-
 ```
 
 
-```{r fig.width=8, fig.height=8, fig.cap="MA plot after normalisation", fig.align="center"}
+We apply `cyclic loess` normalisation from `limma` to normalise log-intensities. We have justified use of `cyclic loess` method in depth in the user's guide
+```{r}
 y <- normalizeBetweenArrays(y, method = "cyclicloess")
-
-
-
-A <- rowMeans(y, na.rm = TRUE)
-o <- order(A)
- 
- 
-par(mfrow=c(4,4))
-for(i in 1:ncol(y)){
-  limma::plotMA(y, array = i, ylab="M", x="A", cex=0.6)
-  M <- y[,i]-rowMeans(y[,-i], na.rm = TRUE)
- 
-  abline(h=median(M, na.rm = TRUE), col = "blue")
-  fit <- loessFit(x=A, y=M)
-  lines(A[o], fit$fitted[o], col="red", lwd=2)
-}
 ```
-It can be seen that the trend disappears after `cyclic loess` normalisation.
+
 
 ## Determine missing values pattern
 
@@ -355,7 +322,7 @@ group <- as.factor(sample_annot$group)
 
 ## Assessment of preservation of local and global structures 
 
-If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics()` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see `?computeStructuralMetrics` for setup instruction. 
+If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics()` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics()`by setting `y=NULL`, if there are no python environments setup.
 
 **Withinness, betweenness and Gromov-Wasserstein (GW) distance**
 
@@ -371,9 +338,7 @@ An ideal imputation method results in smaller `withinness`, larger `withinness` 
 
 ```{r eval=FALSE}
 top.hvp <- findVariableFeatures(y)
-```
 
-```{r eval=FALSE}
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
@@ -523,16 +488,13 @@ hm <- draw(hm, heatmap_legend_side = "left")
 ```
 It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
 
-```{r eval=FALSE}
-top.hvp <- findVariableFeatures(y)
-```
+
 
 ## Imputation
 
 
 ```{r}
 # imputation
-
 y_knn <- impute::impute.knn(y, k = 10)
 y_qrilc <- impute.QRILC(y)[[1]]
 ```
@@ -542,13 +504,14 @@ Note that the scaling algorithm in `msImpute` does not converge at default itera
 ```{r}
 y_msImpute <- scaleData(y, maxit = 50) # an example where iteration does not converge at default iteration number
 y_msImpute <- msImpute(y_msImpute)
-
 ```
 
 ## Assessment of preservation of local and global structures
 
 `k` is set to the number of samples to capture full information
 ```{r eval=FALSE}
+top.hvp <- findVariableFeatures(y)
+
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 12)
 ```
 
