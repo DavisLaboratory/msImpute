@@ -22,3 +22,4 @@ numeric GW distance
 This function is called internally by \code{computeStructuralMetrics}.
 Users should not need to call this function directly.
 }
+\keyword{internal}

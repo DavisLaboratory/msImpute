@@ -5,10 +5,6 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-<<eval=FALSE, echo=FALSE>>=
-library(msImpute)
-@
-
 
 \includepdf[pages=-, fitpaper=true]{msImputeUsersGuide.pdf}
 \end{document}
