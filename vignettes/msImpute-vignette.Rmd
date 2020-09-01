@@ -63,10 +63,8 @@ The data was acquired in two batches (over two days). We are interested to know 
 ```{r setup, message=FALSE}
 library(msImpute)
 library(limma)
-library(tidyr)
 library(imputeLCMD)
 library(impute)
-#library(reticulate)
 library(ComplexHeatmap)
 ```
 
@@ -247,9 +245,6 @@ data(pxd007959)
 
 sample_annot <- pxd007959$samples
 y <- pxd007959$y
-
-
-
 y <- log2(y)
 ```
 
@@ -308,7 +303,6 @@ As it can be seen, samples from the control group cluster together. There is a s
 ## Imputation
 ```{r}
 # imputation
-
 y_knn <- impute::impute.knn(y, k = 10)
 y_qrilc <- impute.QRILC(y)[[1]]
 
