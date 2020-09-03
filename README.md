@@ -37,10 +37,10 @@ computeStructuralMetrics(xcomplete,
 
 ```
 
-Need more help to start? We have collected a number of case studies [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImpute_user_guide.pdf)
+Need more help to start? We have collected a number of **case studies** [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
 
 
 **Reference**
 
-Cite our [preprint](https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1)
+Please consider to cite our [preprint](https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1)
 
