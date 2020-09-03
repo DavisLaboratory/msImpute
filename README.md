@@ -1,7 +1,7 @@
 # msImpute
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/DavisLaboratory/msImpute.svg?branch=master)](https://travis-ci.org/DavisLaboratory/msImpute)
-[![BioC status](http://www.bioconductor.org/shields/build/release/bioc/msImpute.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/msImpute)
+[![R build status](https://github.com/https://github.com/DavisLaboratory/msImpute/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/https://github.com/DavisLaboratory/msImpute/actions)
 [![DOI](https://zenodo.org/badge/239129382.svg)](https://zenodo.org/badge/latestdoi/239129382)
 <!-- badges: end -->
 
