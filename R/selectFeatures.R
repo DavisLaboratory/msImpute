@@ -87,7 +87,7 @@ selectFeatures <- function(object, n_features=500, suppress_plot = FALSE) {
 
   hdrp <- data.frame(name = rownames(x), AveExpr = AveExpr, dropout = dropout ,
                          residual = resids, msImpute_feature=FALSE)
-  hdrp$msImpute_feature[lin_res_o[1:n_features]] <- TRUE
+  hdrp$msImpute_feature[lin_res_o[seq_len(n_features)]] <- TRUE
   hdrp <- data.table::as.data.table(hdrp)
 
   return(hdrp)

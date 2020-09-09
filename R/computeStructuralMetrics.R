@@ -109,8 +109,8 @@ gromov_wasserstein <- function(x, y, k, min.mean = 0.1){
   xt_pca <- prcomp(xt[,is.okay], scale. = TRUE, center = TRUE)
   yt_pca <- prcomp(yt, scale. = TRUE, center = TRUE)
 
-  C1 <- yt_pca$x[,1:k]
-  C2 <- xt_pca$x[,1:k]
+  C1 <- yt_pca$x[, seq_len(k)]
+  C2 <- xt_pca$x[, seq_len(k)]
 
 
   cat("Computing GW distance using k=", k, "Principal Components\n")
