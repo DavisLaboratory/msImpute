@@ -23,7 +23,7 @@ vignette: >
 
 
 
-_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The processing code and steps are explained at the start of each Case Study. The raw data for datasets used in this vignette are also available for download from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please use Raw data should you need to obtain any additional annotation._
+_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The complete peptide and/or evidence tables for datasets used in this vignette can be downloaded from ProteomXchange repository. Alternatively, they can be downloaded from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please see the User's Guide for details of pre-processing steps._
 
 # Installation
 
@@ -64,7 +64,6 @@ The data was acquired in two batches (over two days). We are interested to know 
 library(msImpute)
 library(limma)
 library(imputeLCMD)
-library(impute)
 library(ComplexHeatmap)
 ```
 
@@ -73,50 +72,8 @@ library(ComplexHeatmap)
 The following procedures were applied to process the data, which we later load from the package data.
 
 ### Filter by detection
-```{r eval=FALSE}
-
-# when processing from raw files, please replace "path" with the directory
-# where the proteomicscasestudies github repo is downloaded.
-
-# PXD014777_evidence <- readRDS("path/proteomicscasestudies/PXD014777_evidence.rds")
 
 
-# remove contaminants
-table(grepl("CON__|REV__", PXD014777_evidence$Leading.razor.protein))
-PXD014777_evidence <- PXD014777_evidence[grep("CON__|REV__", PXD014777_evidence$Leading.razor.protein, invert=TRUE),]
-
-
-PXD014777_evidence$PeptideID <- paste(PXD014777_evidence$Mod..peptide.ID, 
-                                      PXD014777_evidence$Charge, sep="_")
-
-# multiple identifications types in a experiment, taken median of the values
-#table(PXD014777_evidence$Type[PXD014777_evidence$PeptideID=="0_2"])
-
-y <- aggregate(Intensity ~ Raw.file + PeptideID, 
-               FUN = function(x) median(x, na.rm = TRUE),
-               na.action = na.pass, data = PXD014777_evidence)
-
-
-# reshape into the form of an intensity matrix 
-y <- spread(y, key = Raw.file, value = Intensity)
-
-
-rownames(y) <- y[,1]
-y <- y[,-1]
-
-
-dim(y)
-
-
-# remove peptides with less than 4 observation
-keep <- (rowSums(!is.na(y)) >= 4)
-
-table(keep)
-
-y<- y[keep,]
-```
-
-The processed data can be accessed via `data(pxd014777)`
 ```{r}
 data(pxd014777)
 y <- pxd014777
@@ -195,50 +152,7 @@ The study aims to characterize the proteomic profile of extracellular vesicles i
 
 ## Filter by detection
 
-The following procedures were applied to process the data, which we later load from the package data.
-```{r eval=FALSE}
 
-# sample_annot <- readRDS("path/proteomicscasestudies/PXD007959_experimentalDesignTemplate.rds")
-# PXD007959_peptide <- readRDS("path/proteomicscasestudies/PXD007959_peptide.rds")
-
-
-sample_annot$group <- gsub(".*_(Mild|Sever|Control|Moderate)","\\1", sample_annot$Experiment)
-sample_annot$group[grep("dCA", sample_annot$group)] <- NA
-
-
-
-table(grepl("CON__|REV__", PXD007959_peptide$Leading.razor.protein))
-table(PXD007959_peptide$Unique..Proteins.)
-
-# keep non-contaminants and peptides that map to unique proteins
-keep1 <- (!grepl("CON__|REV__", PXD007959_peptide$Leading.razor.protein))
-keep2 <- (PXD007959_peptide$Unique..Proteins. == "yes")
-
-PXD007959_peptide <- PXD007959_peptide[keep1&keep2, ]
-
-dim(PXD007959_peptide)
-dim(sample_annot)
-
-# replace zeros with NAs
-y <- PXD007959_peptide[,grep("Intensity\\.", colnames(PXD007959_peptide))]
-rownames(y) <- paste(PXD007959_peptide$Mod..peptide.IDs, 
-                     PXD007959_peptide$Charges, sep="_")
-
-y[y==0] <- NA
-
-
-
-# remove samples with no group annotation
-y <- y[, !is.na(sample_annot$group)]
-sample_annot <- sample_annot[!is.na(sample_annot$group),]
-
-table(rowSums(!is.na(y)) >= 4)
-
-keep3 <- (rowSums(!is.na(y)) >= 4)
-y <- y[keep3,]
-```
-
-## Normalization
 The sample descriptions can be accessed via `pxd007959$samples`. Intensity values are stored in `pxd007959$y`.
 ```{r}
 data(pxd007959)
@@ -248,8 +162,8 @@ y <- pxd007959$y
 y <- log2(y)
 ```
 
-
-We apply `cyclic loess` normalisation from `limma` to normalise log-intensities. We have justified use of `cyclic loess` method in depth in the user's guide
+## Normalization
+We apply `cyclic loess` normalisation from `limma` to normalise log-intensities. We have justified use of `cyclic loess` method in depth in the user's guide.
 ```{r}
 y <- normalizeBetweenArrays(y, method = "cyclicloess")
 ```
@@ -298,12 +212,12 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
          )
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
-As it can be seen, samples from the control group cluster together. There is a structured, block-wise pattern of missing values (i.e. missing values occur in all samples from control individuals, but are measured in disease group). This suggests that missing in not at random. This is an example of **MNAR** dataset. Given this knowledge, we impute using `KNN`, `QRILC` and `msImpute`. We then compare these methods by preservation of local (within experimental group) and global (between experimental group) similarities.
+As it can be seen, samples from the control group cluster together. There is a structured, block-wise pattern of missing values (i.e. missing values occur in all samples from control individuals, but are measured in disease group). This suggests that missing in not at random. This is an example of **MNAR** dataset. Given this knowledge, we impute using `QRILC` and `msImpute`. We then compare these methods by preservation of local (within experimental group) and global (between experimental group) similarities.
 
 ## Imputation
 ```{r}
 # imputation
-y_knn <- impute::impute.knn(y, k = 10)
+
 y_qrilc <- impute.QRILC(y)[[1]]
 
 y_msImpute <- scaleData(y)
@@ -340,32 +254,13 @@ computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
-8.615747 9.455356 8.692705 8.586571 
+8.615751 9.455355 8.692705 8.586565 
 
 $betweenness
-[1] 17.50648
+[1] 9.358183
 
 $gw_dist
-[1] 0.04216309
-
-```
-
-```{r eval=FALSE}
-computeStructuralMetrics(y_knn$data, group, y[rownames(top.hvp)[1:50],], k = 16)
-```
-
-```{}
-Computing GW distance using k= 16 Principal Components
-$withinness
-    Mild  Control Moderate   Severe 
-8.958293 9.751338 8.973504 8.966409 
-
-$betweenness
-[1] 17.0302
-
-$gw_dist
-[1] 0.04713861
-
+[1] 0.04294529
 ```
 
 
@@ -374,20 +269,18 @@ computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
 ```{}
-Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
-10.33614 11.81887 10.64143 10.78648 
+10.32911 11.83523 10.61441 10.76315 
 
 $betweenness
-[1] 18.60394
+[1] 11.61141
 
 $gw_dist
-[1] 0.009620003
-
+[1] 0.008813667
 ```
 
-`Withinness` is smaller by `msImpute` and `knn`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasonable choice, as missing values are likely to be left-censored MNAR.
+`Withinness` is smaller by `msImpute`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasonable choice, as missing values are likely to be left-censored MNAR. Note that `k` is set to the number of samples to capture all dimensions of the data.
 
 
 
@@ -398,37 +291,10 @@ This study investigates the proteomic alterations in bone marrow neutrophils iso
 
 Rows are peptides. Charge state variations are treated as distinct peptide species. Peptides with more than 4 observed intensity values are retained. 
 
-## Data processing
-
-The following code was used to prepare the peptide intensity matrix:
-```{r eval=FALSE}
-# PXD010943_peakArea_peptides <- readRDS("path/proteomicscasestudies/PXD010943_peakArea_peptides.rds")
-
-
-
-PXD010943_peakArea_peptides$PeptideID <- paste(PXD010943_peakArea_peptides$Protein, 
-                                               PXD010943_peakArea_peptides$Peptide, 
-                                               PXD010943_peakArea_peptides$Precursor.Charge, 
-                                               sep="_")
-
-
-
-y <- PXD010943_peakArea_peptides[,grep("_[1234]", colnames(PXD010943_peakArea_peptides))]
-
-table(complete.cases(y))
-
-rownames(y) <- PXD010943_peakArea_peptides$PeptideID
-
-table(rowSums(!is.na(y)) >= 4 ) # no need to remove any peptides, all are detected in a sufficient number of samples
-
-```
-
-
 ### Normalization
 
 We normalize using `quantile normalization`.
 ```{r}
-
 data(pxd010943)
 y <- pxd010943
 # no problematic values for log- transformation
@@ -483,13 +349,12 @@ hm <- draw(hm, heatmap_legend_side = "left")
 It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
 
 
+We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR dataets, then compare the two approaches.
 
 ## Imputation
 
-
 ```{r}
 # imputation
-y_knn <- impute::impute.knn(y, k = 10)
 y_qrilc <- impute.QRILC(y)[[1]]
 ```
 
@@ -502,62 +367,20 @@ y_msImpute <- msImpute(y_msImpute)
 
 ## Assessment of preservation of local and global structures
 
-`k` is set to the number of samples to capture full information
-```{r eval=FALSE}
+In this example, we do not compute `gw_dist` and only rely on `withinness` and `betweenness` metrics to assess imputation.
+```{r}
 top.hvp <- findVariableFeatures(y)
 
-computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 12)
-```
-
-```{}
-Computing GW distance using k= 12 Principal Components
-$withinness
-     Gfi1  R412Xhet R412Xhomo     K403R 
- 8.892049  9.145670  7.279971  6.446897 
-
-$betweenness
-[1] 18.00916
-
-$gw_dist
-[1] 0.09599751
-```
-
-```{r eval=FALSE}
-computeStructuralMetrics(y_knn$data, group, y[rownames(top.hvp)[1:50],], k = 12)
-```
-
-```{}
-Computing GW distance using k= 12 Principal Components
-$withinness
-     Gfi1  R412Xhet R412Xhomo     K403R 
- 8.919586  9.169191  7.261661  6.446843 
-
-$betweenness
-[1] 18.02618
-
-$gw_dist
-[1] 0.09643027
+computeStructuralMetrics(y_msImpute, group, y=NULL)
 ```
 
 
-```{r eval=FALSE}
-computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 12)
+```{r}
+computeStructuralMetrics(y_qrilc, group, y = NULL)
 ```
+Note `withinness` tend to be smaller in `msImpute`, while `betweenness` is marginally larger for `QRILC`. The differences in `betweenness` between `QRILC` and `msImpute` is small. Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.
 
-```{}
-Computing GW distance using k= 12 Principal Components
-$withinness
-     Gfi1  R412Xhet R412Xhomo     K403R 
- 9.041823  9.301998  7.493760  6.459096 
 
-$betweenness
-[1] 18.05546
-
-$gw_dist
-[1] 0.09621171
-```
-
-Note `withinness` tend to be smaller in `KNN` and `msImpute`, while `gw_dist` is almost equal to three approaches selected here (up to 3 decimal place). Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.
 
 # References
 

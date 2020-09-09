@@ -27,7 +27,7 @@ KNN <- function(xorigin, ximputed, k=3){
   NN_amp <- FNN::get.knn(t(ximputed), k = k)
   KNC_amp <- NN_amp$nn.index
   pmeans <- c()
-  for(i in 1:ncol(xorigin)){
+  for(i in seq_len(ncol(xorigin))){
     pmeans <- c(pmeans, mean(KNC_amp[i,] %in% KNC_org[i,]))
   }
   return(mean(pmeans))

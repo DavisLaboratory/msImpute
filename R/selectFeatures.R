@@ -77,7 +77,7 @@ selectFeatures <- function(object, n_features=500, suppress_plot = FALSE) {
   lin_res_o <- order(resids, decreasing = TRUE)
 
   cols <- rep("#3E71A8", length(resids))
-  cols[lin_res_o[1:n_features]] <- "#DE1A1A"
+  cols[lin_res_o[seq_len(n_features)]] <- "#DE1A1A"
 
   if(!suppress_plot){
     plot(x = AveExpr, y = dropout, pch = 16,

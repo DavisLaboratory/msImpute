@@ -66,23 +66,8 @@ computeStructuralMetrics <- function(x, group=NULL, y = NULL, k=2){
 }
 
 
-#'Withinness
-#'
-#' This function is called internally by \code{computeStructuralMetrics}.
-#' Users should not need to call this function directly.
-#'
-#' @param x numeric matrix
-#' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
-#'
-#' @return numeric. Sum of the squared distances of all samples within an experimental group from group centroid
-#'
-#' @examples
-#' data(pxd007959)
-#' y <- pxd007959$y
-#' y <- y[complete.cases(y),]
-#' withinness(y, as.factor(pxd007959$samples$group))
-#'
-#' @export
+
+#' @keywords internal
 withinness <- function(x, class_label){
   within_class_dist <- list()
   for(class in class_label){
@@ -92,46 +77,18 @@ withinness <- function(x, class_label){
   return(unlist(within_class_dist))
 }
 
-#' Betweenness
-#'
-#' This function is called internally by \code{computeStructuralMetrics}.
-#' Users should not need to call this function directly.
-#'
-#' @param x numeric matrix
-#' @param class_label factor. The experimental group of the samples (e.g. control, treatment, WT, Het etc.)
-#'
-#' @return numeric Sum of the squared distances between group centroids
-#' @examples
-#' data(pxd007959)
-#' y <- pxd007959$y
-#' y <- y[complete.cases(y),]
-#' betweenness(y, as.factor(pxd007959$samples$group))
-#'
-#'
-#' @importFrom stats dist
-#' @export
-betweenness <- function(x, class_label){
-  centroids <- sapply(unique(class_label), FUN=function(class){
-    colMeans(t(x[,class_label==class]))
-  })
 
-  return(sum(dist(centroids)^2))
+#' @importFrom stats dist aggregate
+#' @keywords internal
+betweenness <- function(x, class_label){
+  centroids <- aggregate(t(x), list(as.factor(class_label)), mean)
+  # the fist column is the group and should be dropped for distance calculation
+  return(sum(dist(centroids[,-1])^2))
   #return(lsa::cosine(centroids))
 
 }
 
-#' Gromov-Wasserstein distance
-#'
-#' This function is called internally by \code{computeStructuralMetrics}.
-#' Users should not need to call this function directly.
-#'
-#' @param x numeric matrix
-#' @param y numeric matrix
-#' @param k number of Principal Components used to compute Gromov-Wasserstein distance
-#' @param min.mean numeric. Minimum mean log-intensity for peptides to be retained
-#'
-#' @return numeric GW distance
-#'
+
 #' @importFrom stats prcomp
 #' @keywords internal
 gromov_wasserstein <- function(x, y, k, min.mean = 0.1){
