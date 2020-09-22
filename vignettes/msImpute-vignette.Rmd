@@ -20,6 +20,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+
+
+_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The complete peptide and/or evidence tables for datasets used in this vignette can be downloaded from ProteomXchange repository. Alternatively, they can be downloaded from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please see the User's Guide for details of pre-processing steps._
+
+# Installation
+
+
+```{r eval=FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("msImpute")
+```
+
+
 # Quick Start
 
 The package consists of the following main functions:
@@ -34,10 +49,8 @@ The package consists of the following main functions:
 
 - `computeStructuralMetrics`: returns a number of metrics that measure distortions into the data after imputation.
 
-- `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot
 
-
-These functions overall are designed to inform user's decision on picking an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
+These functions overall are designed to inform user's decision on adopting an imputation strategy. 
 
 
 # TIMS Case Study: Blood plasma 
@@ -237,7 +250,7 @@ top.hvp <- findVariableFeatures(y)
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```
+```{}
 Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
@@ -255,7 +268,7 @@ $gw_dist
 computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```
+```{}
 $withinness
     Mild  Control Moderate   Severe 
 10.32911 11.83523 10.61441 10.76315 
@@ -336,7 +349,7 @@ hm <- draw(hm, heatmap_legend_side = "left")
 It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
 
 
-We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR datasets, then compare the two approaches.
+We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR dataets, then compare the two approaches.
 
 ## Imputation
 
