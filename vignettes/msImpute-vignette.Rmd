@@ -21,9 +21,7 @@ vignette: >
 ---
 
 
-
 # Installation
-
 
 ```{r eval=FALSE}
 if(!requireNamespace("BiocManager", quietly = TRUE))
@@ -49,7 +47,7 @@ The package consists of the following main functions:
 - `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot
 
 
-These functions overall are designed to inform user's decision on adopting an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
+These functions overall are designed to inform user's decision on picking an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
 
 
 # TIMS Case Study: Blood plasma 
@@ -249,7 +247,7 @@ top.hvp <- findVariableFeatures(y)
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```{}
+```
 Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
@@ -267,7 +265,7 @@ $gw_dist
 computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```{}
+```
 $withinness
     Mild  Control Moderate   Severe 
 10.32911 11.83523 10.61441 10.76315 
