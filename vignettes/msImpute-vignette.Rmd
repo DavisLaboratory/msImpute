@@ -44,10 +44,8 @@ The package consists of the following main functions:
 
 - `computeStructuralMetrics`: returns a number of metrics that measure distortions into the data after imputation.
 
-- `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot
 
-
-These functions overall are designed to inform user's decision on picking an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
+These functions overall are designed to inform user's decision on picking an imputation strategy. 
 
 
 # TIMS Case Study: Blood plasma 
@@ -346,7 +344,7 @@ hm <- draw(hm, heatmap_legend_side = "left")
 It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
 
 
-We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR dataets, then compare the two approaches.
+We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR datasets, then compare the two approaches.
 
 ## Imputation
 
