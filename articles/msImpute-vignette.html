@@ -94,6 +94,16 @@
       <p>MsImpute is a package for imputation of peptide intensity in proteomics experiments. It additionally contains tools for MAR/MNAR diagnosis and assessment of distortions to the probability distribution of the data post imputation. This document covers case studies featuring data obtained by various Mass Spectrometry (MS) acquisition modes to demonstrate applications of tools implemented in the package. The datasets selected here represent data with MAR and left-censored MNAR missingness patterns. We demonstrate msImpute is able to correctly identify these patterns and inform user’s decisions in downstream analyses.</p>
     </div>
     
+<p><em>Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The complete peptide and/or evidence tables for datasets used in this vignette can be downloaded from ProteomXchange repository. Alternatively, they can be downloaded from <a href="https://github.com/soroorh/proteomicscasestudies">GitHub</a> as <code>rds</code> objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please see the User’s Guide for details of pre-processing steps.</em></p>
+<div id="installation" class="section level1">
+<h1 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h1>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co">if</span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"BiocManager"</span>, quietly = <span class="fl">TRUE</span>))
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"BiocManager"</span>)
+<span class="kw">BiocManager</span>::<span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"msImpute"</span>)
+</pre></div>
+</div>
 <div id="quick-start" class="section level1">
 <h1 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h1>
@@ -104,16 +114,15 @@
 <li><p><code>msImpute</code>: Main function that imputes missing values by learning a low-rank approximation of the data</p></li>
 <li><p><code>findVariableFeatures</code>: finds peptide with high biological variance. We use this in <code><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics()</a></code></p></li>
 <li><p><code>computeStructuralMetrics</code>: returns a number of metrics that measure distortions into the data after imputation.</p></li>
-<li><p><code>plotCV2</code>: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot</p></li>
 </ul>
-<p>These functions overall are designed to inform user’s decision on picking an imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf">here</a></p>
+<p>These functions overall are designed to inform user’s decision on adopting an imputation strategy.</p>
 </div>
 <div id="tims-case-study-blood-plasma" class="section level1">
 <h1 class="hasAnchor">
 <a href="#tims-case-study-blood-plasma" class="anchor"></a>TIMS Case Study: Blood plasma</h1>
 <p>The aim is to assess the missing patterns in ion mobility data by Prianichnikov et al. (2020), available from PXD014777. The <code>evidence</code> table of MaxQuant output was processed as described below. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. For peptides with multiple identification types, the intensity is considered to be the median of reported intensity values. Reverse complements and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained.</p>
 <p>The data was acquired in two batches (over two days). We are interested to know if missing values are evenly distributed across batches, or there is a batch-specific dropout trend. The runs are also labeled by S1, S2 and S4 (source unknown). The aim is to use this information to work out if missing values occur due to technical or biological effects.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
+<div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">msImpute</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://bioinf.wehi.edu.au/limma">limma</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">imputeLCMD</span>)
@@ -126,26 +135,26 @@
 <div id="filter-by-detection" class="section level3">
 <h3 class="hasAnchor">
 <a href="#filter-by-detection" class="anchor"></a>Filter by detection</h3>
-<div class="sourceCode" id="cb2"><pre class="downlit">
+<div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">pxd014777</span>)
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="kw">pxd014777</span>
 </pre></div>
 <p>Zero values that will be converted to Inf/-Inf after log- transformation. Check if there are valid values in the data before log transformation</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
+<div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.infinite</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html">data.matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="kw">y</span>))))
 </pre></div>
 <pre><code>## 
 ##  FALSE   TRUE 
 ## 610515    681</code></pre>
 <p>There are zero values that will be converted to Inf/-Inf after log- transformation. Add a small offset to avoid infinite values:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="kw">y</span><span class="op">+</span><span class="fl">0.25</span>)
 </pre></div>
 </div>
 <div id="normalization" class="section level3">
 <h3 class="hasAnchor">
 <a href="#normalization" class="anchor"></a>Normalization</h3>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co"># quantile normalisation</span>
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span>(<span class="kw">y</span>, method = <span class="st">"quantile"</span>)
 </pre></div>
@@ -155,11 +164,11 @@
 <h2 class="hasAnchor">
 <a href="#determine-missing-values-pattern" class="anchor"></a>Determine missing values pattern</h2>
 <p>Determine dominant patterns of missing values by investigating the dropout pattern of high dropout peptides. We find top 500 peptides with higher than expected dropout rat and high average log-intensity, then make a heatmap of their dropout pattern.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="kw">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span>(<span class="kw">y</span>, n_features = <span class="fl">500</span>)
 </pre></div>
-<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-5-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
+<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-6-1.png" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="co"># construct matrix M to capture missing entries</span>
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">y</span>),<span class="fl">1</span>,<span class="fl">0</span>)
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="kw">M</span>[<span class="kw">hdp</span><span class="op">$</span><span class="kw">msImpute_feature</span>,]
@@ -170,7 +179,7 @@
 <span class="kw">batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"(2018.*)_RF.*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">y</span>)))
 <span class="kw">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">".*(S[1-9]).*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">y</span>)))
 </pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit">
+<div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="kw">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html">HeatmapAnnotation</a></span>(batch = <span class="kw">batch</span>,
                                experiment = <span class="kw">experiment</span>,
                                col = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(batch = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'20181023'</span> = <span class="st">"#B24745FF"</span>,
@@ -200,7 +209,7 @@ column_title = <span class="st">"dropout pattern, columns ordered by dropout sim
 <span class="kw">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span>(<span class="kw">hm</span>, heatmap_legend_side = <span class="st">"left"</span>)
 </pre></div>
 <div class="figure" style="text-align: center">
-<img src="msImpute-vignette_files/figure-html/unnamed-chunk-6-1.png" alt="Heatmap of missing value patterns for top 500 high dropout peptides" width="700"><p class="caption">
+<img src="msImpute-vignette_files/figure-html/unnamed-chunk-7-1.png" alt="Heatmap of missing value patterns for top 500 high dropout peptides" width="700"><p class="caption">
 Heatmap of missing value patterns for top 500 high dropout peptides
 </p>
 </div>
@@ -215,7 +224,7 @@ Heatmap of missing value patterns for top 500 high dropout peptides
 <h2 class="hasAnchor">
 <a href="#filter-by-detection-1" class="anchor"></a>Filter by detection</h2>
 <p>The sample descriptions can be accessed via <code>pxd007959$samples</code>. Intensity values are stored in <code>pxd007959$y</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
+<div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">pxd007959</span>)
 
 <span class="kw">sample_annot</span> <span class="op">&lt;-</span> <span class="kw">pxd007959</span><span class="op">$</span><span class="kw">samples</span>
@@ -227,19 +236,19 @@ Heatmap of missing value patterns for top 500 high dropout peptides
 <h2 class="hasAnchor">
 <a href="#normalization-1" class="anchor"></a>Normalization</h2>
 <p>We apply <code>cyclic loess</code> normalisation from <code>limma</code> to normalise log-intensities. We have justified use of <code>cyclic loess</code> method in depth in the user’s guide.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
+<div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span>(<span class="kw">y</span>, method = <span class="st">"cyclicloess"</span>)
 </pre></div>
 </div>
 <div id="determine-missing-values-pattern-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#determine-missing-values-pattern-1" class="anchor"></a>Determine missing values pattern</h2>
-<div class="sourceCode" id="cb12"><pre class="downlit">
+<div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="co"># determine missing values pattern</span>
 <span class="kw">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span>(<span class="kw">y</span>, n_features = <span class="fl">500</span>)
 </pre></div>
-<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-9-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
+<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-10-1.png" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="co"># construct matrix M to capture missing entries</span>
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">y</span>),<span class="fl">1</span>,<span class="fl">0</span>)
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="kw">M</span>[<span class="kw">hdp</span><span class="op">$</span><span class="kw">msImpute_feature</span>,]
@@ -274,7 +283,7 @@ column_title = <span class="st">"dropout pattern, columns ordered by dropout sim
 <span class="kw">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span>(<span class="kw">hm</span>, heatmap_legend_side = <span class="st">"left"</span>)
 </pre></div>
 <div class="figure" style="text-align: center">
-<img src="msImpute-vignette_files/figure-html/unnamed-chunk-10-1.png" alt="Dropout pattern of top 500 high dropout peptides" width="700"><p class="caption">
+<img src="msImpute-vignette_files/figure-html/unnamed-chunk-11-1.png" alt="Dropout pattern of top 500 high dropout peptides" width="700"><p class="caption">
 Dropout pattern of top 500 high dropout peptides
 </p>
 </div>
@@ -283,7 +292,7 @@ Dropout pattern of top 500 high dropout peptides
 <div id="imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#imputation" class="anchor"></a>Imputation</h2>
-<div class="sourceCode" id="cb14"><pre class="downlit">
+<div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="co"># imputation</span>
 
 <span class="kw">y_qrilc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imputeLCMD/man/impute.QRILC.html">impute.QRILC</a></span>(<span class="kw">y</span>)[[<span class="fl">1</span>]]
@@ -292,7 +301,7 @@ Dropout pattern of top 500 high dropout peptides
 </pre></div>
 <pre><code>## bi-scaling ...
 ## data scaled</code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit">
+<div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">y_msImpute</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span>(<span class="kw">y_msImpute</span>)
 </pre></div>
 <pre><code>## maximum rank is 15 
@@ -302,7 +311,7 @@ Dropout pattern of top 500 high dropout peptides
 ## model fitted. 
 ## Imputting missing entries ... 
 ## Imputation completed</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit">
+<div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="kw">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="kw">sample_annot</span><span class="op">$</span><span class="kw">group</span>)
 </pre></div>
 </div>
@@ -318,7 +327,7 @@ Dropout pattern of top 500 high dropout peptides
 <li><p><code>gw_dist</code> is the Gromov-Wasserstein distance computed between Principal Components of imputed and source data. It is a measure of how well the structures are overall preserved over all principal axis of variation in the data. Hence, it captures preservation of both local and global structures. PCs of the source data are computed using highly variable peptides (i.e. peptides with high biological variance).</p></li>
 </ul>
 <p>An ideal imputation method results in smaller <code>withinness</code>, larger <code>withinness</code> and smaller <code>gw_dist</code> among other imputation methods.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="kw">top.hvp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findVariableFeatures.html">findVariableFeatures</a></span>(<span class="kw">y</span>)
 
 <span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span>(<span class="kw">y_msImpute</span>, <span class="kw">group</span>, <span class="kw">y</span>[<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">top.hvp</span>)[<span class="fl">1</span><span class="op">:</span><span class="fl">50</span>],], k = <span class="fl">16</span>)
@@ -333,7 +342,7 @@ $betweenness
 
 $gw_dist
 [1] 0.04294529</code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span>(<span class="kw">y_qrilc</span>, <span class="kw">group</span>, <span class="kw">y</span>[<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">top.hvp</span>)[<span class="fl">1</span><span class="op">:</span><span class="fl">50</span>],], k = <span class="fl">16</span>)
 </pre></div>
 <pre><code>$withinness
@@ -357,7 +366,7 @@ $gw_dist
 <h3 class="hasAnchor">
 <a href="#normalization-2" class="anchor"></a>Normalization</h3>
 <p>We normalize using <code>quantile normalization</code>.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
+<div class="sourceCode" id="cb24"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">pxd010943</span>)
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="kw">pxd010943</span>
 <span class="co"># no problematic values for log- transformation</span>
@@ -366,7 +375,7 @@ $gw_dist
 <pre><code>## 
 ## FALSE 
 ## 30641</code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit">
+<div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="kw">y</span>)
 <span class="kw">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span>(<span class="kw">y</span>, method = <span class="st">"quantile"</span>)
 </pre></div>
@@ -375,11 +384,11 @@ $gw_dist
 <h2 class="hasAnchor">
 <a href="#determine-missing-values-pattern-2" class="anchor"></a>Determine missing values pattern</h2>
 <p>We use top 100 high dropout peptides as there are 180 partially observed peptides overall</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
+<div class="sourceCode" id="cb27"><pre class="downlit">
 <span class="kw">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span>(<span class="kw">y</span>, n_features = <span class="fl">100</span>) 
 </pre></div>
-<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-15-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
+<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-16-1.png" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="co"># construct matrix M to capture missing entries</span>
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">y</span>),<span class="fl">1</span>,<span class="fl">0</span>)
 <span class="kw">M</span> <span class="op">&lt;-</span> <span class="kw">M</span>[<span class="kw">hdp</span><span class="op">$</span><span class="kw">msImpute_feature</span>,]
@@ -393,7 +402,7 @@ $gw_dist
 <pre><code>##  [1] Gfi1      Gfi1      Gfi1      Gfi1      R412Xhet  R412Xhet  R412Xhet 
 ##  [8] R412Xhet  R412Xhomo R412Xhomo K403R     K403R     K403R    
 ## Levels: Gfi1 K403R R412Xhet R412Xhomo</code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit">
+<div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="kw">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html">HeatmapAnnotation</a></span>(group = <span class="kw">group</span>)
 
 <span class="kw">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span>(<span class="kw">M</span>,
@@ -417,27 +426,27 @@ column_title = <span class="st">"dropout pattern, columns ordered by dropout sim
 <span class="kw">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span>(<span class="kw">hm</span>, heatmap_legend_side = <span class="st">"left"</span>)
 </pre></div>
 <div class="figure" style="text-align: center">
-<img src="msImpute-vignette_files/figure-html/unnamed-chunk-16-1.png" alt="Dropout pattern of top 100 high dropout peptides" width="700"><p class="caption">
+<img src="msImpute-vignette_files/figure-html/unnamed-chunk-17-1.png" alt="Dropout pattern of top 100 high dropout peptides" width="700"><p class="caption">
 Dropout pattern of top 100 high dropout peptides
 </p>
 </div>
 <p>It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be <strong>MAR</strong>.</p>
-<p>We impute the data using a left-censored MNAR method (<code>QRILC</code>) and <code>msImpute</code> which is suitable for MAR datasets, then compare the two approaches.</p>
+<p>We impute the data using a left-censored MNAR method (<code>QRILC</code>) and <code>msImpute</code> which is suitable for MAR dataets, then compare the two approaches.</p>
 </div>
 <div id="imputation-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#imputation-1" class="anchor"></a>Imputation</h2>
-<div class="sourceCode" id="cb30"><pre class="downlit">
+<div class="sourceCode" id="cb31"><pre class="downlit">
 <span class="co"># imputation</span>
 <span class="kw">y_qrilc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imputeLCMD/man/impute.QRILC.html">impute.QRILC</a></span>(<span class="kw">y</span>)[[<span class="fl">1</span>]]
 </pre></div>
 <p>Note that the scaling algorithm in <code>msImpute</code> does not converge at default iterations in this case. The number of iterations is increased to achieve convergence.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
+<div class="sourceCode" id="cb32"><pre class="downlit">
 <span class="kw">y_msImpute</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scaleData.html">scaleData</a></span>(<span class="kw">y</span>, maxit = <span class="fl">50</span>) <span class="co"># an example where iteration does not converge at default iteration number</span>
 </pre></div>
 <pre><code>## bi-scaling ...
 ## data scaled</code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit">
+<div class="sourceCode" id="cb34"><pre class="downlit">
 <span class="kw">y_msImpute</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span>(<span class="kw">y_msImpute</span>)
 </pre></div>
 <pre><code>## maximum rank is 12 
@@ -452,11 +461,11 @@ Dropout pattern of top 100 high dropout peptides
 <h2 class="hasAnchor">
 <a href="#assessment-of-preservation-of-local-and-global-structures-1" class="anchor"></a>Assessment of preservation of local and global structures</h2>
 <p>In this example, we do not compute <code>gw_dist</code> and only rely on <code>withinness</code> and <code>betweenness</code> metrics to assess imputation.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit">
+<div class="sourceCode" id="cb36"><pre class="downlit">
 <span class="kw">top.hvp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findVariableFeatures.html">findVariableFeatures</a></span>(<span class="kw">y</span>)
 </pre></div>
-<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit">
+<p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
+<div class="sourceCode" id="cb37"><pre class="downlit">
 <span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span>(<span class="kw">y_msImpute</span>, <span class="kw">group</span>, y=<span class="kw">NULL</span>)
 </pre></div>
 <pre><code>## $withinness
@@ -465,15 +474,15 @@ Dropout pattern of top 100 high dropout peptides
 ## 
 ## $betweenness
 ## [1] 9.87758</code></pre>
-<div class="sourceCode" id="cb38"><pre class="downlit">
+<div class="sourceCode" id="cb39"><pre class="downlit">
 <span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span>(<span class="kw">y_qrilc</span>, <span class="kw">group</span>, y = <span class="kw">NULL</span>)
 </pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  9.040203  9.298123  7.487923  6.459766 
+##  9.044213  9.304413  7.481806  6.459911 
 ## 
 ## $betweenness
-## [1] 10.01687</code></pre>
+## [1] 10.01637</code></pre>
 <p>Note <code>withinness</code> tend to be smaller in <code>msImpute</code>, while <code>betweenness</code> is marginally larger for <code>QRILC</code>. The differences in <code>betweenness</code> between <code>QRILC</code> and <code>msImpute</code> is small. Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.</p>
 </div>
 </div>
