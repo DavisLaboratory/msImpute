@@ -115,7 +115,7 @@
 <li><p><code>computeStructuralMetrics</code>: returns a number of metrics that measure distortions into the data after imputation.</p></li>
 <li><p><code>plotCV2</code>: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot</p></li>
 </ul>
-<p>These functions overall are designed to inform user’s decision on adopting an imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf">here</a></p>
+<p>These functions overall are designed to inform user’s decision on picking an imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf">here</a></p>
 </div>
 <div id="tims-case-study-blood-plasma" class="section level1">
 <h1 class="hasAnchor">
@@ -479,10 +479,10 @@ Dropout pattern of top 100 high dropout peptides
 </pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  9.044298  9.288840  7.497734  6.461355 
+##  9.035186  9.296331  7.511513  6.459537 
 ## 
 ## $betweenness
-## [1] 10.01473</code></pre>
+## [1] 10.01306</code></pre>
 <p>Note <code>withinness</code> tend to be smaller in <code>msImpute</code>, while <code>betweenness</code> is marginally larger for <code>QRILC</code>. The differences in <code>betweenness</code> between <code>QRILC</code> and <code>msImpute</code> is small. Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.</p>
 </div>
 </div>
