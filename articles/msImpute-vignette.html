@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
       </span>
     </div>
 
@@ -94,7 +94,6 @@
       <p>MsImpute is a package for imputation of peptide intensity in proteomics experiments. It additionally contains tools for MAR/MNAR diagnosis and assessment of distortions to the probability distribution of the data post imputation. This document covers case studies featuring data obtained by various Mass Spectrometry (MS) acquisition modes to demonstrate applications of tools implemented in the package. The datasets selected here represent data with MAR and left-censored MNAR missingness patterns. We demonstrate msImpute is able to correctly identify these patterns and inform user’s decisions in downstream analyses.</p>
     </div>
     
-<p><em>Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The complete peptide and/or evidence tables for datasets used in this vignette can be downloaded from ProteomXchange repository. Alternatively, they can be downloaded from <a href="https://github.com/soroorh/proteomicscasestudies">GitHub</a> as <code>rds</code> objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please see the User’s Guide for details of pre-processing steps.</em></p>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
@@ -112,10 +111,11 @@
 <li><p><code>selectFeatures</code>: identifies peptides with high biological dropout rate. These peptides have a high abundance and high dropout. Their missingness pattern is used as a diagnostic for MAR/MNAR missingness type, which can then inform later decisions around imputation of the data.</p></li>
 <li><p><code>scaleData</code>: <em>msImpute</em> first scales the data before training a low-rank model</p></li>
 <li><p><code>msImpute</code>: Main function that imputes missing values by learning a low-rank approximation of the data</p></li>
-<li><p><code>findVariableFeatures</code>: finds peptide with high biological variance. We use this in <code><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics()</a></code></p></li>
+<li><p><code>findVariableFeatures</code>: finds peptide with high biological variance. We use this in <code>computeStructuralMetrics</code></p></li>
 <li><p><code>computeStructuralMetrics</code>: returns a number of metrics that measure distortions into the data after imputation.</p></li>
+<li><p><code>plotCV2</code>: Plots the square of coefficient of variation versus average log-expression i.e. mean-<span class="math inline">\(CV^2\)</span> plot</p></li>
 </ul>
-<p>These functions overall are designed to inform user’s decision on adopting an imputation strategy.</p>
+<p>These functions overall are designed to inform user’s decision on adopting an imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf">here</a>.</p>
 </div>
 <div id="tims-case-study-blood-plasma" class="section level1">
 <h1 class="hasAnchor">
@@ -318,7 +318,7 @@ Dropout pattern of top 500 high dropout peptides
 <div id="assessment-of-preservation-of-local-and-global-structures" class="section level2">
 <h2 class="hasAnchor">
 <a href="#assessment-of-preservation-of-local-and-global-structures" class="anchor"></a>Assessment of preservation of local and global structures</h2>
-<p>If you’ve installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by <code><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics()</a></code> as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user’s guide for setup instructions. Note that you can still run <code><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics()</a></code>by setting <code>y=NULL</code>, if there are no python environments setup.</p>
+<p>If you’ve installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by <code>computeStructuralMetrics</code> as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user’s guide for setup instructions. Note that you can still run <code>computeStructuralMetrics</code>by setting <code>y=NULL</code>, if there are no python environments setup.</p>
 <p><strong>Withinness, betweenness and Gromov-Wasserstein (GW) distance</strong></p>
 <p><code>computeStructuralMerics</code> returns three metrics that can be used to compare various imputation procedures:</p>
 <ul>
@@ -479,10 +479,10 @@ Dropout pattern of top 100 high dropout peptides
 </pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  9.044213  9.304413  7.481806  6.459911 
+##  9.039817  9.294867  7.515389  6.460894 
 ## 
 ## $betweenness
-## [1] 10.01637</code></pre>
+## [1] 10.02002</code></pre>
 <p>Note <code>withinness</code> tend to be smaller in <code>msImpute</code>, while <code>betweenness</code> is marginally larger for <code>QRILC</code>. The differences in <code>betweenness</code> between <code>QRILC</code> and <code>msImpute</code> is small. Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.</p>
 </div>
 </div>
@@ -520,7 +520,7 @@ Dropout pattern of top 100 high dropout peptides
 ##  [4] pcaMethods_1.81.0    Biobase_2.49.1       BiocGenerics_0.35.4 
 ##  [7] norm_1.0-9.5         tmvtnorm_1.4-10      gmm_1.6-5           
 ## [10] sandwich_2.5-1       Matrix_1.2-18        mvtnorm_1.1-1       
-## [13] limma_3.45.14        msImpute_0.99.17     BiocStyle_2.17.0    
+## [13] limma_3.45.14        msImpute_0.99.18     BiocStyle_2.17.0    
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] edgeR_3.31.4                BiocSingular_1.5.0         
