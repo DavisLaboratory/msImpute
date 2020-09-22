@@ -23,8 +23,6 @@ vignette: >
 
 
 
-_Since the proteomics quantification data (tables) are typically too large to be fully incorporated into R packages, the analyses presented are based on pre-processed data. The complete peptide and/or evidence tables for datasets used in this vignette can be downloaded from ProteomXchange repository. Alternatively, they can be downloaded from [GitHub](https://github.com/soroorh/proteomicscasestudies) as `rds` objects. Peptide and protein annotations are not included in the data attached to the package, as msImpute does not require this information. Please see the User's Guide for details of pre-processing steps._
-
 # Installation
 
 
@@ -45,12 +43,14 @@ The package consists of the following main functions:
 
 - `msImpute`: Main function that imputes missing values by learning a low-rank approximation of the data
 
-- `findVariableFeatures`: finds peptide with high biological variance. We use this in `computeStructuralMetrics()`
+- `findVariableFeatures`: finds peptide with high biological variance. We use this in `computeStructuralMetrics`
 
 - `computeStructuralMetrics`: returns a number of metrics that measure distortions into the data after imputation.
 
+- `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-$CV^2$ plot
 
-These functions overall are designed to inform user's decision on adopting an imputation strategy. 
+
+These functions overall are designed to inform user's decision on adopting an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf).
 
 
 # TIMS Case Study: Blood plasma 
@@ -230,7 +230,7 @@ group <- as.factor(sample_annot$group)
 
 ## Assessment of preservation of local and global structures 
 
-If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics()` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics()`by setting `y=NULL`, if there are no python environments setup.
+If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics`by setting `y=NULL`, if there are no python environments setup.
 
 **Withinness, betweenness and Gromov-Wasserstein (GW) distance**
 
