@@ -20,16 +20,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
-# Installation
-
-```{r eval=FALSE}
-if(!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("msImpute")
-```
-
-
 # Quick Start
 
 The package consists of the following main functions:
@@ -44,8 +34,10 @@ The package consists of the following main functions:
 
 - `computeStructuralMetrics`: returns a number of metrics that measure distortions into the data after imputation.
 
+- `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-CV^2 plot
 
-These functions overall are designed to inform user's decision on picking an imputation strategy. 
+
+These functions overall are designed to inform user's decision on picking an imputation strategy. For a more detailed workflow, please see [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
 
 
 # TIMS Case Study: Blood plasma 
