@@ -1,9 +1,0 @@
-\documentclass{article}
-\usepackage{pdfpages}
-%\VignetteIndexEntry{User's Guide}
-%\VignettePackage{msImpute}
-
-
-\begin{document}
-\includepdf[pages=-, fitpaper=true]{msImputeUsersGuide.pdf}
-\end{document}
