@@ -20,6 +20,6 @@ Encoding: UTF-8
 LazyData: true
 BugReports: https://github.com/DavisLaboratory/msImpute/issues
 RoxygenNote: 7.1.1
-Suggests: BiocStyle, knitr, rmarkdown, ComplexHeatmap, imputeLCMD
+Suggests: BiocStyle, knitr, rmarkdown, ComplexHeatmap, imputeLCMD, reticulate
 VignetteBuilder: knitr
 biocViews: MassSpectrometry, Proteomics, Software

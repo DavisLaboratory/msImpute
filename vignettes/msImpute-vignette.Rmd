@@ -61,10 +61,18 @@ The data was acquired in two batches (over two days). We are interested to know 
 
 
 ```{r setup, message=FALSE}
+library(reticulate)
 library(msImpute)
 library(limma)
 library(imputeLCMD)
 library(ComplexHeatmap)
+
+virtualenv_create('msImpute-reticulate')
+virtualenv_install("msImpute-reticulate","scipy")
+virtualenv_install("msImpute-reticulate","cython")
+virtualenv_install("msImpute-reticulate","POT")
+
+use_virtualenv("msImpute-reticulate")
 ```
 
 ## Data processing
@@ -230,7 +238,7 @@ group <- as.factor(sample_annot$group)
 
 ## Assessment of preservation of local and global structures 
 
-If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Here we have just included the results returned by `computeStructuralMetrics` as text, as this may not run on all systems, if the python environment is not setup beforehand. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics`by setting `y=NULL`, if there are no python environments setup.
+If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics` by setting `y=NULL`, if there are no python environments setup.
 
 **Withinness, betweenness and Gromov-Wasserstein (GW) distance**
 
@@ -244,41 +252,19 @@ If you've installed python, and have set up a python environment in your session
 
 An ideal imputation method results in smaller `withinness`, larger `withinness` and smaller `gw_dist` among other imputation methods.
 
-```{r eval=FALSE}
+```{r}
 top.hvp <- findVariableFeatures(y)
 
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```{}
-Computing GW distance using k= 16 Principal Components
-$withinness
-    Mild  Control Moderate   Severe 
-8.615751 9.455355 8.692705 8.586565 
-
-$betweenness
-[1] 9.358183
-
-$gw_dist
-[1] 0.04294529
-```
 
 
-```{r eval=FALSE}
+```{r}
 computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
-```{}
-$withinness
-    Mild  Control Moderate   Severe 
-10.32911 11.83523 10.61441 10.76315 
 
-$betweenness
-[1] 11.61141
-
-$gw_dist
-[1] 0.008813667
-```
 
 `Withinness` is smaller by `msImpute`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasonable choice, as missing values are likely to be left-censored MNAR. Note that `k` is set to the number of samples to capture all dimensions of the data.
 
