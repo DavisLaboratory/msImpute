@@ -16,6 +16,8 @@ plotCV2(y, trend = TRUE, outlier = FALSE, sigma = 1, eps = 0.001, main = NULL)
 \item{sigma}{numeric. Kernel width in RBF kernel. Default to 1.}
 
 \item{eps}{numeric. This is threshold used to call a data point as an outlier. Default to 0.001}
+
+\item{main}{character string. Title of the plot. Default  to NULL}
 }
 \value{
 A plot is created on the current graphics device.

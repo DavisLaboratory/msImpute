@@ -15,6 +15,7 @@
 #' @param outlier logical. Should outlier points be highlighted? Defaults to FALSE.
 #' @param sigma numeric. Kernel width in RBF kernel. Default to 1.
 #' @param eps numeric. This is threshold used to call a data point as an outlier. Default to 0.001
+#' @param main character string. Title of the plot. Default  to NULL
 #'
 #' @return A plot is created on the current graphics device.
 #' @examples
