@@ -66,13 +66,6 @@ library(msImpute)
 library(limma)
 library(imputeLCMD)
 library(ComplexHeatmap)
-
-virtualenv_create('msImpute-reticulate')
-virtualenv_install("msImpute-reticulate","scipy")
-virtualenv_install("msImpute-reticulate","cython")
-virtualenv_install("msImpute-reticulate","POT")
-
-use_virtualenv("msImpute-reticulate")
 ```
 
 ## Data processing
@@ -252,16 +245,48 @@ If you've installed python, and have set up a python environment in your session
 
 An ideal imputation method results in smaller `withinness`, larger `withinness` and smaller `gw_dist` among other imputation methods.
 
-```{r}
+```{r eval=FALSE}
+virtualenv_create('msImpute-reticulate')
+virtualenv_install("msImpute-reticulate","scipy")
+virtualenv_install("msImpute-reticulate","cython")
+virtualenv_install("msImpute-reticulate","POT")
+
+use_virtualenv("msImpute-reticulate")
+
 top.hvp <- findVariableFeatures(y)
 
 computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 ```
 
+```
+Computing GW distance using k= 16 Principal Components
+$withinness
+    Mild  Control Moderate   Severe 
+8.615750 9.455355 8.692705 8.586567 
+
+$betweenness
+[1] 9.358183
+
+$gw_dist
+[1] 0.0429456
+```
 
 
-```{r}
+```{r eval=FALSE}
 computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
+```
+
+```
+Computing GW distance using k= 16 Principal Components
+$withinness
+    Mild  Control Moderate   Severe 
+10.34686 11.84049 10.62378 10.73958 
+
+$betweenness
+[1] 11.62664
+
+$gw_dist
+[1] 0.008877501
 ```
 
 

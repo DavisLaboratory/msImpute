@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 
 
-\section{Version 0.99.21}{\itemize{
+\section{Version 0.99.22}{\itemize{
     \item Submitted to Bioconductor
 }}
 
