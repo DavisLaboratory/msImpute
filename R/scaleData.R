@@ -12,28 +12,23 @@
 #'
 #' @details
 #' Standardizes rows and/or columns of a matrix with missing values, according to the \code{biScale} algorithm in Hastie et al. 2015.
-#' Data is assumed to be normalised and log-transformed.
+#' Data is assumed to be normalised and log-transformed. Please note that data scaling might not be appropriate for MS1 data. A good strategy
+#' is to compare mean-variance plot (\code{plotCV2}) before and after imputation. If the plots look differently, you may need to skip
+#' data scaling. The MS1 data are more variable (tend to have higher CV^2), and may contain outliers which will skew the scaling.
+#'
+#'
 #'
 #' @return
 #' A list of two components: E and E.scaled. E contains the input matrix, E.scaled contains the scaled data
 #'
 #'
 #' @examples
-#' set.seed(101)
-#' n=12000
-#' p=10
-#' J=5
-#' np=n*p
-#' missfrac=0.3
-#' x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)%*%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
-#'   matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
-#' ix=seq(np)
-#' imiss=sample(ix,np*missfrac,replace=FALSE)
-#' xna=x
-#' xna[imiss]=NA
-#' keep <- (rowSums(!is.na(xna)) >= 4)
-#' xna <- xna[keep,]
-#' xna <- scaleData(xna)
+#' data(pxd010943)
+#' y <- pxd010943
+#' y <- log2(y)
+#' keep <- (rowSums(!is.na(y)) >= 4)
+#' y <- as.matrix.data.frame(y[keep,])
+#' y <- scaleData(y, maxit=30)
 #' @seealso selectFeatures, msImpute
 #' @references
 #' Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
@@ -48,6 +43,9 @@ scaleData <- function(object, maxit = 20, thresh = 1e-09, row.center = TRUE, row
   }else{
     x <- object
   }
+
+  if(!is.matrix(x)) message("Input is a data frame. A numeric matrix is required.")
+
   if(any(is.nan(x) | is.infinite(x))) stop("Inf or NaN values encountered.")
   if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
   if(any(x < 0, na.rm = TRUE)){
