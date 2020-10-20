@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.23</span>
       </span>
     </div>
 
@@ -82,24 +82,42 @@
 
 <p>Methods for label-free mass spectrometry proteomics imputation</p>
 <p><strong>Installation (R)</strong></p>
+<p>Install from Github:</p>
 <pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools") # devtools is required to download and install the package
 devtools::install_github("DavisLaboratory/msImpute")</a></code></pre>
+<p>Install from Bioconductor:</p>
+<pre><code>if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("msImpute")</code></pre>
 <p><strong>Quick Start</strong></p>
 <pre><code><a href="https://github.com/rstudio/reticulate">library(reticulate)
 library(msImpute)
 
-selectFeatures(xna)  # xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
-xna &lt;- scaleData(xna) 
-msImpute(xna, rank.max = 2) # rank 2 approximaiton
-xcomplete &lt;- msImpute(xna)  # optimal rank determined by msImpute
+# xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
+# "group" defines experimental condition (e.g. control, treatment etc).
+
+# select peptides missing in at least one experimental group
+selectFeatures(xna, method="ebm", group=group) 
+
+
+# select peptides that can be informative for
+# exploring missing value patterns at high abundance
+selectFeatures(xna, method="hvp", n_features=500) 
+
+
+# impute MAR data by low-rank models (v2 is enhanced version of v1 implementation)
+xcomplete &lt;- msImpute(xna, method="v2") 
+
+
+# impute MNAR data by low-rank models (adaptation of low-rank models for MNAR data)
+xcomplete &lt;- msImpute(xna, method="v2-mnar", group=group)  
 
 
 # Requires python. See Manual for more information.
-top.hvp &lt;- findVariableFeatures(xna$E)
+top.hvp &lt;- findVariableFeatures(xna)
 computeStructuralMetrics(xcomplete, 
-                         # "group" denotes experimental condition (e.g. control, treatment etc).
                          group, 
-                         xna$E[rownames(top.hvp)[1:50],], 
+                         xna[rownames(top.hvp)[1:50],], 
                          k = 2) 
 
 </a></code></pre>

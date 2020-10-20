@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.23</span>
       </span>
     </div>
 
@@ -211,7 +211,7 @@ column_title <span class="op">=</span> <span class="st">"dropout pattern, column
 Heatmap of missing value patterns for peptides selected as informative peptides
 </p>
 </div>
-<p>The larger the EBM, the more scattered the missing values will be. If missing values are scattered across samples, their value can be estimated from the neighborhood, hence missing type is likely MNAR. If however, peptides are missing completely in one experimental condition, or they have much more concentrated (or dense) distributions, their EBM value will be lower. A <code>NaN</code> EBM suggests peptide is missing in at least one experimental group, defined by the <code>group</code> argument. Since there are 103 such peptides with <code>EBM=NaN</code>, this data has peptides that are missing not at random i.e. the missingness is batch-specific. Given that this is a technical dataset, MNAR missing here can not be biological, and reflects batch-to-batch variations, such as differences in limit of detection etc. <code>selectFeatures</code> just enables to detect any peptides that appear to exhibit structured missing, and hence might be left-censored. you can also set <code>method="hvp"</code> which will select top <code>n_features</code> peptides with high dropout rate, defined as proportion of samples where a given peptide is missing, that are also highly expressed.</p>
+<p>The larger the EBM, the more scattered the missing values will be. If missing values are scattered across samples, their value can be estimated from the neighborhood, hence missing type is likely MNAR. If however, peptides are missing completely in one experimental condition, or they have much more concentrated (or dense) distributions, their EBM value will be lower. A <code>NaN</code> EBM suggests peptide is missing in at least one experimental group, defined by the <code>group</code> argument. Since there are 103 such peptides with <code>EBM=NaN</code>, this data has peptides that are missing not at random i.e. the missingness is batch-specific. Given that this is a technical dataset, MNAR missing here can not be biological, and reflects batch-to-batch variations, such as differences in limit of detection of MS etc. <code>selectFeatures</code> just enables to detect any peptides that appear to exhibit structured missing, and hence might be left-censored. you can also set <code>method="hvp"</code> which will select top <code>n_features</code> peptides with high dropout rate, defined as proportion of samples where a given peptide is missing, that are also highly expressed as the <code>msImpute_feature</code> in the output <code>dataframe</code>. If <code>method="ebm"</code>, the features marked in <code>msImpute_feature</code> column will be peptides (or proteins, depending on the input expression matrix), will the ones with <code>NaN</code> EBM (i.e. peptides with structured missing patterns). The <code>"hvp"</code> method can detect missingness patterns at high abundance, whereas <code>"ebm"</code> is for detection of peptides (completely) missing in at least one experimental group.</p>
 </div>
 </div>
 <div id="dda-case-study-extracellular-vesicles-isolated-from-inflammatory-bowel-disease-patients-and-controls" class="section level1">
@@ -441,7 +441,7 @@ column_title <span class="op">=</span> <span class="st">"dropout pattern, column
 Dropout pattern of informative peptides
 </p>
 </div>
-<p>It can be seen that peptides with structured missing tend to come from the <code>R412Xhomo</code> group. Given that a very small number of missing peptides exhibit structured missing out of total number of partially observed peptides (17/182), we try both <code>method="v2=mnar"</code> (default, for MNAR data) and <code>method="v2"</code> (for MAR data) and compare structural metrics:</p>
+<p>It can be seen that peptides with structured missing tend to come from the <code>R412Xhomo</code> group. Given that a very small number of missing peptides exhibit structured missing out of total number of partially observed peptides (17/182), we try both <code>method="v2-mnar"</code> (default, for MNAR data) and <code>method="v2"</code> (for MAR data) and compare structural metrics:</p>
 </div>
 <div id="imputation-1" class="section level2">
 <h2 class="hasAnchor">
@@ -531,7 +531,7 @@ Dropout pattern of informative peptides
 ##  [4] pcaMethods_1.81.0    Biobase_2.49.1       BiocGenerics_0.35.4 
 ##  [7] norm_1.0-9.5         tmvtnorm_1.4-10      gmm_1.6-5           
 ## [10] sandwich_3.0-0       Matrix_1.2-18        mvtnorm_1.1-1       
-## [13] limma_3.45.18        msImpute_0.99.22     reticulate_1.16     
+## [13] limma_3.45.18        msImpute_0.99.23     reticulate_1.16     
 ## [16] BiocStyle_2.17.1    
 ## 
 ## loaded via a namespace (and not attached):
