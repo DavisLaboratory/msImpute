@@ -37,11 +37,9 @@ BiocManager::install("msImpute")
 
 The package consists of the following main functions:
 
-- `selectFeatures`: identifies peptides with high biological dropout rate. These peptides have a high abundance and high dropout. Their missingness pattern is used as a diagnostic for MAR/MNAR missingness type, which can then inform later decisions around imputation of the data.
+- `selectFeatures`: identifies informative peptides that can be used to examine MAR/MNAR missingness in the data.
 
-- `scaleData`: _msImpute_ first scales the data before training a low-rank model
-
-- `msImpute`: Main function that imputes missing values by learning a low-rank approximation of the data
+- `msImpute`: Main function that imputes missing values by learning a low-rank approximation of the data.
 
 - `findVariableFeatures`: finds peptide with high biological variance. We use this in `computeStructuralMetrics`
 
@@ -99,10 +97,19 @@ y <- normalizeBetweenArrays(y, method = "quantile")
 
 ## Determine missing values pattern
 
-Determine dominant patterns of missing values by investigating the dropout pattern of high dropout peptides. We find top 500 peptides with higher than expected dropout rat and high average log-intensity, then make a heatmap of their dropout pattern.
-```{r fig.align="center"}
-hdp <- selectFeatures(y, n_features = 500)
+Determine dominant patterns of missing values by investigating the distribution of missing values. Peptides that are missing in at least one experimental group (here batch), and therefore exhibit structured missing patterns can be identified by the EBM metric implemented in `selectFeatures`. We then make a heatmap of their dropout pattern.
+```{r}
 
+batch <- as.factor(gsub("(2018.*)_RF.*","\\1", colnames(y)))
+experiment <- as.factor(gsub(".*(S[1-9]).*","\\1", colnames(y)))
+
+
+hdp <- selectFeatures(y, method = "ebm", group = batch)
+
+
+# peptides missing in one or more experimental group will have a NaN EBM, which is a measure of entropy of 
+# distribution of observed values
+table(is.nan(hdp$EBM))
 
 # construct matrix M to capture missing entries
 M <- ifelse(is.na(y),1,0)
@@ -111,11 +118,10 @@ M <- M[hdp$msImpute_feature,]
 # plot a heatmap of missingness patterns for the selected peptides
 
 
-batch <- as.factor(gsub("(2018.*)_RF.*","\\1", colnames(y)))
-experiment <- as.factor(gsub(".*(S[1-9]).*","\\1", colnames(y)))
+
 ```
 
-```{r fig.cap="Heatmap of missing value patterns for top 500 high dropout peptides", fig.align="center"}
+```{r fig.cap="Heatmap of missing value patterns for peptides selected as informative peptides", fig.align="center"}
 ha_column <- HeatmapAnnotation(batch = batch,
                                experiment = experiment,
                                col = list(batch = c('20181023' = "#B24745FF",
@@ -144,7 +150,10 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
          )
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
-As it can be seen on the heatmap, missing values are evenly distributed over batches (there is no systematic clustering of samples by batch), however, samples labeled as `S2`in the file name tend to cluster together. It turns out that samples from `S1` and `S4` experiments are blood plasma from individuals, whereas samples labeled as `S2` are labeled as pooled plasma. This is a biological effect, and we just demonstrated that `msImpute` can detect biologically meaningful and informative results.  
+The larger the EBM, the more scattered the missing values will be. If missing values are scattered across samples, their value can be estimated from the neighborhood, hence missing type is likely MNAR. If however, peptides are missing completely in one experimental condition, or they have much more concentrated (or dense) distributions, their EBM value will be lower. A `NaN` EBM suggests peptide is missing in at least one experimental group, defined by the `group` argument. Since there are 103 such peptides with `EBM=NaN`, this data
+has peptides that are missing not at random i.e. the missingness is batch-specific. Given that this is a technical dataset, MNAR missing here can not be biological, and reflects batch-to-batch variations, such as differences in limit of detection etc.
+`selectFeatures` just enables to detect any peptides that appear to exhibit structured missing, and hence might be left-censored.
+you can also set `method="hvp"` which will select top `n_features` peptides with high dropout rate, defined as proportion of samples where a given peptide is missing, that are also highly expressed.
 
 
 # DDA Case Study: Extracellular vesicles isolated from inflammatory bowel disease patients and controls
@@ -174,12 +183,13 @@ y <- normalizeBetweenArrays(y, method = "cyclicloess")
 
 ```{r fig.align="center"}
 # determine missing values pattern
-hdp <- selectFeatures(y, n_features = 500)
+group <- sample_annot$group
+hdp <- selectFeatures(y, method="ebm", group = group)
 ```
 
 
 
-```{r fig.cap="Dropout pattern of top 500 high dropout peptides", fig.align="center"}
+```{r fig.cap="Dropout pattern of informative peptides", fig.align="center"}
 # construct matrix M to capture missing entries
 M <- ifelse(is.na(y),1,0)
 M <- M[hdp$msImpute_feature,]
@@ -213,7 +223,9 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
          )
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
-As it can be seen, samples from the control group cluster together. There is a structured, block-wise pattern of missing values (i.e. missing values occur in all samples from control individuals, but are measured in disease group). This suggests that missing in not at random. This is an example of **MNAR** dataset. Given this knowledge, we impute using `QRILC` and `msImpute`. We then compare these methods by preservation of local (within experimental group) and global (between experimental group) similarities.
+As it can be seen, samples from the control group cluster together. There is a structured, block-wise pattern of missing values in the 'Control' and 'Severe' groups. This suggests that missing in not at random. This is an example of **MNAR** dataset. Given this knowledge, we impute using `QRILC` and `msImpute`, setting method to `v2-mnar`. We then compare these methods by preservation of local (within experimental group) and global (between experimental group) similarities. Note that low-rank approximation generally works for data of MAR types. However, the algorithm implemented in `v2-mnar` makes it applicable to MNAR data. To make low-rank models applicable to 
+MNAR data, we need to use it in a supervised mode, hence why we need to provide information about groups or biological/experimental
+condition of each sample.
 
 ## Imputation
 ```{r}
@@ -221,8 +233,8 @@ As it can be seen, samples from the control group cluster together. There is a s
 
 y_qrilc <- impute.QRILC(y)[[1]]
 
-y_msImpute <- scaleData(y)
-y_msImpute <- msImpute(y_msImpute)
+y_msImpute <- msImpute(y, method = "v2-mnar", group = group)
+
 
 
 group <- as.factor(sample_annot$group)
@@ -262,13 +274,13 @@ computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
 Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
-8.615750 9.455355 8.692705 8.586567 
+10.39139 11.53781 10.54993 10.46477 
 
 $betweenness
-[1] 9.358183
+[1] 11.50008
 
 $gw_dist
-[1] 0.0429456
+[1] 0.01717915
 ```
 
 
@@ -291,7 +303,16 @@ $gw_dist
 
 
 
-`Withinness` is smaller by `msImpute`, which indicates that local structures are better preserved by these two methods. However, the `gw_dist` is smaller for `QRILC` over all PCs. This suggests that `QRILC` is likely a better approach compared to the other two methods. Given that the dominant patterns of missing values in this dataset is MNAR, `QRILC` is indeed a reasonable choice, as missing values are likely to be left-censored MNAR. Note that `k` is set to the number of samples to capture all dimensions of the data.
+`Withinness` tends to be smaller by `msImpute`, which indicates that local structures are better preserved by these two methods. The `gw_dist` over all PCs for the two methods is very similar (rounded to 2 decimals). This suggests the enhancements in `v2-mnar` is just as good as left-censored MNAR methods such as `QRILC`.  Note that `k` is set to the number of samples to capture all dimensions of the data. 
+
+
+Also note that that, unlike `QRILC`, msImpute `v2-mnar` dose not drastically increase the variance of peptides (measured by squared coefficient of variation) post imputation.
+```{r}
+par(mfrow=c(2,2))
+pcv <- plotCV2(y, main = "data")
+pcv <- plotCV2(y_msImpute, main = "msImpute v2-mnar")
+pcv <- plotCV2(y_qrilc, main = "qrilc")
+```
 
 
 
@@ -317,13 +338,21 @@ y <- normalizeBetweenArrays(y, method = "quantile")
 
 ## Determine missing values pattern
 
-We use top 100 high dropout peptides as there are 180 partially observed peptides overall
-```{r fig.align="center"}
-hdp <- selectFeatures(y, n_features = 100) 
+```{r}
+group <- as.factor(gsub("_[1234]", "", colnames(y)))
+group
+
+hdp <- selectFeatures(y, method = "ebm", group = group) 
+
+table(hdp$msImpute_feature)
+table(is.nan(hdp$EBM))
+
+table(complete.cases(y))
+
 ```
+A very small number of peptides (17) tend to be missing in at least one experimental group.
 
-
-```{r fig.cap="Dropout pattern of top 100 high dropout peptides", fig.align="center"}
+```{r fig.cap="Dropout pattern of informative peptides", fig.align="center"}
 
 # construct matrix M to capture missing entries
 M <- ifelse(is.na(y),1,0)
@@ -331,9 +360,7 @@ M <- M[hdp$msImpute_feature,]
 
 # plot a heatmap of missingness patterns for the selected peptides
 
-group <- as.factor(gsub("_[1234]", "", colnames(y)))
 
-group
 
 ha_column <- HeatmapAnnotation(group = group)
 
@@ -357,40 +384,41 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
          )
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
-It can be seen that missing values are evenly distributed across the groups, and there is no systematic clustering of samples by experimental group. Hence, the dominant pattern of missingness is likely to be **MAR**.
-
-
-We impute the data using a left-censored MNAR method (`QRILC`) and `msImpute` which is suitable for MAR dataets, then compare the two approaches.
+It can be seen that peptides with structured missing tend to come from the `R412Xhomo` group. Given that a very small number of 
+missing peptides exhibit structured missing out of total number of partially observed peptides (17/182), we try both
+`method="v2=mnar"` (default, for MNAR data) and `method="v2"` (for MAR data) and compare structural metrics:
 
 ## Imputation
 
-```{r}
-# imputation
-y_qrilc <- impute.QRILC(y)[[1]]
-```
 
-
-Note that the scaling algorithm in `msImpute` does not converge at default iterations in this case. The number of iterations is increased to achieve convergence.
 ```{r}
-y_msImpute <- scaleData(y, maxit = 50) # an example where iteration does not converge at default iteration number
-y_msImpute <- msImpute(y_msImpute)
+y_msImpute_mar <- msImpute(y, method = "v2") # no need to specify group if data is MAR.
+y_msImpute_mnar <- msImpute(y, method = "v2-mnar", group = group)
 ```
 
 ## Assessment of preservation of local and global structures
 
 In this example, we do not compute `gw_dist` and only rely on `withinness` and `betweenness` metrics to assess imputation.
 ```{r}
-top.hvp <- findVariableFeatures(y)
 
-computeStructuralMetrics(y_msImpute, group, y=NULL)
+computeStructuralMetrics(y_msImpute_mar, group, y=NULL)
 ```
 
 
 ```{r}
-computeStructuralMetrics(y_qrilc, group, y = NULL)
+computeStructuralMetrics(y_msImpute_mnar, group, y = NULL)
 ```
-Note `withinness` tend to be smaller in `msImpute`, while `betweenness` is marginally larger for `QRILC`. The differences in `betweenness` between `QRILC` and `msImpute` is small. Note that since such a small proportion of peptides are missing, and the dominant missingness pattern appear to be MAR, one can also choose to not impute depending on the downstream analyses.
 
+There do not appear to be substantial difference between the two methods.
+
+
+Additionally, both of the method preserve variations in the data well:
+```{r}
+par(mfrow=c(2,2))
+pcv <- plotCV2(y, main = "data")
+pcv <- plotCV2(y_msImpute_mnar, main = "msImpute v2-mnar")
+pcv <- plotCV2(y_msImpute_mar, main = "msImpute v2")
+```
 
 
 # References

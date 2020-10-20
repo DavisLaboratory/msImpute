@@ -2,69 +2,90 @@
 % Please edit documentation in R/msImpute.R
 \name{msImpute}
 \alias{msImpute}
-\title{Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation}
+\title{Imputation of peptide log-intensity in mass spectrometry label-free proteomics by low-rank approximation}
 \usage{
 msImpute(
-  object,
+  y,
+  method = c("v2-mnar", "v2", "v1"),
+  group = NULL,
+  a = 0.2,
   rank.max = NULL,
   lambda = NULL,
   thresh = 1e-05,
   maxit = 100,
   trace.it = FALSE,
   warm.start = NULL,
-  final.svd = TRUE
+  final.svd = TRUE,
+  biScale_maxit = 20
 )
 }
 \arguments{
-\item{object}{Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
+\item{y}{Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
 
-\item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{object})-1) by default.}
+\item{method}{character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
+\code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}}
+
+\item{group}{character or factor vector of length \code{ncol(y)}}
+
+\item{a}{numeric. the weight parameter. default to 0.2.}
+
+\item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".}
 
 \item{lambda}{Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
-the algorithm reverts to "hardImputation", where the convergence will be slower.}
+the algorithm reverts to "hardImputation", where the convergence will be slower. Applicable to "v1" only.}
 
-\item{thresh}{Numeric. Convergence threshold. Set to 1e-05, by default.}
+\item{thresh}{Numeric. Convergence threshold. Set to 1e-05, by default. Applicable to "v1" only.}
 
-\item{maxit}{Numeric. Maximum number of iterations of the algorithm before the algorithm is converged. 100 by default.}
+\item{maxit}{Numeric. Maximum number of iterations of the algorithm before the algorithm is converged. 100 by default.
+Applicable to "v1" only.}
 
-\item{trace.it}{Logical. Prints traces of progress of the algorithm.}
+\item{trace.it}{Logical. Prints traces of progress of the algorithm.
+Applicable to "v1" only.}
 
-\item{warm.start}{List. A SVD object can be used to initialize the algorithm instead of random initialization.}
+\item{warm.start}{List. A SVD object can be used to initialize the algorithm instead of random initialization.
+Applicable to "v1" only.}
 
-\item{final.svd}{Logical. Shall final SVD object be saved? The solutions to the matrix completion problems are computed from U, D and V components of final SVD.}
+\item{final.svd}{Logical. Shall final SVD object be saved?
+The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
+Applicable to "v1" only.}
+
+\item{biScale_maxit}{number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
+parameter only if you're running \code{method=v1}. Applicable to "v1" only.}
 }
 \value{
 Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
 a numeric matrix of identical dimensions is returned.
 }
 \description{
-Returns a completed peptide intensity matrix where missing values (NAs) are imputated
+Returns a completed matrix of peptide log-intensity where missing values (NAs) are imputated
 by low-rank approximation of the input matrix. Non-NA entries remain unmodified. \code{msImpute} requires at least 4
 non-missing measurements per peptide across all samples. It is assumed that peptide intensities  (DDA), or MS1/MS2 normalised peak areas (DIA),
-are log2-transformed and normalised (e.g. quantile normalisation).
+are log2-transformed and normalised (e.g. by quantile normalisation).
 }
 \details{
-\code{msImpute} operates on the softImpute-ALS algorithm.
-For more details on the underlying algorithm, please see \code{\link[softImpute]{softImpute}} package.
+\code{msImpute} operates on the \code{softImpute-als} algorithm in \code{\link[softImpute]{softImpute}} package.
+The algorithm estimates a low-rank matrix ( a smaller matrix
+than the input matrix) that approximates the data with a reasonable accuracy. \code{SoftImpute-als} determines the optimal
+rank of the matrix through the \code{lambda} parameter, which it learns from the data.
+This algorithm is implemented in \code{method="v1"}.
+In v2 we have used a information theoretic approach to estimate the optimal rank, instead of relying on \code{softImpute-als}
+defaults. Similarly, we have implemented a new approach to estimate \code{lambda} from the data. Low-rank approximation
+is a linear reconstruction of the data, and is only appropriate for imputation of MAR data. In order to make the
+algorithm applicable to MNAR data, we have implemented \code{method="v2-mnar"} which imputes the missing observations
+as weighted sum of values imputed by msImpute v2 (\code{metho="v2"}) and random draws from a Gaussian distribution.
+Missing values that tend to be missing completely in one or more experimental groups will be weighted more (shrunken) towards
+imputation by sampling from a Gaussian parameterised by smallest observed values in the sample (similar to minProb, or
+Perseus). However, if the missing value distribution is even across the samples for a peptide, the imputed values
+for that peptide are shrunken towards
+low-rank imputed values. The judgment of distribution of missing values is based on the EBM metric implemented in
+\code{selectFeatures}, which is also a information theory measure.
 }
 \examples{
-set.seed(101)
-n=12000
-p=10
-J=5
-np=n*p
-missfrac=0.3
-x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)\%*\%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
-  matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
-ix=seq(np)
-imiss=sample(ix,np*missfrac,replace=FALSE)
-xna=x
-xna[imiss]=NA
-keep <- (rowSums(!is.na(xna)) >= 4)
-xna <- xna[keep,]
-xna <- scaleData(xna)
-xcomplete <- msImpute(object=xna)
+data(pxd010943)
+y <- log2(data.matrix(pxd010943))
+group <- gsub("_[1234]","", colnames(y))
+yimp <- msImpute(y, method="v2-mnar", group=group)
 }
 \references{
 Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
@@ -72,5 +93,8 @@ Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and 
 Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
 }
 \seealso{
-selectFeatures, scaleData
+selectFeatures
+}
+\author{
+Soroor Hediyeh-zadeh
 }

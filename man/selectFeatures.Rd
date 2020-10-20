@@ -2,45 +2,62 @@
 % Please edit documentation in R/selectFeatures.R
 \name{selectFeatures}
 \alias{selectFeatures}
-\title{Select features with high biological dropout rate}
+\title{Select features for MAR/MNAR pattern examination}
 \usage{
-selectFeatures(object, n_features = 500, suppress_plot = FALSE)
+selectFeatures(
+  x,
+  method = c("ebm", "hvp"),
+  group,
+  n_features = 500,
+  suppress_plot = TRUE
+)
 }
 \arguments{
-\item{object}{Numeric matrix giving log-intensity where missing values are denoted by NA.
+\item{x}{Numeric matrix giving log-intensity where missing values are denoted by NA.
 Rows are peptides, columns are samples.}
 
-\item{n_features}{Numeric, number of features with high dropout rate. 500 by default.}
+\item{method}{character. What method should be used to find features? options include \code{method='hvp'} and \code{method='ebm'}}
 
-\item{suppress_plot}{Logical show plot of dropouts vs abundances.}
+\item{group}{character or factor vector specifying biological (experimental) group e.g. control, treatment, WT, KO}
+
+\item{n_features}{Numeric, number of features with high dropout rate. 500 by default. Applicable if \code{method="hvp"}.}
+
+\item{suppress_plot}{Logical show plot of dropouts vs abundances. Default to TRUE. Applicable if \code{method="hvp"}.}
 }
 \value{
 A data frame with a logical column denoting the selected features
 }
 \description{
-Fits a linear model to peptide dropout rate against peptide abundance. The selected features (peptides) can be
-used to determine if data is Missing Not At Random (MNAR). Users should note that \code{msImpute} assumes peptides
-are Missing At Random (MAR).
+Two methods are provided to identify features (peptides or proteins) that can be informative of missing patterns.
+Method \code{hvp} fits a linear model to peptide dropout rate (proportion of samples were peptide is missing)
+against peptide abundance (average log2-intensity). Method \code{emb} is a information theoretic approach to
+identify missing patterns. It quantifies the heterogeneity (entropy) of missing patterns per
+biological (experimental group). This is the default method.
+}
+\details{
+In general, the presence of group-wise (structured) blocks of missing values,
+where peptides are missing in one experimental group can indicate MNAR, whereas if
+such patterns are absent (or missingness is uniform across the samples), peptides are likely MAR.
+In the presence of MNAR, left-censored MNAR imputation methods should
+be chosen. Two methods are provided to explore missing patterns: \code{method=hvp} identifies top \code{n_features}
+peptides with high average expression that also have high dropout rate, defined as the proportion of samples where
+peptide is missing. Peptides with high (potentially) biological dropouts are marked in the \code{hvp} column in the
+output dataframe. This method does not use any information about experimental conditions (i.e. group).
+Another approach to explore and quantify missing patterns is by looking at how homogeneous or heterogeneous
+missing patterns are in each experimental group. This is done by computing entropy of distribution of observed values.
+This is the default and recommended method for \code{selectFeatures}. Entropy is reported in \code{EBM} column
+of the output. A \code{NaN} EBM indicates peptide is missing at least in one experimental group. Features set to
+\code{TRUE} in \code{msImpute_feature} column are the features selected by the selected method. Users are encouraged
+to use the EBM metric to find informative features, hence why the \code{group} argument is required.
 }
 \examples{
-set.seed(101)
-n=12000
-p=10
-J=5
-np=n*p
-missfrac=0.3
-x=matrix(rnorm(n*J,mean = 5,sd = 0.2),n,J)\%*\%matrix(rnorm(J*p, mean = 5,sd = 0.2),J,p)+
-  matrix(rnorm(np,mean = 5,sd = 0.2),n,p)/5
-ix=seq(np)
-imiss=sample(ix,np*missfrac,replace=FALSE)
-xna=x
-xna[imiss]=NA
-keep <- (rowSums(!is.na(xna)) >= 4)
-xna <- xna[keep,]
-rownames(xna) <- 1:nrow(xna)
-hdp <- selectFeatures(xna, n_features=500,  suppress_plot=FALSE)
+data(pxd007959)
+group <- pxd007959$samples$group
+y <- data.matrix(pxd007959$y)
+y <- log2(y)
+hdp <- selectFeatures(y, method="ebm", group = group)
 # construct matrix M to capture missing entries
-M <- ifelse(is.na(xna),1,0)
+M <- ifelse(is.na(y),1,0)
 M <- M[hdp$msImpute_feature,]
 # plot a heatmap of missingness patterns for the selected peptides
 require(ComplexHeatmap)
@@ -52,7 +69,7 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
               show_column_names = TRUE,
               cluster_rows = TRUE,
               cluster_columns = TRUE,
-              show_column_dend = FALSE,
+              show_column_dend = TRUE,
               show_row_dend = FALSE,
               row_names_gp =  gpar(fontsize = 7),
               column_names_gp = gpar(fontsize = 8),
@@ -67,5 +84,8 @@ hm <- draw(hm, heatmap_legend_side = "left")
 Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
 }
 \seealso{
-scaleData, msImpute
+msImpute
+}
+\author{
+Soroor Hediyeh-zadeh
 }
