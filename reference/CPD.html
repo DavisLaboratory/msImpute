@@ -74,7 +74,7 @@ Requires complete datasets - for developers/use in benchmark studies only." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -127,7 +127,7 @@ CPD quantifies preservation of the global structure after imputation.
 Requires complete datasets - for developers/use in benchmark studies only.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CPD</span>(<span class='kw'>xorigin</span>, <span class='kw'>ximputed</span>)</pre>
+    <pre class="usage"><span class='fu'>CPD</span><span class='op'>(</span><span class='va'>xorigin</span>, <span class='va'>ximputed</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,11 +147,11 @@ Requires complete datasets - for developers/use in benchmark studies only.</p>
     <p>numeric</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>pxd007959</span>)
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='kw'>pxd007959</span><span class='op'>$</span><span class='kw'>y</span>
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='kw'>y</span>[<span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span>(<span class='kw'>y</span>),]
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='op'>]</span>
 <span class='co'># for demonstration we use same y for xorigin and ximputed</span>
-<span class='fu'>CPD</span>(<span class='kw'>y</span>, <span class='kw'>y</span>)
+<span class='fu'>CPD</span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>y</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 </div></pre>
   </div>

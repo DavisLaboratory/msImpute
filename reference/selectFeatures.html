@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Select features with high biological dropout rate — selectFeatures • msImpute</title>
+<title>Select features for MAR/MNAR pattern examination — selectFeatures • msImpute</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,12 @@
 
 
 
-<meta property="og:title" content="Select features with high biological dropout rate — selectFeatures" />
-<meta property="og:description" content="Fits a linear model to peptide dropout rate against peptide abundance. The selected features (peptides) can be
-used to determine if data is Missing Not At Random (MNAR). Users should note that msImpute assumes peptides
-are Missing At Random (MAR)." />
+<meta property="og:title" content="Select features for MAR/MNAR pattern examination — selectFeatures" />
+<meta property="og:description" content="Two methods are provided to identify features (peptides or proteins) that can be informative of missing patterns.
+Method hvp fits a linear model to peptide dropout rate (proportion of samples were peptide is missing)
+against peptide abundance (average log2-intensity). Method emb is a information theoretic approach to
+identify missing patterns. It quantifies the heterogeneity (entropy) of missing patterns per
+biological (experimental group). This is the default method." />
 
 
 
@@ -74,7 +76,7 @@ are Missing At Random (MAR)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -116,71 +118,95 @@ are Missing At Random (MAR)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Select features with high biological dropout rate</h1>
+    <h1>Select features for MAR/MNAR pattern examination</h1>
     <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/selectFeatures.R'><code>R/selectFeatures.R</code></a></small>
     <div class="hidden name"><code>selectFeatures.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Fits a linear model to peptide dropout rate against peptide abundance. The selected features (peptides) can be
-used to determine if data is Missing Not At Random (MNAR). Users should note that <code>msImpute</code> assumes peptides
-are Missing At Random (MAR).</p>
+    <p>Two methods are provided to identify features (peptides or proteins) that can be informative of missing patterns.
+Method <code>hvp</code> fits a linear model to peptide dropout rate (proportion of samples were peptide is missing)
+against peptide abundance (average log2-intensity). Method <code>emb</code> is a information theoretic approach to
+identify missing patterns. It quantifies the heterogeneity (entropy) of missing patterns per
+biological (experimental group). This is the default method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectFeatures</span>(<span class='kw'>object</span>, n_features = <span class='fl'>500</span>, suppress_plot = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>selectFeatures</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ebm"</span>, <span class='st'>"hvp"</span><span class='op'>)</span>,
+  <span class='va'>group</span>,
+  n_features <span class='op'>=</span> <span class='fl'>500</span>,
+  suppress_plot <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
+      <th>x</th>
       <td><p>Numeric matrix giving log-intensity where missing values are denoted by NA.
 Rows are peptides, columns are samples.</p></td>
     </tr>
     <tr>
+      <th>method</th>
+      <td><p>character. What method should be used to find features? options include <code>method='hvp'</code> and <code>method='ebm'</code></p></td>
+    </tr>
+    <tr>
+      <th>group</th>
+      <td><p>character or factor vector specifying biological (experimental) group e.g. control, treatment, WT, KO</p></td>
+    </tr>
+    <tr>
       <th>n_features</th>
-      <td><p>Numeric, number of features with high dropout rate. 500 by default.</p></td>
+      <td><p>Numeric, number of features with high dropout rate. 500 by default. Applicable if <code>method="hvp"</code>.</p></td>
     </tr>
     <tr>
       <th>suppress_plot</th>
-      <td><p>Logical show plot of dropouts vs abundances.</p></td>
+      <td><p>Logical show plot of dropouts vs abundances. Default to TRUE. Applicable if <code>method="hvp"</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame with a logical column denoting the selected features</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In general, the presence of group-wise (structured) blocks of missing values,
+where peptides are missing in one experimental group can indicate MNAR, whereas if
+such patterns are absent (or missingness is uniform across the samples), peptides are likely MAR.
+In the presence of MNAR, left-censored MNAR imputation methods should
+be chosen. Two methods are provided to explore missing patterns: <code>method=hvp</code> identifies top <code>n_features</code>
+peptides with high average expression that also have high dropout rate, defined as the proportion of samples where
+peptide is missing. Peptides with high (potentially) biological dropouts are marked in the <code>hvp</code> column in the
+output dataframe. This method does not use any information about experimental conditions (i.e. group).
+Another approach to explore and quantify missing patterns is by looking at how homogeneous or heterogeneous
+missing patterns are in each experimental group. This is done by computing entropy of distribution of observed values.
+This is the default and recommended method for <code>selectFeatures</code>. Entropy is reported in <code>EBM</code> column
+of the output. A <code>NaN</code> EBM indicates peptide is missing at least in one experimental group. Features set to
+<code>TRUE</code> in <code>msImpute_feature</code> column are the features selected by the selected method. Users are encouraged
+to use the EBM metric to find informative features, hence why the <code>group</code> argument is required.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Hediyeh-zadeh, S., Webb, A. I., &amp; Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>scaleData, msImpute</p></div>
+    <div class='dont-index'><p>msImpute</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Soroor Hediyeh-zadeh</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>101</span>)
-<span class='kw'>n</span><span class='op'>=</span><span class='fl'>12000</span>
-<span class='kw'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='kw'>J</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='kw'>np</span><span class='op'>=</span><span class='kw'>n</span><span class='op'>*</span><span class='kw'>p</span>
-<span class='kw'>missfrac</span><span class='op'>=</span><span class='fl'>0.3</span>
-<span class='kw'>x</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='kw'>J</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>J</span>)<span class='op'>%*%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>J</span><span class='op'>*</span><span class='kw'>p</span>, mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>J</span>,<span class='kw'>p</span>)<span class='op'>+</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>np</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>p</span>)<span class='op'>/</span><span class='fl'>5</span>
-<span class='kw'>ix</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>np</span>)
-<span class='kw'>imiss</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='kw'>ix</span>,<span class='kw'>np</span><span class='op'>*</span><span class='kw'>missfrac</span>,replace=<span class='fl'>FALSE</span>)
-<span class='kw'>xna</span><span class='op'>=</span><span class='kw'>x</span>
-<span class='kw'>xna</span>[<span class='kw'>imiss</span>]<span class='op'>=</span><span class='fl'>NA</span>
-<span class='kw'>keep</span> <span class='op'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span>(<span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>xna</span>)) <span class='op'>&gt;=</span> <span class='fl'>4</span>)
-<span class='kw'>xna</span> <span class='op'>&lt;-</span> <span class='kw'>xna</span>[<span class='kw'>keep</span>,]
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='kw'>xna</span>) <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>xna</span>)
-<span class='kw'>hdp</span> <span class='op'>&lt;-</span> <span class='fu'>selectFeatures</span>(<span class='kw'>xna</span>, n_features=<span class='fl'>500</span>,  suppress_plot=<span class='fl'>FALSE</span>)
-</div><div class='img'><img src='selectFeatures-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># construct matrix M to capture missing entries</span>
-<span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>xna</span>),<span class='fl'>1</span>,<span class='fl'>0</span>)
-<span class='kw'>M</span> <span class='op'>&lt;-</span> <span class='kw'>M</span>[<span class='kw'>hdp</span><span class='op'>$</span><span class='kw'>msImpute_feature</span>,]
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span>
+<span class='va'>group</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+<span class='va'>hdp</span> <span class='op'>&lt;-</span> <span class='fu'>selectFeatures</span><span class='op'>(</span><span class='va'>y</span>, method<span class='op'>=</span><span class='st'>"ebm"</span>, group <span class='op'>=</span> <span class='va'>group</span><span class='op'>)</span>
+<span class='co'># construct matrix M to capture missing entries</span>
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='fl'>1</span>,<span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='va'>M</span><span class='op'>[</span><span class='va'>hdp</span><span class='op'>$</span><span class='va'>msImpute_feature</span>,<span class='op'>]</span>
 <span class='co'># plot a heatmap of missingness patterns for the selected peptides</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='kw'><a href='https://github.com/jokergoo/ComplexHeatmap'>ComplexHeatmap</a></span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/jokergoo/ComplexHeatmap'>ComplexHeatmap</a></span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading required package: ComplexHeatmap</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>========================================</span>
-#&gt; <span class='message'>ComplexHeatmap version 2.5.5</span>
+#&gt; <span class='message'>ComplexHeatmap version 2.5.6</span>
 #&gt; <span class='message'>Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/</span>
 #&gt; <span class='message'>Github page: https://github.com/jokergoo/ComplexHeatmap</span>
 #&gt; <span class='message'>Documentation: http://jokergoo.github.io/ComplexHeatmap-reference</span>
@@ -191,25 +217,25 @@ Rows are peptides, columns are samples.</p></td>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>This message can be suppressed by:</span>
 #&gt; <span class='message'>  suppressPackageStartupMessages(library(ComplexHeatmap))</span>
-#&gt; <span class='message'>========================================</span></div><div class='input'><span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html'>Heatmap</a></span>(<span class='kw'>M</span>,
-column_title = <span class='st'>"dropout pattern, columns ordered by dropout similarity"</span>,
-              name = <span class='st'>"Intensity"</span>,
-              col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#8FBC8F"</span>, <span class='st'>"#FFEFDB"</span>),
-              show_row_names = <span class='fl'>FALSE</span>,
-              show_column_names = <span class='fl'>TRUE</span>,
-              cluster_rows = <span class='fl'>TRUE</span>,
-              cluster_columns = <span class='fl'>TRUE</span>,
-              show_column_dend = <span class='fl'>FALSE</span>,
-              show_row_dend = <span class='fl'>FALSE</span>,
-              row_names_gp =  <span class='fu'>gpar</span>(fontsize = <span class='fl'>7</span>),
-              column_names_gp = <span class='fu'>gpar</span>(fontsize = <span class='fl'>8</span>),
-              heatmap_legend_param = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='co'>#direction = "horizontal",</span>
-              heatmap_legend_side = <span class='st'>"bottom"</span>,
-              labels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"observed"</span>,<span class='st'>"missing"</span>),
-              legend_width = <span class='fu'>unit</span>(<span class='fl'>6</span>, <span class='st'>"cm"</span>)),
-         )
-<span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html'>draw</a></span>(<span class='kw'>hm</span>, heatmap_legend_side = <span class='st'>"left"</span>)
-</div><div class='img'><img src='selectFeatures-2.png' alt='' width='700' height='433' /></div></pre>
+#&gt; <span class='message'>========================================</span></div><div class='input'><span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html'>Heatmap</a></span><span class='op'>(</span><span class='va'>M</span>,
+column_title <span class='op'>=</span> <span class='st'>"dropout pattern, columns ordered by dropout similarity"</span>,
+              name <span class='op'>=</span> <span class='st'>"Intensity"</span>,
+              col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#8FBC8F"</span>, <span class='st'>"#FFEFDB"</span><span class='op'>)</span>,
+              show_row_names <span class='op'>=</span> <span class='cn'>FALSE</span>,
+              show_column_names <span class='op'>=</span> <span class='cn'>TRUE</span>,
+              cluster_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,
+              cluster_columns <span class='op'>=</span> <span class='cn'>TRUE</span>,
+              show_column_dend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+              show_row_dend <span class='op'>=</span> <span class='cn'>FALSE</span>,
+              row_names_gp <span class='op'>=</span>  <span class='fu'>gpar</span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>7</span><span class='op'>)</span>,
+              column_names_gp <span class='op'>=</span> <span class='fu'>gpar</span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>,
+              heatmap_legend_param <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='co'>#direction = "horizontal",</span>
+              heatmap_legend_side <span class='op'>=</span> <span class='st'>"bottom"</span>,
+              labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"observed"</span>,<span class='st'>"missing"</span><span class='op'>)</span>,
+              legend_width <span class='op'>=</span> <span class='fu'>unit</span><span class='op'>(</span><span class='fl'>6</span>, <span class='st'>"cm"</span><span class='op'>)</span><span class='op'>)</span>,
+         <span class='op'>)</span>
+<span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html'>draw</a></span><span class='op'>(</span><span class='va'>hm</span>, heatmap_legend_side <span class='op'>=</span> <span class='st'>"left"</span><span class='op'>)</span>
+</div><div class='img'><img src='selectFeatures-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

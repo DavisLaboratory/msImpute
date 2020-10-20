@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation — msImpute • msImpute</title>
+<title>Imputation of peptide log-intensity in mass spectrometry label-free proteomics by low-rank approximation — msImpute • msImpute</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,11 @@
 
 
 
-<meta property="og:title" content="Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation — msImpute" />
-<meta property="og:description" content="Returns a completed peptide intensity matrix where missing values (NAs) are imputated
+<meta property="og:title" content="Imputation of peptide log-intensity in mass spectrometry label-free proteomics by low-rank approximation — msImpute" />
+<meta property="og:description" content="Returns a completed matrix of peptide log-intensity where missing values (NAs) are imputated
 by low-rank approximation of the input matrix. Non-NA entries remain unmodified. msImpute requires at least 4
 non-missing measurements per peptide across all samples. It is assumed that peptide intensities  (DDA), or MS1/MS2 normalised peak areas (DIA),
-are log2-transformed and normalised (e.g. quantile normalisation)." />
+are log2-transformed and normalised (e.g. by quantile normalisation)." />
 
 
 
@@ -75,7 +75,7 @@ are log2-transformed and normalised (e.g. quantile normalisation)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -117,65 +117,92 @@ are log2-transformed and normalised (e.g. quantile normalisation)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Peptide-level imputation in mass spectrometry label-free proteomics by low-rank approximation</h1>
+    <h1>Imputation of peptide log-intensity in mass spectrometry label-free proteomics by low-rank approximation</h1>
     <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/msImpute.R'><code>R/msImpute.R</code></a></small>
     <div class="hidden name"><code>msImpute.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Returns a completed peptide intensity matrix where missing values (NAs) are imputated
+    <p>Returns a completed matrix of peptide log-intensity where missing values (NAs) are imputated
 by low-rank approximation of the input matrix. Non-NA entries remain unmodified. <code>msImpute</code> requires at least 4
 non-missing measurements per peptide across all samples. It is assumed that peptide intensities  (DDA), or MS1/MS2 normalised peak areas (DIA),
-are log2-transformed and normalised (e.g. quantile normalisation).</p>
+are log2-transformed and normalised (e.g. by quantile normalisation).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>msImpute</span>(
-  <span class='kw'>object</span>,
-  rank.max = <span class='kw'>NULL</span>,
-  lambda = <span class='kw'>NULL</span>,
-  thresh = <span class='fl'>1e-05</span>,
-  maxit = <span class='fl'>100</span>,
-  trace.it = <span class='fl'>FALSE</span>,
-  warm.start = <span class='kw'>NULL</span>,
-  final.svd = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>msImpute</span><span class='op'>(</span>
+  <span class='va'>y</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v2-mnar"</span>, <span class='st'>"v2"</span>, <span class='st'>"v1"</span><span class='op'>)</span>,
+  group <span class='op'>=</span> <span class='cn'>NULL</span>,
+  a <span class='op'>=</span> <span class='fl'>0.2</span>,
+  rank.max <span class='op'>=</span> <span class='cn'>NULL</span>,
+  lambda <span class='op'>=</span> <span class='cn'>NULL</span>,
+  thresh <span class='op'>=</span> <span class='fl'>1e-05</span>,
+  maxit <span class='op'>=</span> <span class='fl'>100</span>,
+  trace.it <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  warm.start <span class='op'>=</span> <span class='cn'>NULL</span>,
+  final.svd <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  biScale_maxit <span class='op'>=</span> <span class='fl'>20</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
+      <th>y</th>
       <td><p>Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.</p></td>
     </tr>
     <tr>
+      <th>method</th>
+      <td><p>character. Allowed values are <code>"v2"</code> for <code>msImputev2</code> imputation (enhanced version) for MAR.
+<code>method="v2-mnar"</code> (modified low-rank approx for MNAR), and <code>"v1"</code> initial release of <code>msImpute</code></p></td>
+    </tr>
+    <tr>
+      <th>group</th>
+      <td><p>character or factor vector of length <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(y)</a></code></p></td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td><p>numeric. the weight parameter. default to 0.2.</p></td>
+    </tr>
+    <tr>
       <th>rank.max</th>
-      <td><p>Numeric. This restricts the rank of the solution. is set to min(dim(<code>object</code>)-1) by default.</p></td>
+      <td><p>Numeric. This restricts the rank of the solution. is set to min(dim(<code>y</code>)-1) by default in "v1".</p></td>
     </tr>
     <tr>
       <th>lambda</th>
       <td><p>Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
-the algorithm reverts to "hardImputation", where the convergence will be slower.</p></td>
+the algorithm reverts to "hardImputation", where the convergence will be slower. Applicable to "v1" only.</p></td>
     </tr>
     <tr>
       <th>thresh</th>
-      <td><p>Numeric. Convergence threshold. Set to 1e-05, by default.</p></td>
+      <td><p>Numeric. Convergence threshold. Set to 1e-05, by default. Applicable to "v1" only.</p></td>
     </tr>
     <tr>
       <th>maxit</th>
-      <td><p>Numeric. Maximum number of iterations of the algorithm before the algorithm is converged. 100 by default.</p></td>
+      <td><p>Numeric. Maximum number of iterations of the algorithm before the algorithm is converged. 100 by default.
+Applicable to "v1" only.</p></td>
     </tr>
     <tr>
       <th>trace.it</th>
-      <td><p>Logical. Prints traces of progress of the algorithm.</p></td>
+      <td><p>Logical. Prints traces of progress of the algorithm.
+Applicable to "v1" only.</p></td>
     </tr>
     <tr>
       <th>warm.start</th>
-      <td><p>List. A SVD object can be used to initialize the algorithm instead of random initialization.</p></td>
+      <td><p>List. A SVD object can be used to initialize the algorithm instead of random initialization.
+Applicable to "v1" only.</p></td>
     </tr>
     <tr>
       <th>final.svd</th>
-      <td><p>Logical. Shall final SVD object be saved? The solutions to the matrix completion problems are computed from U, D and V components of final SVD.</p></td>
+      <td><p>Logical. Shall final SVD object be saved?
+The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
+Applicable to "v1" only.</p></td>
+    </tr>
+    <tr>
+      <th>biScale_maxit</th>
+      <td><p>number of iteration for the scaling algorithm to converge . See <code>scaleData</code>. You may need to change this
+parameter only if you're running <code>method=v1</code>. Applicable to "v1" only.</p></td>
     </tr>
     </table>
 
@@ -185,41 +212,40 @@ the algorithm reverts to "hardImputation", where the convergence will be slower.
 a numeric matrix of identical dimensions is returned.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>msImpute</code> operates on the softImpute-ALS algorithm.
-For more details on the underlying algorithm, please see <code><a href='https://rdrr.io/pkg/softImpute/man/softImpute.html'>softImpute</a></code> package.</p>
+    <p><code>msImpute</code> operates on the <code>softImpute-als</code> algorithm in <code><a href='https://rdrr.io/pkg/softImpute/man/softImpute.html'>softImpute</a></code> package.
+The algorithm estimates a low-rank matrix ( a smaller matrix
+than the input matrix) that approximates the data with a reasonable accuracy. <code>SoftImpute-als</code> determines the optimal
+rank of the matrix through the <code>lambda</code> parameter, which it learns from the data.
+This algorithm is implemented in <code>method="v1"</code>.
+In v2 we have used a information theoretic approach to estimate the optimal rank, instead of relying on <code>softImpute-als</code>
+defaults. Similarly, we have implemented a new approach to estimate <code>lambda</code> from the data. Low-rank approximation
+is a linear reconstruction of the data, and is only appropriate for imputation of MAR data. In order to make the
+algorithm applicable to MNAR data, we have implemented <code>method="v2-mnar"</code> which imputes the missing observations
+as weighted sum of values imputed by msImpute v2 (<code>metho="v2"</code>) and random draws from a Gaussian distribution.
+Missing values that tend to be missing completely in one or more experimental groups will be weighted more (shrunken) towards
+imputation by sampling from a Gaussian parameterised by smallest observed values in the sample (similar to minProb, or
+Perseus). However, if the missing value distribution is even across the samples for a peptide, the imputed values
+for that peptide are shrunken towards
+low-rank imputed values. The judgment of distribution of missing values is based on the EBM metric implemented in
+<code>selectFeatures</code>, which is also a information theory measure.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Hastie, T., Mazumder, R., Lee, J. D., &amp; Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.</p>
 <p>Hediyeh-zadeh, S., Webb, A. I., &amp; Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>selectFeatures, scaleData</p></div>
+    <div class='dont-index'><p>selectFeatures</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Soroor Hediyeh-zadeh</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>101</span>)
-<span class='kw'>n</span><span class='op'>=</span><span class='fl'>12000</span>
-<span class='kw'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='kw'>J</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='kw'>np</span><span class='op'>=</span><span class='kw'>n</span><span class='op'>*</span><span class='kw'>p</span>
-<span class='kw'>missfrac</span><span class='op'>=</span><span class='fl'>0.3</span>
-<span class='kw'>x</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='kw'>J</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>J</span>)<span class='op'>%*%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>J</span><span class='op'>*</span><span class='kw'>p</span>, mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>J</span>,<span class='kw'>p</span>)<span class='op'>+</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>np</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>p</span>)<span class='op'>/</span><span class='fl'>5</span>
-<span class='kw'>ix</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>np</span>)
-<span class='kw'>imiss</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='kw'>ix</span>,<span class='kw'>np</span><span class='op'>*</span><span class='kw'>missfrac</span>,replace=<span class='fl'>FALSE</span>)
-<span class='kw'>xna</span><span class='op'>=</span><span class='kw'>x</span>
-<span class='kw'>xna</span>[<span class='kw'>imiss</span>]<span class='op'>=</span><span class='fl'>NA</span>
-<span class='kw'>keep</span> <span class='op'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span>(<span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>xna</span>)) <span class='op'>&gt;=</span> <span class='fl'>4</span>)
-<span class='kw'>xna</span> <span class='op'>&lt;-</span> <span class='kw'>xna</span>[<span class='kw'>keep</span>,]
-<span class='kw'>xna</span> <span class='op'>&lt;-</span> <span class='fu'><a href='scaleData.html'>scaleData</a></span>(<span class='kw'>xna</span>)
-</div><div class='output co'>#&gt; bi-scaling ...
-#&gt; data scaled </div><div class='input'><span class='kw'>xcomplete</span> <span class='op'>&lt;-</span> <span class='fu'>msImpute</span>(object=<span class='kw'>xna</span>)
-</div><div class='output co'>#&gt; maximum rank is 9 
-#&gt; computing lambda0 ... 
-#&gt; lambda0 is 134.2294 
-#&gt; fit the low-rank model ... 
-#&gt; model fitted. 
-#&gt; Imputting missing entries ... 
-#&gt; Imputation completed </div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd010943</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span><span class='op'>(</span><span class='va'>pxd010943</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>group</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>"_[1234]"</span>,<span class='st'>""</span>, <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>yimp</span> <span class='op'>&lt;-</span> <span class='fu'>msImpute</span><span class='op'>(</span><span class='va'>y</span>, method<span class='op'>=</span><span class='st'>"v2-mnar"</span>, group<span class='op'>=</span><span class='va'>group</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Running msImpute version v2-mnar</span></div><div class='output co'>#&gt; <span class='message'>rank is 3</span></div><div class='output co'>#&gt; <span class='message'>computing lambda0 ...</span></div><div class='output co'>#&gt; <span class='message'>lambda0 is 41.1293291240971</span></div><div class='output co'>#&gt; <span class='message'>fit the low-rank model ...</span></div><div class='output co'>#&gt; <span class='message'>model fitted. </span>
+#&gt; <span class='message'>Imputting missing entries ...</span></div><div class='output co'>#&gt; <span class='message'>Imputation completed</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

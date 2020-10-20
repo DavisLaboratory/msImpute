@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -123,16 +123,16 @@
     <p>Standardize a matrix to have optionally row means zero and variances one, and/or column means zero and variances one.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>scaleData</span>(
-  <span class='kw'>object</span>,
-  maxit = <span class='fl'>20</span>,
-  thresh = <span class='fl'>1e-09</span>,
-  row.center = <span class='fl'>TRUE</span>,
-  row.scale = <span class='fl'>TRUE</span>,
-  col.center = <span class='fl'>TRUE</span>,
-  col.scale = <span class='fl'>TRUE</span>,
-  trace = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>scaleData</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  maxit <span class='op'>=</span> <span class='fl'>20</span>,
+  thresh <span class='op'>=</span> <span class='fl'>1e-09</span>,
+  row.center <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  row.scale <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  col.center <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  col.scale <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  trace <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,7 +177,9 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Standardizes rows and/or columns of a matrix with missing values, according to the <code>biScale</code> algorithm in Hastie et al. 2015.
-Data is assumed to be normalised and log-transformed.</p>
+Data is assumed to be normalised and log-transformed. Please note that data scaling might not be appropriate for MS1 data. A good strategy
+is to compare mean-variance plot (<code>plotCV2</code>) before and after imputation. If the plots look differently, you may need to skip
+data scaling. The MS1 data are more variable (tend to have higher CV^2), and may contain outliers which will skew the scaling.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Hastie, T., Mazumder, R., Lee, J. D., &amp; Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.</p>
@@ -187,21 +189,12 @@ Data is assumed to be normalised and log-transformed.</p>
     <div class='dont-index'><p>selectFeatures, msImpute</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>101</span>)
-<span class='kw'>n</span><span class='op'>=</span><span class='fl'>12000</span>
-<span class='kw'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='kw'>J</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='kw'>np</span><span class='op'>=</span><span class='kw'>n</span><span class='op'>*</span><span class='kw'>p</span>
-<span class='kw'>missfrac</span><span class='op'>=</span><span class='fl'>0.3</span>
-<span class='kw'>x</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span><span class='op'>*</span><span class='kw'>J</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>J</span>)<span class='op'>%*%</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>J</span><span class='op'>*</span><span class='kw'>p</span>, mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>J</span>,<span class='kw'>p</span>)<span class='op'>+</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>np</span>,mean = <span class='fl'>5</span>,sd = <span class='fl'>0.2</span>),<span class='kw'>n</span>,<span class='kw'>p</span>)<span class='op'>/</span><span class='fl'>5</span>
-<span class='kw'>ix</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='kw'>np</span>)
-<span class='kw'>imiss</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='kw'>ix</span>,<span class='kw'>np</span><span class='op'>*</span><span class='kw'>missfrac</span>,replace=<span class='fl'>FALSE</span>)
-<span class='kw'>xna</span><span class='op'>=</span><span class='kw'>x</span>
-<span class='kw'>xna</span>[<span class='kw'>imiss</span>]<span class='op'>=</span><span class='fl'>NA</span>
-<span class='kw'>keep</span> <span class='op'>&lt;-</span> (<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span>(<span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='kw'>xna</span>)) <span class='op'>&gt;=</span> <span class='fl'>4</span>)
-<span class='kw'>xna</span> <span class='op'>&lt;-</span> <span class='kw'>xna</span>[<span class='kw'>keep</span>,]
-<span class='kw'>xna</span> <span class='op'>&lt;-</span> <span class='fu'>scaleData</span>(<span class='kw'>xna</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd010943</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>pxd010943</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+<span class='va'>keep</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span><span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&gt;=</span> <span class='fl'>4</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix.data.frame</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>[</span><span class='va'>keep</span>,<span class='op'>]</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>scaleData</span><span class='op'>(</span><span class='va'>y</span>, maxit<span class='op'>=</span><span class='fl'>30</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; bi-scaling ...
 #&gt; data scaled </div></pre>
   </div>

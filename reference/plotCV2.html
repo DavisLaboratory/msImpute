@@ -75,7 +75,7 @@ Users can use this plot as a diagnostic plot to determine if filtering by averag
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -129,7 +129,7 @@ Outlier observations (possibly originated from incorrect match between runs), ar
 Users can use this plot as a diagnostic plot to determine if filtering by average intensity is required.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotCV2</span>(<span class='kw'>y</span>, trend = <span class='fl'>TRUE</span>, outlier = <span class='fl'>TRUE</span>, sigma = <span class='fl'>1</span>, eps = <span class='fl'>0.001</span>)</pre>
+    <pre class="usage"><span class='fu'>plotCV2</span><span class='op'>(</span><span class='va'>y</span>, trend <span class='op'>=</span> <span class='cn'>TRUE</span>, outlier <span class='op'>=</span> <span class='cn'>FALSE</span>, sigma <span class='op'>=</span> <span class='fl'>1</span>, eps <span class='op'>=</span> <span class='fl'>0.001</span>, main <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,7 +144,7 @@ Users can use this plot as a diagnostic plot to determine if filtering by averag
     </tr>
     <tr>
       <th>outlier</th>
-      <td><p>logical. Should oulier points be highlighted? Defaults to TRUE.</p></td>
+      <td><p>logical. Should outlier points be highlighted? Defaults to FALSE.</p></td>
     </tr>
     <tr>
       <th>sigma</th>
@@ -152,7 +152,11 @@ Users can use this plot as a diagnostic plot to determine if filtering by averag
     </tr>
     <tr>
       <th>eps</th>
-      <td><p>numeric. This is threshold used to call a data point as an oulier. Default to 0.001</p></td>
+      <td><p>numeric. This is threshold used to call a data point as an outlier. Default to 0.001</p></td>
+    </tr>
+    <tr>
+      <th>main</th>
+      <td><p>character string. Title of the plot. Default  to NULL</p></td>
     </tr>
     </table>
 
@@ -166,10 +170,10 @@ belong to the dataset (i.e. is close enough in distance to other data points). U
 for intensity-based filtering with respect to the mean log-intensity of the outlier points.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>pxd010943</span>)
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='kw'>pxd010943</span>
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span>(<span class='kw'>y</span>)
-<span class='kw'>ppCV2</span> <span class='op'>&lt;-</span> <span class='fu'>plotCV2</span>(<span class='kw'>y</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd010943</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>pxd010943</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+<span class='va'>ppCV2</span> <span class='op'>&lt;-</span> <span class='fu'>plotCV2</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
 </div><div class='img'><img src='plotCV2-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>

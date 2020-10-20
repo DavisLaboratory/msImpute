@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.22</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
     <p>For each peptide, the total variance is decomposed into biological and technical variance using package <code>scran</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>findVariableFeatures</span>(<span class='kw'>y</span>)</pre>
+    <pre class="usage"><span class='fu'>findVariableFeatures</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,8 +146,8 @@ computed by subtracting the estimated technical variance from the loess fit from
     <div class='dont-index'><p>computeStructuralMetrics</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>pxd007959</span>)
-<span class='fu'>findVariableFeatures</span>(<span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span>(<span class='kw'>pxd007959</span><span class='op'>$</span><span class='kw'>y</span>)))
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span>
+<span class='fu'>findVariableFeatures</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='findVariableFeatures-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;                      mean      total     tech         bio      p.value
 #&gt; 5852_2;3         27.71717 14.9405637 4.998963  9.94160060 7.849473e-07
 #&gt; 1921_2           26.37509 13.1141413 3.743057  9.37108397 7.454870e-10
