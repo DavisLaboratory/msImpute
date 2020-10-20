@@ -7,10 +7,20 @@ Methods for label-free mass spectrometry proteomics imputation
 
 **Installation (R)**
 
+Install from Github:
 ```
 install.packages("devtools") # devtools is required to download and install the package
 devtools::install_github("DavisLaboratory/msImpute")
 ```
+
+Install from Bioconductor:
+```
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("msImpute")
+```
+
+
 
 **Quick Start**
 
@@ -18,18 +28,31 @@ devtools::install_github("DavisLaboratory/msImpute")
 library(reticulate)
 library(msImpute)
 
-selectFeatures(xna)  # xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
-xna <- scaleData(xna) 
-msImpute(xna, rank.max = 2) # rank 2 approximaiton
-xcomplete <- msImpute(xna)  # optimal rank determined by msImpute
+# xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
+# "group" defines experimental condition (e.g. control, treatment etc).
+
+# select peptides missing in at least one experimental group
+selectFeatures(xna, method="ebm", group=group) 
+
+
+# select peptides that can be informative for
+# exploring missing value patterns at high abundance
+selectFeatures(xna, method="hvp", n_features=500) 
+
+
+# impute MAR data by low-rank models (v2 is enhanced version of v1 implementation)
+xcomplete <- msImpute(xna, method="v2") 
+
+
+# impute MNAR data by low-rank models (adaptation of low-rank models for MNAR data)
+xcomplete <- msImpute(xna, method="v2-mnar", group=group)  
 
 
 # Requires python. See Manual for more information.
-top.hvp <- findVariableFeatures(xna$E)
+top.hvp <- findVariableFeatures(xna)
 computeStructuralMetrics(xcomplete, 
-                         # "group" denotes experimental condition (e.g. control, treatment etc).
                          group, 
-                         xna$E[rownames(top.hvp)[1:50],], 
+                         xna[rownames(top.hvp)[1:50],], 
                          k = 2) 
 
 

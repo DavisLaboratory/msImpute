@@ -151,9 +151,12 @@ column_title = "dropout pattern, columns ordered by dropout similarity",
 hm <- draw(hm, heatmap_legend_side = "left")
 ```
 The larger the EBM, the more scattered the missing values will be. If missing values are scattered across samples, their value can be estimated from the neighborhood, hence missing type is likely MNAR. If however, peptides are missing completely in one experimental condition, or they have much more concentrated (or dense) distributions, their EBM value will be lower. A `NaN` EBM suggests peptide is missing in at least one experimental group, defined by the `group` argument. Since there are 103 such peptides with `EBM=NaN`, this data
-has peptides that are missing not at random i.e. the missingness is batch-specific. Given that this is a technical dataset, MNAR missing here can not be biological, and reflects batch-to-batch variations, such as differences in limit of detection etc.
+has peptides that are missing not at random i.e. the missingness is batch-specific. Given that this is a technical dataset, MNAR missing here can not be biological, and reflects batch-to-batch variations, such as differences in limit of detection of MS etc.
 `selectFeatures` just enables to detect any peptides that appear to exhibit structured missing, and hence might be left-censored.
-you can also set `method="hvp"` which will select top `n_features` peptides with high dropout rate, defined as proportion of samples where a given peptide is missing, that are also highly expressed.
+you can also set `method="hvp"` which will select top `n_features` peptides with high dropout rate, defined as proportion of samples where a given peptide is missing, that are also highly expressed as the `msImpute_feature` in the output `dataframe`. If `method="ebm"`,
+the features marked in `msImpute_feature` column will be peptides (or proteins, depending on the input expression matrix), will the ones
+with `NaN` EBM (i.e. peptides with structured missing patterns). The `"hvp"` method can detect missingness patterns at high abundance,
+whereas `"ebm"` is for detection of peptides (completely) missing in at least one experimental group.
 
 
 # DDA Case Study: Extracellular vesicles isolated from inflammatory bowel disease patients and controls
@@ -386,7 +389,7 @@ hm <- draw(hm, heatmap_legend_side = "left")
 ```
 It can be seen that peptides with structured missing tend to come from the `R412Xhomo` group. Given that a very small number of 
 missing peptides exhibit structured missing out of total number of partially observed peptides (17/182), we try both
-`method="v2=mnar"` (default, for MNAR data) and `method="v2"` (for MAR data) and compare structural metrics:
+`method="v2-mnar"` (default, for MNAR data) and `method="v2"` (for MAR data) and compare structural metrics:
 
 ## Imputation
 

@@ -4,7 +4,7 @@
 
 \section{Version 0.99.23}{\itemize{
     \item \code{selectFeatures} and \code{msImpute} now use information theoretic approaches
-    to find informative features for MAR/MNAR diagnosis, and estimation of optimal rank, respectively.
+    to find informative features for MAR/MNAR diagnosis and estimation of optimal rank, respectively.
 
     \item \code{lambda} in \code{msImpute} is now estimated from the data, using the bayesian interpretation of
     this shrinkage operator.
