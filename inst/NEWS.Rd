@@ -2,6 +2,9 @@
 \title{msImpute News}
 \encoding{UTF-8}
 
+\section{Version 0.99.25}{\itemize{
+    \item fix typo in \code{msImpute} man page
+}}
 
 \section{Version 0.99.24}{\itemize{
     \item Bug fix in the internal function \code{l2bary}

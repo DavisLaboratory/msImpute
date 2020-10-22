@@ -16,7 +16,7 @@
 #' defaults. Similarly, we have implemented a new approach to estimate \code{lambda} from the data. Low-rank approximation
 #' is a linear reconstruction of the data, and is only appropriate for imputation of MAR data. In order to make the
 #' algorithm applicable to MNAR data, we have implemented \code{method="v2-mnar"} which imputes the missing observations
-#' as weighted sum of values imputed by msImpute v2 (\code{metho="v2"}) and random draws from a Gaussian distribution.
+#' as weighted sum of values imputed by msImpute v2 (\code{method="v2"}) and random draws from a Gaussian distribution.
 #' Missing values that tend to be missing completely in one or more experimental groups will be weighted more (shrunken) towards
 #' imputation by sampling from a Gaussian parameterised by smallest observed values in the sample (similar to minProb, or
 #' Perseus). However, if the missing value distribution is even across the samples for a peptide, the imputed values
