@@ -2,6 +2,11 @@
 \title{msImpute News}
 \encoding{UTF-8}
 
+
+\section{Version 0.99.24}{\itemize{
+    \item Bug fix in the internal function \code{l2bary}
+}}
+
 \section{Version 0.99.23}{\itemize{
     \item \code{selectFeatures} and \code{msImpute} now use information theoretic approaches
     to find informative features for MAR/MNAR diagnosis and estimation of optimal rank, respectively.
