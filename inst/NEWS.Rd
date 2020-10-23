@@ -2,6 +2,11 @@
 \title{msImpute News}
 \encoding{UTF-8}
 
+
+\section{Version 0.99.26}{\itemize{
+    \item update doc for \code{msImpute}
+}}
+
 \section{Version 0.99.25}{\itemize{
     \item fix typo in \code{msImpute} man page
 }}
