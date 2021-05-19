@@ -1,7 +1,7 @@
 Package: msImpute
 Type: Package
 Title: Imputation of label-free mass spectrometry peptides
-Version: 1.2.0
+Version: 1.3.0
 Authors@R: 
     person(given = "Soroor",
            family = "Hediyeh-zadeh",
