@@ -49,6 +49,8 @@ biological (experimental group). This is the default method." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -60,9 +62,16 @@ biological (experimental group). This is the default method." />
 
 
 
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -76,7 +85,7 @@ biological (experimental group). This is the default method." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -101,7 +110,7 @@ biological (experimental group). This is the default method." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/DavisLaboratory/msImpute/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,13 +140,13 @@ identify missing patterns. It quantifies the heterogeneity (entropy) of missing 
 biological (experimental group). This is the default method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectFeatures</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>selectFeatures</span><span class='op'>(</span>
   <span class='va'>x</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ebm"</span>, <span class='st'>"hvp"</span><span class='op'>)</span>,
   <span class='va'>group</span>,
   n_features <span class='op'>=</span> <span class='fl'>500</span>,
   suppress_plot <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,47 +204,54 @@ to use the EBM metric to find informative features, hence why the <code>group</c
     <p>Soroor Hediyeh-zadeh</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span>
-<span class='va'>group</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
-<span class='va'>hdp</span> <span class='op'>&lt;-</span> <span class='fu'>selectFeatures</span><span class='op'>(</span><span class='va'>y</span>, method<span class='op'>=</span><span class='st'>"ebm"</span>, group <span class='op'>=</span> <span class='va'>group</span><span class='op'>)</span>
-<span class='co'># construct matrix M to capture missing entries</span>
-<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='fl'>1</span>,<span class='fl'>0</span><span class='op'>)</span>
-<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='va'>M</span><span class='op'>[</span><span class='va'>hdp</span><span class='op'>$</span><span class='va'>msImpute_feature</span>,<span class='op'>]</span>
-<span class='co'># plot a heatmap of missingness patterns for the selected peptides</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/jokergoo/ComplexHeatmap'>ComplexHeatmap</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: ComplexHeatmap</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>========================================</span>
-#&gt; <span class='message'>ComplexHeatmap version 2.5.6</span>
-#&gt; <span class='message'>Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/</span>
-#&gt; <span class='message'>Github page: https://github.com/jokergoo/ComplexHeatmap</span>
-#&gt; <span class='message'>Documentation: http://jokergoo.github.io/ComplexHeatmap-reference</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>If you use it in published research, please cite:</span>
-#&gt; <span class='message'>Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional </span>
-#&gt; <span class='message'>  genomic data. Bioinformatics 2016.</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>This message can be suppressed by:</span>
-#&gt; <span class='message'>  suppressPackageStartupMessages(library(ComplexHeatmap))</span>
-#&gt; <span class='message'>========================================</span></div><div class='input'><span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html'>Heatmap</a></span><span class='op'>(</span><span class='va'>M</span>,
-column_title <span class='op'>=</span> <span class='st'>"dropout pattern, columns ordered by dropout similarity"</span>,
-              name <span class='op'>=</span> <span class='st'>"Intensity"</span>,
-              col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#8FBC8F"</span>, <span class='st'>"#FFEFDB"</span><span class='op'>)</span>,
-              show_row_names <span class='op'>=</span> <span class='cn'>FALSE</span>,
-              show_column_names <span class='op'>=</span> <span class='cn'>TRUE</span>,
-              cluster_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,
-              cluster_columns <span class='op'>=</span> <span class='cn'>TRUE</span>,
-              show_column_dend <span class='op'>=</span> <span class='cn'>TRUE</span>,
-              show_row_dend <span class='op'>=</span> <span class='cn'>FALSE</span>,
-              row_names_gp <span class='op'>=</span>  <span class='fu'>gpar</span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>7</span><span class='op'>)</span>,
-              column_names_gp <span class='op'>=</span> <span class='fu'>gpar</span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>,
-              heatmap_legend_param <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='co'>#direction = "horizontal",</span>
-              heatmap_legend_side <span class='op'>=</span> <span class='st'>"bottom"</span>,
-              labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"observed"</span>,<span class='st'>"missing"</span><span class='op'>)</span>,
-              legend_width <span class='op'>=</span> <span class='fu'>unit</span><span class='op'>(</span><span class='fl'>6</span>, <span class='st'>"cm"</span><span class='op'>)</span><span class='op'>)</span>,
-         <span class='op'>)</span>
-<span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html'>draw</a></span><span class='op'>(</span><span class='va'>hm</span>, heatmap_legend_side <span class='op'>=</span> <span class='st'>"left"</span><span class='op'>)</span>
-</div><div class='img'><img src='selectFeatures-1.png' alt='' width='700' height='433' /></div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>group</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.matrix.html'>data.matrix</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log2</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>hdp</span> <span class='op'>&lt;-</span> <span class='fu'>selectFeatures</span><span class='op'>(</span><span class='va'>y</span>, method<span class='op'>=</span><span class='st'>"ebm"</span>, group <span class='op'>=</span> <span class='va'>group</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># construct matrix M to capture missing entries</span></span>
+<span class='r-in'><span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='fl'>1</span>,<span class='fl'>0</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>M</span> <span class='op'>&lt;-</span> <span class='va'>M</span><span class='op'>[</span><span class='va'>hdp</span><span class='op'>$</span><span class='va'>msImpute_feature</span>,<span class='op'>]</span></span>
+<span class='r-in'><span class='co'># plot a heatmap of missingness patterns for the selected peptides</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/jokergoo/ComplexHeatmap'>ComplexHeatmap</a></span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: ComplexHeatmap</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: grid</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> ========================================</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> ComplexHeatmap version 2.9.0</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Github page: https://github.com/jokergoo/ComplexHeatmap</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Documentation: http://jokergoo.github.io/ComplexHeatmap-reference</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> If you use it in published research, please cite:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>   genomic data. Bioinformatics 2016.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The new InteractiveComplexHeatmap package can directly export static </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> complex heatmaps into an interactive Shiny app with zero effort. Have a try!</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> This message can be suppressed by:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>   suppressPackageStartupMessages(library(ComplexHeatmap))</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> ========================================</span>
+<span class='r-in'><span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html'>Heatmap</a></span><span class='op'>(</span><span class='va'>M</span>,</span>
+<span class='r-in'>column_title <span class='op'>=</span> <span class='st'>"dropout pattern, columns ordered by dropout similarity"</span>,</span>
+<span class='r-in'>              name <span class='op'>=</span> <span class='st'>"Intensity"</span>,</span>
+<span class='r-in'>              col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#8FBC8F"</span>, <span class='st'>"#FFEFDB"</span><span class='op'>)</span>,</span>
+<span class='r-in'>              show_row_names <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
+<span class='r-in'>              show_column_names <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>              cluster_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>              cluster_columns <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>              show_column_dend <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>              show_row_dend <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
+<span class='r-in'>              row_names_gp <span class='op'>=</span>  <span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>7</span><span class='op'>)</span>,</span>
+<span class='r-in'>              column_names_gp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>,</span>
+<span class='r-in'>              heatmap_legend_param <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='co'>#direction = "horizontal",</span></span>
+<span class='r-in'>              heatmap_legend_side <span class='op'>=</span> <span class='st'>"bottom"</span>,</span>
+<span class='r-in'>              labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"observed"</span>,<span class='st'>"missing"</span><span class='op'>)</span>,</span>
+<span class='r-in'>              legend_width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='st'>"cm"</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>         <span class='op'>)</span></span>
+<span class='r-in'><span class='va'>hm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html'>draw</a></span><span class='op'>(</span><span class='va'>hm</span>, heatmap_legend_side <span class='op'>=</span> <span class='st'>"left"</span><span class='op'>)</span></span>
+<span class='r-plt'><img src='selectFeatures-1.png' alt='' width='700' height='433' /></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -247,11 +263,11 @@ column_title <span class='op'>=</span> <span class='st'>"dropout pattern, column
 
       <footer>
       <div class="copyright">
-  <p>Developed by Soroor Hediyeh-zadeh.</p>
+  <p><p>Developed by Soroor Hediyeh-zadeh.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -259,6 +275,8 @@ column_title <span class='op'>=</span> <span class='st'>"dropout pattern, column
 
   
 
+
+  
 
   </body>
 </html>

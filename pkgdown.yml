@@ -1,7 +1,7 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1.9000
-pkgdown_sha: e1e46f2e13c7efdb17bc4eae40bc3779c2b0b517
+pandoc: 2.11.4
+pkgdown: 1.6.1.9001
+pkgdown_sha: b7b462438bc6252d40e9e5f223b0c56bf938f6d7
 articles:
   msImpute-vignette: msImpute-vignette.html
-last_built: 2020-10-23T04:09Z
+last_built: 2021-06-03T07:01Z
 

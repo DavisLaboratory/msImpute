@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">msImpute</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -55,8 +57,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/DavisLaboratory/msImpute/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/DavisLaboratory/msImpute/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -70,17 +72,17 @@
 
       
 
-      </header><script src="msImpute-vignette_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="msImpute-vignette_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>msImpute: Imputation of peptide intensity by low-rank approximation</h1>
-                        <h4 class="author">Soroor Hediyeh-zadeh</h4>
+                        <h4 data-toc-skip class="author">Soroor Hediyeh-zadeh</h4>
             <address class="author_afil">
-      The Walter and Eliza Hall Institute of Medical Research<br><h4 class="author">Andrew I. Webb</h4>
+      The Walter and Eliza Hall Institute of Medical Research<br><h4 data-toc-skip class="author">Andrew I. Webb</h4>
             <address class="author_afil">
-      The Walter and Eliza Hall Institute of Medical Research<br><h4 class="author">Melissa J. Davis</h4>
+      The Walter and Eliza Hall Institute of Medical Research<br><h4 data-toc-skip class="author">Melissa J. Davis</h4>
             <address class="author_afil">
-      The Walter and Eliza Hall Institute of Medical Research<br><small class="dont-index">Source: <a href="https://github.com/DavisLaboratory/msImpute/blob/master/vignettes/msImpute-vignette.Rmd"><code>vignettes/msImpute-vignette.Rmd</code></a></small>
+      The Walter and Eliza Hall Institute of Medical Research<br><small class="dont-index">Source: <a href="https://github.com/DavisLaboratory/msImpute/blob/master/vignettes/msImpute-vignette.Rmd" class="external-link"><code>vignettes/msImpute-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>msImpute-vignette.Rmd</code></div>
 
     </address>
@@ -96,15 +98,15 @@
     
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span><span class="op">(</span><span class="st">"msImpute"</span><span class="op">)</span></pre></div>
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h1>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"msImpute"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="quick-start" class="section level1">
 <h1 class="hasAnchor">
-<a href="#quick-start" class="anchor"></a>Quick Start</h1>
+<a href="#quick-start" class="anchor" aria-hidden="true"></a>Quick Start</h1>
 <p>The package consists of the following main functions:</p>
 <ul>
 <li><p><code>selectFeatures</code>: identifies informative peptides that can be used to examine MAR/MNAR missingness in the data.</p></li>
@@ -113,54 +115,54 @@
 <li><p><code>computeStructuralMetrics</code>: returns a number of metrics that measure distortions into the data after imputation.</p></li>
 <li><p><code>plotCV2</code>: Plots the square of coefficient of variation versus average log-expression i.e. mean-<span class="math inline">\(CV^2\)</span> plot</p></li>
 </ul>
-<p>These functions overall are designed to inform user’s decision in choosing a proper imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf">User’s Manual</a>.</p>
+<p>These functions overall are designed to inform user’s decision in choosing a proper imputation strategy. For a more detailed workflow, please see <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf" class="external-link">User’s Manual</a>.</p>
 </div>
 <div id="tims-case-study-blood-plasma" class="section level1">
 <h1 class="hasAnchor">
-<a href="#tims-case-study-blood-plasma" class="anchor"></a>TIMS Case Study: Blood plasma</h1>
+<a href="#tims-case-study-blood-plasma" class="anchor" aria-hidden="true"></a>TIMS Case Study: Blood plasma</h1>
 <p>The aim is to assess the missing patterns in ion mobility data by Prianichnikov et al. (2020), available from PXD014777. The <code>evidence</code> table of MaxQuant output was processed as described below. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. For peptides with multiple identification types, the intensity is considered to be the median of reported intensity values. Reverse complements and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained.</p>
 <p>The data was acquired in two batches (over two days). We are interested to know if missing values are evenly distributed across batches, or there is a batch-specific dropout trend. The runs are also labeled by S1, S2 and S4 (source unknown). The aim is to use this information to work out if missing values occur due to technical or biological effects.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/reticulate">reticulate</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">msImpute</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/limma">limma</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">imputeLCMD</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/reticulate" class="external-link">reticulate</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">msImpute</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/limma" class="external-link">limma</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">imputeLCMD</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span></code></pre></div>
 <div id="data-processing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#data-processing" class="anchor"></a>Data processing</h2>
+<a href="#data-processing" class="anchor" aria-hidden="true"></a>Data processing</h2>
 <p>The following procedures were applied to process the data, which we later load from the package data.</p>
 <div id="filter-by-detection" class="section level3">
 <h3 class="hasAnchor">
-<a href="#filter-by-detection" class="anchor"></a>Filter by detection</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pxd014777</span><span class="op">)</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="va">pxd014777</span></pre></div>
+<a href="#filter-by-detection" class="anchor" aria-hidden="true"></a>Filter by detection</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pxd014777</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="va">pxd014777</span></code></pre></div>
 <p>Zero values that will be converted to Inf/-Inf after log- transformation. Check if there are valid values in the data before log transformation</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.infinite</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html">data.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.infinite</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##  FALSE   TRUE 
 ## 610515    681</code></pre>
 <p>There are zero values that will be converted to Inf/-Inf after log- transformation. Add a small offset to avoid infinite values:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">+</span><span class="fl">0.25</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">+</span><span class="fl">0.25</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="normalization" class="section level3">
 <h3 class="hasAnchor">
-<a href="#normalization" class="anchor"></a>Normalization</h3>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co"># quantile normalisation</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></pre></div>
+<a href="#normalization" class="anchor" aria-hidden="true"></a>Normalization</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># quantile normalisation</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html" class="external-link">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="determine-missing-values-pattern" class="section level2">
 <h2 class="hasAnchor">
-<a href="#determine-missing-values-pattern" class="anchor"></a>Determine missing values pattern</h2>
+<a href="#determine-missing-values-pattern" class="anchor" aria-hidden="true"></a>Determine missing values pattern</h2>
 <p>Determine dominant patterns of missing values by investigating the distribution of missing values. Peptides that are missing in at least one experimental group (here batch), and therefore exhibit structured missing patterns can be identified by the EBM metric implemented in <code>selectFeatures</code>. We then make a heatmap of their dropout pattern.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"(2018.*)_RF.*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*(S[1-9]).*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"(2018.*)_RF.*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">".*(S[1-9]).*"</span>,<span class="st">"\\1"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 
 <span class="va">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"ebm"</span>, group <span class="op">=</span> <span class="va">batch</span><span class="op">)</span>
@@ -168,29 +170,29 @@
 
 <span class="co"># peptides missing in one or more experimental group will have a NaN EBM, which is a measure of entropy of </span>
 <span class="co"># distribution of observed values</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.nan</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">EBM</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.nan</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">EBM</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
 ##  2780   103</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co"># construct matrix M to capture missing entries</span>
-<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># construct matrix M to capture missing entries</span>
+<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
 <span class="va">M</span> <span class="op">&lt;-</span> <span class="va">M</span><span class="op">[</span><span class="va">hdp</span><span class="op">$</span><span class="va">msImpute_feature</span>,<span class="op">]</span>
 
-<span class="co"># plot a heatmap of missingness patterns for the selected peptides</span></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html">HeatmapAnnotation</a></span><span class="op">(</span>batch <span class="op">=</span> <span class="va">batch</span>,
+<span class="co"># plot a heatmap of missingness patterns for the selected peptides</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></span><span class="op">(</span>batch <span class="op">=</span> <span class="va">batch</span>,
                                experiment <span class="op">=</span> <span class="va">experiment</span>,
-                               col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>batch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'20181023'</span> <span class="op">=</span> <span class="st">"#B24745FF"</span>,
+                               col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>batch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'20181023'</span> <span class="op">=</span> <span class="st">"#B24745FF"</span>,
                                                     <span class="st">'20181024'</span><span class="op">=</span> <span class="st">"#00A1D5FF"</span><span class="op">)</span>,
-                                          experiment<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">=</span><span class="st">"#DF8F44FF"</span>,
+                                          experiment<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S1"</span><span class="op">=</span><span class="st">"#DF8F44FF"</span>,
                                                        <span class="st">"S2"</span><span class="op">=</span><span class="st">"#374E55FF"</span>,
                                                        <span class="st">"S4"</span><span class="op">=</span><span class="st">"#79AF97FF"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
 column_title <span class="op">=</span> <span class="st">"dropout pattern, columns ordered by dropout similarity"</span>,
               name <span class="op">=</span> <span class="st">"Intensity"</span>,
-              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
+              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
               show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,
               show_column_names <span class="op">=</span> <span class="cn">FALSE</span>,
               cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -198,14 +200,14 @@ column_title <span class="op">=</span> <span class="st">"dropout pattern, column
               show_column_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               show_row_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               top_annotation <span class="op">=</span> <span class="va">ha_column</span>,
-              row_names_gp <span class="op">=</span>  <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
-              column_names_gp <span class="op">=</span> <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
-              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
+              row_names_gp <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
+              column_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
+              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
               heatmap_legend_side <span class="op">=</span> <span class="st">"bottom"</span>,
-              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
-              legend_width <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
+              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
+              legend_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
          <span class="op">)</span>
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></pre></div>
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="msImpute-vignette_files/figure-html/unnamed-chunk-7-1.png" alt="Heatmap of missing value patterns for peptides selected as informative peptides" width="700"><p class="caption">
 Heatmap of missing value patterns for peptides selected as informative peptides
@@ -216,51 +218,51 @@ Heatmap of missing value patterns for peptides selected as informative peptides
 </div>
 <div id="dda-case-study-extracellular-vesicles-isolated-from-inflammatory-bowel-disease-patients-and-controls" class="section level1">
 <h1 class="hasAnchor">
-<a href="#dda-case-study-extracellular-vesicles-isolated-from-inflammatory-bowel-disease-patients-and-controls" class="anchor"></a>DDA Case Study: Extracellular vesicles isolated from inflammatory bowel disease patients and controls</h1>
+<a href="#dda-case-study-extracellular-vesicles-isolated-from-inflammatory-bowel-disease-patients-and-controls" class="anchor" aria-hidden="true"></a>DDA Case Study: Extracellular vesicles isolated from inflammatory bowel disease patients and controls</h1>
 <p>The study aims to characterize the proteomic profile of extracellular vesicles isolated from the descending colon of pediatric patients with inflammatory bowel disease and control participants. The following analysis is based on the <code>peptide</code> table from MaxQuant output, available from PXD007959. Rows are Modified Peptide IDs. Charge state variations are treated as distinct peptide species. Reverse complements and contaminant peptides are discarded. Peptides with more than 4 observed intensity values are retained. Additionally, qualified peptides are required to map uniquely to proteins. Two of the samples with missing group annotation were excluded.</p>
 <div id="filter-by-detection-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#filter-by-detection-1" class="anchor"></a>Filter by detection</h2>
+<a href="#filter-by-detection-1" class="anchor" aria-hidden="true"></a>Filter by detection</h2>
 <p>The sample descriptions can be accessed via <code>pxd007959$samples</code>. Intensity values are stored in <code>pxd007959$y</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pxd007959</span><span class="op">)</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pxd007959</span><span class="op">)</span>
 
 <span class="va">sample_annot</span> <span class="op">&lt;-</span> <span class="va">pxd007959</span><span class="op">$</span><span class="va">samples</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">pxd007959</span><span class="op">$</span><span class="va">y</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></pre></div>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="normalization-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#normalization-1" class="anchor"></a>Normalization</h2>
+<a href="#normalization-1" class="anchor" aria-hidden="true"></a>Normalization</h2>
 <p>We apply <code>cyclic loess</code> normalisation from <code>limma</code> to normalise log-intensities. We have justified use of <code>cyclic loess</code> method in depth in the user’s guide.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"cyclicloess"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html" class="external-link">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"cyclicloess"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="determine-missing-values-pattern-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#determine-missing-values-pattern-1" class="anchor"></a>Determine missing values pattern</h2>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="co"># determine missing values pattern</span>
+<a href="#determine-missing-values-pattern-1" class="anchor" aria-hidden="true"></a>Determine missing values pattern</h2>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># determine missing values pattern</span>
 <span class="va">group</span> <span class="op">&lt;-</span> <span class="va">sample_annot</span><span class="op">$</span><span class="va">group</span>
-<span class="va">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span><span class="op">(</span><span class="va">y</span>, method<span class="op">=</span><span class="st">"ebm"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="co"># construct matrix M to capture missing entries</span>
-<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
+<span class="va">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span><span class="op">(</span><span class="va">y</span>, method<span class="op">=</span><span class="st">"ebm"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># construct matrix M to capture missing entries</span>
+<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
 <span class="va">M</span> <span class="op">&lt;-</span> <span class="va">M</span><span class="op">[</span><span class="va">hdp</span><span class="op">$</span><span class="va">msImpute_feature</span>,<span class="op">]</span>
 
 
 
 <span class="co"># plot a heatmap of missingness patterns for the selected peptides</span>
-<span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html">HeatmapAnnotation</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">sample_annot</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,
-                               col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>group<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Control'</span> <span class="op">=</span> <span class="st">"#E64B35FF"</span>,
+<span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sample_annot</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,
+                               col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>group<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Control'</span> <span class="op">=</span> <span class="st">"#E64B35FF"</span>,
                                                 <span class="st">'Mild'</span> <span class="op">=</span> <span class="st">"#3C5488FF"</span>,
                                                 <span class="st">'Moderate'</span> <span class="op">=</span> <span class="st">"#00A087FF"</span>,
                                                 <span class="st">'Severe'</span><span class="op">=</span><span class="st">"#F39B7FFF"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
 column_title <span class="op">=</span> <span class="st">"dropout pattern, columns ordered by dropout similarity"</span>,
               name <span class="op">=</span> <span class="st">"Intensity"</span>,
-              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
+              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
               show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,
               show_column_names <span class="op">=</span> <span class="cn">FALSE</span>,
               cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -268,14 +270,14 @@ column_title <span class="op">=</span> <span class="st">"dropout pattern, column
               show_column_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               show_row_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               top_annotation <span class="op">=</span> <span class="va">ha_column</span>,
-              row_names_gp <span class="op">=</span>  <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
-              column_names_gp <span class="op">=</span> <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
-              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
+              row_names_gp <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
+              column_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
+              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
               heatmap_legend_side <span class="op">=</span> <span class="st">"bottom"</span>,
-              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
-              legend_width <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
+              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
+              legend_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
          <span class="op">)</span>
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></pre></div>
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="msImpute-vignette_files/figure-html/unnamed-chunk-11-1.png" alt="Dropout pattern of informative peptides" width="700"><p class="caption">
 Dropout pattern of informative peptides
@@ -285,27 +287,29 @@ Dropout pattern of informative peptides
 </div>
 <div id="imputation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#imputation" class="anchor"></a>Imputation</h2>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="co"># imputation</span>
+<a href="#imputation" class="anchor" aria-hidden="true"></a>Imputation</h2>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># imputation</span>
 
-<span class="va">y_qrilc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imputeLCMD/man/impute.QRILC.html">impute.QRILC</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
+<span class="va">y_qrilc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imputeLCMD/man/impute.QRILC.html" class="external-link">impute.QRILC</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 
-<span class="va">y_msImpute</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2-mnar"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></pre></div>
-<pre><code>## Running msImpute version v2-mnar</code></pre>
+<span class="va">y_msImpute</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2-mnar"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></code></pre></div>
+<pre><code>## Running msImpute version 2</code></pre>
+<pre><code>## Estimate distribution under MAR assumption</code></pre>
 <pre><code>## rank is 12</code></pre>
 <pre><code>## computing lambda0 ...</code></pre>
-<pre><code>## lambda0 is 545.047266965271</code></pre>
+<pre><code>## lambda0 is 265.389462076271</code></pre>
 <pre><code>## fit the low-rank model ...</code></pre>
 <pre><code>## model fitted. 
 ## Imputting missing entries ...</code></pre>
 <pre><code>## Imputation completed</code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">sample_annot</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></pre></div>
+<pre><code>## Compute barycenter of MAR and NMAR distributions v2-mnar</code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sample_annot</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="assessment-of-preservation-of-local-and-global-structures" class="section level2">
 <h2 class="hasAnchor">
-<a href="#assessment-of-preservation-of-local-and-global-structures" class="anchor"></a>Assessment of preservation of local and global structures</h2>
+<a href="#assessment-of-preservation-of-local-and-global-structures" class="anchor" aria-hidden="true"></a>Assessment of preservation of local and global structures</h2>
 <p>If you’ve installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Please see the user’s guide for setup instructions. Note that you can still run <code>computeStructuralMetrics</code> by setting <code>y=NULL</code>, if there are no python environments setup.</p>
 <p><strong>Withinness, betweenness and Gromov-Wasserstein (GW) distance</strong></p>
 <p><code>computeStructuralMerics</code> returns three metrics that can be used to compare various imputation procedures:</p>
@@ -315,17 +319,17 @@ Dropout pattern of informative peptides
 <li><p><code>gw_dist</code> is the Gromov-Wasserstein distance computed between Principal Components of imputed and source data. It is a measure of how well the structures are overall preserved over all principal axis of variation in the data. Hence, it captures preservation of both local and global structures. PCs of the source data are computed using highly variable peptides (i.e. peptides with high biological variance).</p></li>
 </ul>
 <p>An ideal imputation method results in smaller <code>withinness</code>, larger <code>withinness</code> and smaller <code>gw_dist</code> among other imputation methods.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_create</a></span><span class="op">(</span><span class="st">'msImpute-reticulate'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"scipy"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"cython"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"POT"</span><span class="op">)</span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html" class="external-link">virtualenv_create</a></span><span class="op">(</span><span class="st">'msImpute-reticulate'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html" class="external-link">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"scipy"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html" class="external-link">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"cython"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/virtualenv-tools.html" class="external-link">virtualenv_install</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span>,<span class="st">"POT"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/use_python.html">use_virtualenv</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/use_python.html" class="external-link">use_virtualenv</a></span><span class="op">(</span><span class="st">"msImpute-reticulate"</span><span class="op">)</span>
 
 <span class="va">top.hvp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findVariableFeatures.html">findVariableFeatures</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">top.hvp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,<span class="op">]</span>, k <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">top.hvp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,<span class="op">]</span>, k <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></code></pre></div>
 <pre><code>Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
@@ -336,8 +340,8 @@ $betweenness
 
 $gw_dist
 [1] 0.01717915</code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_qrilc</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">top.hvp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,<span class="op">]</span>, k <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_qrilc</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">top.hvp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>,<span class="op">]</span>, k <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></code></pre></div>
 <pre><code>Computing GW distance using k= 16 Principal Components
 $withinness
     Mild  Control Moderate   Severe 
@@ -350,77 +354,77 @@ $gw_dist
 [1] 0.008877501</code></pre>
 <p><code>Withinness</code> tends to be smaller by <code>msImpute</code>, which indicates that local structures are better preserved by these two methods. The <code>gw_dist</code> over all PCs for the two methods is very similar (rounded to 2 decimals). This suggests the enhancements in <code>v2-mnar</code> is just as good as left-censored MNAR methods such as <code>QRILC</code>. Note that <code>k</code> is set to the number of samples to capture all dimensions of the data.</p>
 <p>Also note that that, unlike <code>QRILC</code>, msImpute <code>v2-mnar</code> dose not drastically increase the variance of peptides (measured by squared coefficient of variation) post imputation.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y</span>, main <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span>
 <span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_msImpute</span>, main <span class="op">=</span> <span class="st">"msImpute v2-mnar"</span><span class="op">)</span>
-<span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_qrilc</span>, main <span class="op">=</span> <span class="st">"qrilc"</span><span class="op">)</span></pre></div>
+<span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_qrilc</span>, main <span class="op">=</span> <span class="st">"qrilc"</span><span class="op">)</span></code></pre></div>
 <p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 </div>
 </div>
 <div id="swath-dia-case-study-swath-ms-analysis-of-gfi1-mutant-bone-marrow-neutrophils" class="section level1">
 <h1 class="hasAnchor">
-<a href="#swath-dia-case-study-swath-ms-analysis-of-gfi1-mutant-bone-marrow-neutrophils" class="anchor"></a>SWATH-DIA Case Study: SWATH-MS analysis of Gfi1-mutant bone marrow neutrophils</h1>
+<a href="#swath-dia-case-study-swath-ms-analysis-of-gfi1-mutant-bone-marrow-neutrophils" class="anchor" aria-hidden="true"></a>SWATH-DIA Case Study: SWATH-MS analysis of Gfi1-mutant bone marrow neutrophils</h1>
 <p>This study investigates the proteomic alterations in bone marrow neutrophils isolated from 5-8 week old Gfi1+/-, Gfi1K403R/-, Gfi1R412X/-, and Gfi1R412X/R412X mice using the SWATH-MS technique. This dataset consists of 13 DIA (for SWATH) runs on a TripleTOF 5600 plus (SCIEX). Data available from PXD010943. Peak areas extracted from <code>13DIAs_SWATHprocessing_area_score_FDR_observedRT.xlsx</code>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>Rows are peptides. Charge state variations are treated as distinct peptide species. Peptides with more than 4 observed intensity values are retained.</p>
 <div id="normalization-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#normalization-2" class="anchor"></a>Normalization</h3>
+<a href="#normalization-2" class="anchor" aria-hidden="true"></a>Normalization</h3>
 <p>We normalize using <code>quantile normalization</code>.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pxd010943</span><span class="op">)</span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pxd010943</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">pxd010943</span>
 <span class="co"># no problematic values for log- transformation</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.infinite</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html">data.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.infinite</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE 
 ## 30641</code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
-<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/normalizebetweenarrays.html" class="external-link">normalizeBetweenArrays</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="determine-missing-values-pattern-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#determine-missing-values-pattern-2" class="anchor"></a>Determine missing values pattern</h2>
-<div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"_[1234]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">group</span></pre></div>
+<a href="#determine-missing-values-pattern-2" class="anchor" aria-hidden="true"></a>Determine missing values pattern</h2>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_[1234]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">group</span></code></pre></div>
 <pre><code>##  [1] Gfi1      Gfi1      Gfi1      Gfi1      R412Xhet  R412Xhet  R412Xhet 
 ##  [8] R412Xhet  R412Xhomo R412Xhomo K403R     K403R     K403R    
 ## Levels: Gfi1 K403R R412Xhet R412Xhomo</code></pre>
-<div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="va">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"ebm"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span> 
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selectFeatures.html">selectFeatures</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"ebm"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span> 
 
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">msImpute_feature</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">msImpute_feature</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
 ##  2340    17</code></pre>
-<div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.nan</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">EBM</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.nan</a></span><span class="op">(</span><span class="va">hdp</span><span class="op">$</span><span class="va">EBM</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
 ##  2340    17</code></pre>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
 ##   182  2175</code></pre>
 <p>A very small number of peptides (17) tend to be missing in at least one experimental group.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit">
-<span class="co"># construct matrix M to capture missing entries</span>
-<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># construct matrix M to capture missing entries</span>
+<span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
 <span class="va">M</span> <span class="op">&lt;-</span> <span class="va">M</span><span class="op">[</span><span class="va">hdp</span><span class="op">$</span><span class="va">msImpute_feature</span>,<span class="op">]</span>
 
 <span class="co"># plot a heatmap of missingness patterns for the selected peptides</span>
 
 
 
-<span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html">HeatmapAnnotation</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">group</span><span class="op">)</span>
+<span class="va">ha_column</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">group</span><span class="op">)</span>
 
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">M</span>,
 column_title <span class="op">=</span> <span class="st">"dropout pattern, columns ordered by dropout similarity"</span>,
               name <span class="op">=</span> <span class="st">"Intensity"</span>,
-              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
+              col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#8FBC8F"</span>, <span class="st">"#FFEFDB"</span><span class="op">)</span>,
               show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,
               show_column_names <span class="op">=</span> <span class="cn">FALSE</span>,
               cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -428,14 +432,14 @@ column_title <span class="op">=</span> <span class="st">"dropout pattern, column
               show_column_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               show_row_dend <span class="op">=</span> <span class="cn">FALSE</span>,
               top_annotation <span class="op">=</span> <span class="va">ha_column</span>,
-              row_names_gp <span class="op">=</span>  <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
-              column_names_gp <span class="op">=</span> <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
-              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
+              row_names_gp <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,
+              column_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
+              heatmap_legend_param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="co">#direction = "horizontal",</span>
               heatmap_legend_side <span class="op">=</span> <span class="st">"bottom"</span>,
-              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
-              legend_width <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
+              labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observed"</span>,<span class="st">"missing"</span><span class="op">)</span>,
+              legend_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,
          <span class="op">)</span>
-<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></pre></div>
+<span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">hm</span>, heatmap_legend_side <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="msImpute-vignette_files/figure-html/unnamed-chunk-18-1.png" alt="Dropout pattern of informative peptides" width="700"><p class="caption">
 Dropout pattern of informative peptides
@@ -445,71 +449,74 @@ Dropout pattern of informative peptides
 </div>
 <div id="imputation-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#imputation-1" class="anchor"></a>Imputation</h2>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="va">y_msImpute_mar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span> <span class="co"># no need to specify group if data is MAR.</span></pre></div>
-<pre><code>## Running msImpute version v2</code></pre>
+<a href="#imputation-1" class="anchor" aria-hidden="true"></a>Imputation</h2>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y_msImpute_mar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span> <span class="co"># no need to specify group if data is MAR.</span></code></pre></div>
+<pre><code>## Running msImpute version 2</code></pre>
+<pre><code>## Estimate distribution under MAR assumption</code></pre>
 <pre><code>## rank is 3</code></pre>
 <pre><code>## computing lambda0 ...</code></pre>
-<pre><code>## lambda0 is 41.6024033439951</code></pre>
+<pre><code>## lambda0 is 7.00105001906051</code></pre>
 <pre><code>## fit the low-rank model ...</code></pre>
 <pre><code>## model fitted. 
 ## Imputting missing entries ...</code></pre>
 <pre><code>## Imputation completed</code></pre>
-<div class="sourceCode" id="cb50"><pre class="downlit">
-<span class="va">y_msImpute_mnar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2-mnar"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></pre></div>
-<pre><code>## Running msImpute version v2-mnar</code></pre>
-<pre><code>## rank is 3</code></pre>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y_msImpute_mnar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2-mnar"</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></code></pre></div>
+<pre><code>## Running msImpute version 2</code></pre>
+<pre><code>## Estimate distribution under MAR assumption</code></pre>
+<pre><code>## rank is 4</code></pre>
 <pre><code>## computing lambda0 ...</code></pre>
-<pre><code>## lambda0 is 41.6024033439951</code></pre>
+<pre><code>## lambda0 is 9.67386430005289</code></pre>
 <pre><code>## fit the low-rank model ...</code></pre>
 <pre><code>## model fitted. 
 ## Imputting missing entries ...</code></pre>
 <pre><code>## Imputation completed</code></pre>
+<pre><code>## Compute barycenter of MAR and NMAR distributions v2-mnar</code></pre>
 </div>
 <div id="assessment-of-preservation-of-local-and-global-structures-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#assessment-of-preservation-of-local-and-global-structures-1" class="anchor"></a>Assessment of preservation of local and global structures</h2>
+<a href="#assessment-of-preservation-of-local-and-global-structures-1" class="anchor" aria-hidden="true"></a>Assessment of preservation of local and global structures</h2>
 <p>In this example, we do not compute <code>gw_dist</code> and only rely on <code>withinness</code> and <code>betweenness</code> metrics to assess imputation.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit">
-<span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mar</span>, <span class="va">group</span>, y<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mar</span>, <span class="va">group</span>, y<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  8.894406  9.148477  7.257921  6.446894 
+##  8.906889  9.157768  7.259084  6.446989 
 ## 
 ## $betweenness
-## [1] 9.889743</code></pre>
-<div class="sourceCode" id="cb60"><pre class="downlit">
-<span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mnar</span>, <span class="va">group</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></pre></div>
+## [1] 9.905195</code></pre>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mnar</span>, <span class="va">group</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  8.901785  9.154337  7.262805  6.447030 
+##  8.905953  9.163851  7.258039  6.447324 
 ## 
 ## $betweenness
-## [1] 9.902059</code></pre>
+## [1] 9.913245</code></pre>
 <p>There do not appear to be substantial difference between the two methods.</p>
 <p>Additionally, both of the method preserve variations in the data well:</p>
-<div class="sourceCode" id="cb62"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y</span>, main <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span>
 <span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_msImpute_mnar</span>, main <span class="op">=</span> <span class="st">"msImpute v2-mnar"</span><span class="op">)</span>
-<span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_msImpute_mar</span>, main <span class="op">=</span> <span class="st">"msImpute v2"</span><span class="op">)</span></pre></div>
+<span class="va">pcv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCV2.html">plotCV2</a></span><span class="op">(</span><span class="va">y_msImpute_mar</span>, main <span class="op">=</span> <span class="st">"msImpute v2"</span><span class="op">)</span></code></pre></div>
 <p><img src="msImpute-vignette_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 </div>
 </div>
 <div id="references" class="section level1">
 <h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
-<p>Prianichnikov, N., Koch, H., Koch, S., Lubeck, M., Heilig, R., Brehmer, S., Fischer, R., &amp; Cox, J. (2020). MaxQuant Software for Ion Mobility Enhanced Shotgun Proteomics. Molecular &amp; cellular proteomics : MCP, 19(6), 1058–1069. <a href="https://doi.org/10.1074/mcp.TIR119.001720" class="uri">https://doi.org/10.1074/mcp.TIR119.001720</a></p>
-<p>Zhang, X., Deeke, S.A., Ning, Z. et al. Metaproteomics reveals associations between microbiome and intestinal extracellular vesicle proteins in pediatric inflammatory bowel disease. Nat Commun 9, 2873 (2018). <a href="https://doi.org/10.1038/s41467-018-05357-4" class="uri">https://doi.org/10.1038/s41467-018-05357-4</a></p>
-<p>Muench, D.E., Olsson, A., Ferchen, K. et al. Mouse models of neutropenia reveal progenitor-stage-specific defects. Nature 582, 109–114 (2020). <a href="https://doi.org/10.1038/s41586-020-2227-7" class="uri">https://doi.org/10.1038/s41586-020-2227-7</a></p>
+<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
+<p>Prianichnikov, N., Koch, H., Koch, S., Lubeck, M., Heilig, R., Brehmer, S., Fischer, R., &amp; Cox, J. (2020). MaxQuant Software for Ion Mobility Enhanced Shotgun Proteomics. Molecular &amp; cellular proteomics : MCP, 19(6), 1058–1069. <a href="https://doi.org/10.1074/mcp.TIR119.001720" class="external-link uri">https://doi.org/10.1074/mcp.TIR119.001720</a></p>
+<p>Zhang, X., Deeke, S.A., Ning, Z. et al. Metaproteomics reveals associations between microbiome and intestinal extracellular vesicle proteins in pediatric inflammatory bowel disease. Nat Commun 9, 2873 (2018). <a href="https://doi.org/10.1038/s41467-018-05357-4" class="external-link uri">https://doi.org/10.1038/s41467-018-05357-4</a></p>
+<p>Muench, D.E., Olsson, A., Ferchen, K. et al. Mouse models of neutropenia reveal progenitor-stage-specific defects. Nature 582, 109–114 (2020). <a href="https://doi.org/10.1038/s41586-020-2227-7" class="external-link uri">https://doi.org/10.1038/s41586-020-2227-7</a></p>
 </div>
 <div id="session-info" class="section level1 unnumbered">
 <h1 class="hasAnchor">
-<a href="#session-info" class="anchor"></a>Session info</h1>
-<pre><code>## R version 4.0.3 Patched (2020-10-13 r79342)
+<a href="#session-info" class="anchor" aria-hidden="true"></a>Session info</h1>
+<pre><code>## R version 4.1.0 (2021-05-18)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.1 LTS
+## Running under: Ubuntu 20.04.2 LTS
 ## 
 ## Matrix products: default
 ## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
@@ -527,53 +534,58 @@ Dropout pattern of informative peptides
 ##  [8] datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] ComplexHeatmap_2.5.6 imputeLCMD_2.0       impute_1.63.0       
-##  [4] pcaMethods_1.81.0    Biobase_2.49.1       BiocGenerics_0.35.4 
-##  [7] norm_1.0-9.5         tmvtnorm_1.4-10      gmm_1.6-5           
-## [10] sandwich_3.0-0       Matrix_1.2-18        mvtnorm_1.1-1       
-## [13] limma_3.45.19        msImpute_0.99.26     reticulate_1.16     
-## [16] BiocStyle_2.17.1    
+##  [1] ComplexHeatmap_2.9.0 imputeLCMD_2.0       impute_1.67.0       
+##  [4] pcaMethods_1.85.0    Biobase_2.53.0       BiocGenerics_0.39.0 
+##  [7] norm_1.0-9.5         tmvtnorm_1.4-10      gmm_1.6-6           
+## [10] sandwich_3.0-1       Matrix_1.3-3         mvtnorm_1.1-1       
+## [13] limma_3.49.0         msImpute_1.3.0       reticulate_1.20     
+## [16] BiocStyle_2.21.1    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-6                matrixStats_0.57.0         
+##  [1] bitops_1.0-7                matrixStats_0.59.0         
 ##  [3] fs_1.5.0                    RColorBrewer_1.1-2         
-##  [5] rprojroot_1.3-2             GenomeInfoDb_1.25.11       
-##  [7] tools_4.0.3                 backports_1.1.10           
-##  [9] R6_2.4.1                    irlba_2.3.3                
-## [11] colorspace_1.4-1            GetoptLong_1.0.3           
-## [13] compiler_4.0.3              textshaping_0.1.2          
-## [15] BiocNeighbors_1.7.0         desc_1.2.0                 
-## [17] DelayedArray_0.15.16        bookdown_0.20              
-## [19] pkgdown_1.6.1.9000          systemfonts_0.3.2          
-## [21] stringr_1.4.0               digest_0.6.25              
-## [23] rmarkdown_2.4               XVector_0.29.3             
-## [25] pkgconfig_2.0.3             htmltools_0.5.0            
-## [27] sparseMatrixStats_1.1.11    MatrixGenerics_1.1.8       
-## [29] highr_0.8                   pdist_1.2                  
-## [31] rlang_0.4.8                 GlobalOptions_0.1.2        
-## [33] DelayedMatrixStats_1.11.5   shape_1.4.5                
-## [35] zoo_1.8-8                   jsonlite_1.7.1             
-## [37] BiocParallel_1.23.3         RCurl_1.98-1.2             
-## [39] magrittr_1.5                BiocSingular_1.5.2         
-## [41] GenomeInfoDbData_1.2.4      scuttle_0.99.21            
-## [43] Rcpp_1.0.5                  S4Vectors_0.27.14          
-## [45] stringi_1.5.3               yaml_2.2.1                 
-## [47] edgeR_3.31.6                SummarizedExperiment_1.19.9
-## [49] zlibbioc_1.35.0             dqrng_0.2.1                
-## [51] crayon_1.3.4                lattice_0.20-41            
-## [53] beachmat_2.5.8              circlize_0.4.10            
-## [55] locfit_1.5-9.4              knitr_1.30                 
-## [57] igraph_1.2.6                GenomicRanges_1.41.6       
-## [59] rdetools_1.0                rjson_0.2.20               
-## [61] softImpute_1.4              evaluate_0.14              
-## [63] data.table_1.13.0           scran_1.17.25              
-## [65] BiocManager_1.30.10         png_0.1-7                  
-## [67] clue_0.3-57                 assertthat_0.2.1           
-## [69] xfun_0.18                   rsvd_1.0.3                 
-## [71] ragg_0.4.0                  SingleCellExperiment_1.11.9
-## [73] memoise_1.1.0               IRanges_2.23.10            
-## [75] cluster_2.1.0               bluster_0.99.2             
-## [77] statmod_1.4.34</code></pre>
+##  [5] doParallel_1.0.16           rprojroot_2.0.2            
+##  [7] GenomeInfoDb_1.29.0         tools_4.1.0                
+##  [9] bslib_0.2.5.1               R6_2.5.0                   
+## [11] irlba_2.3.3                 colorspace_2.0-1           
+## [13] GetoptLong_1.0.5            compiler_4.1.0             
+## [15] textshaping_0.3.4           BiocNeighbors_1.11.0       
+## [17] Cairo_1.5-12.2              desc_1.3.0                 
+## [19] DelayedArray_0.19.0         bookdown_0.22              
+## [21] sass_0.4.0                  pkgdown_1.6.1.9001         
+## [23] systemfonts_1.0.2           stringr_1.4.0              
+## [25] digest_0.6.27               rmarkdown_2.8              
+## [27] XVector_0.33.0              pkgconfig_2.0.3            
+## [29] htmltools_0.5.1.1           sparseMatrixStats_1.5.0    
+## [31] MatrixGenerics_1.5.0        highr_0.9                  
+## [33] fastmap_1.1.0               pdist_1.2                  
+## [35] GlobalOptions_0.1.2         rlang_0.4.11               
+## [37] DelayedMatrixStats_1.15.0   shape_1.4.6                
+## [39] jquerylib_0.1.4             zoo_1.8-9                  
+## [41] jsonlite_1.7.2              BiocParallel_1.27.0        
+## [43] RCurl_1.98-1.3              magrittr_2.0.1             
+## [45] BiocSingular_1.9.0          GenomeInfoDbData_1.2.6     
+## [47] scuttle_1.3.0               Rcpp_1.0.6                 
+## [49] S4Vectors_0.31.0            stringi_1.6.2              
+## [51] yaml_2.2.1                  edgeR_3.35.0               
+## [53] SummarizedExperiment_1.23.0 zlibbioc_1.39.0            
+## [55] dqrng_0.3.0                 crayon_1.4.1               
+## [57] lattice_0.20-44             beachmat_2.9.0             
+## [59] circlize_0.4.12             locfit_1.5-9.4             
+## [61] metapod_1.1.0               knitr_1.33                 
+## [63] igraph_1.2.6                GenomicRanges_1.45.0       
+## [65] rjson_0.2.20                rdetools_1.0               
+## [67] softImpute_1.4-1            codetools_0.2-18           
+## [69] ScaledMatrix_1.1.0          evaluate_0.14              
+## [71] data.table_1.14.0           scran_1.21.1               
+## [73] BiocManager_1.30.15         png_0.1-7                  
+## [75] foreach_1.5.1               clue_0.3-59                
+## [77] cachem_1.0.5                xfun_0.23                  
+## [79] rsvd_1.0.5                  ragg_1.1.2                 
+## [81] SingleCellExperiment_1.15.1 iterators_1.0.13           
+## [83] memoise_2.0.0               IRanges_2.27.0             
+## [85] cluster_2.1.2               bluster_1.3.0              
+## [87] statmod_1.4.36</code></pre>
 </div>
 <div class="footnotes">
 <hr>
@@ -594,11 +606,13 @@ Dropout pattern of informative peptides
 
 
       <footer><div class="copyright">
-  <p>Developed by Soroor Hediyeh-zadeh.</p>
+  <p></p>
+<p>Developed by Soroor Hediyeh-zadeh.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -606,6 +620,8 @@ Dropout pattern of informative peptides
 
   
 
+
+  
 
   </body>
 </html>
