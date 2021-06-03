@@ -90,10 +90,14 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                        maxit = maxit, trace.it = trace.it, warm.start = warm.start,
                        final.svd = final.svd)
   }else{
-    message(paste("Running msImpute version", method))
-    yimp <- msImputev1(y, rank.max = ceiling(erank(y)), lambda = estimateLambda(y))
+    # message(paste("Running msImpute version 2", method))
+    message("Running msImpute version 2")
+    message("Estimate distribution under MAR assumption")
+
+    rank.max <- ifelse(is.null(rank.max), ceiling(erank(y)) , rank.max)
+    yimp <- msImputev1(y, rank.max = rank.max , lambda = estimateLambda(y, rank = rank.max)) #
     if (method == "v2-mnar"){
-      #message(paste("Running msImpute version", method))
+      message(paste("Compute barycenter of MAR and NMAR distributions", method))
       if (is.null(group)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
       ygauss <- gaussimpute(y)
       yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=a)
@@ -135,7 +139,7 @@ msImputev1 <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   # if(is(object,"MAList")) x <- object$E
 
   if(any(is.nan(x) | is.infinite(x))) stop("Inf or NaN values encountered.")
-  if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
+  #if(any(rowSums(!is.na(x)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
   if(any(x < 0, na.rm = TRUE)){
     warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
   }
@@ -145,8 +149,10 @@ msImputev1 <- function(object, rank.max = NULL, lambda = NULL, thresh = 1e-05,
   if(is.null(lambda)) lambda <- softImpute::lambda0(xnas)
   message(paste("lambda0 is", lambda))
   message("fit the low-rank model ...")
-  fit <- softImpute::softImpute(x, rank.max=rank.max,lambda=lambda, type = "als", thresh = thresh,
-                                maxit = maxit, trace.it = trace.it, warm.start = warm.start, final.svd = final.svd)
+  fit <- softImpute::softImpute(x, rank.max=rank.max, lambda=lambda,
+                                type = "als", thresh = thresh,
+                                maxit = maxit, trace.it = trace.it,
+                                warm.start = warm.start, final.svd = final.svd)
   message("model fitted. \nImputting missing entries ...")
   ximp <- softImpute::complete(x, fit)
   message("Imputation completed")  # need to define a print method for final rank model fitted
