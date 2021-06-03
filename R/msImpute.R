@@ -108,11 +108,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
   }
 
 
-
-
-
-
-
+  yimp[!is.na(y)] <- y[!is.na(y)]
   return(yimp)
 
 
