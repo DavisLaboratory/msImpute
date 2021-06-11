@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CPD — CPD • msImpute</title>
+<title>Creates intensity matrix from tabular data in evidence table of MaxQuant — evidenceToMatrix • msImpute</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,10 @@
 
 
 
-<meta property="og:title" content="CPD — CPD" />
-<meta property="og:description" content="Spearman correlation between pairwise distances in the original data and imputed data.
-CPD quantifies preservation of the global structure after imputation.
-Requires complete datasets - for developers/use in benchmark studies only." />
+<meta property="og:title" content="Creates intensity matrix from tabular data in evidence table of MaxQuant — evidenceToMatrix" />
+<meta property="og:description" content="Every Modified sequence - Charge is considered as a precursor feature.
+Only the feature with maximum intensity is retained. The columns are run names, the rows
+are peptide ids (in the Modified.sequence_Charge format)" />
 
 
 
@@ -124,45 +124,60 @@ Requires complete datasets - for developers/use in benchmark studies only." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>CPD</h1>
-    <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/CPD.R'><code>R/CPD.R</code></a></small>
-    <div class="hidden name"><code>CPD.Rd</code></div>
+    <h1>Creates intensity matrix from tabular data in evidence table of MaxQuant</h1>
+    <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/evidenceToMatrix.R'><code>R/evidenceToMatrix.R</code></a></small>
+    <div class="hidden name"><code>evidenceToMatrix.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Spearman correlation between pairwise distances in the original data and imputed data.
-CPD quantifies preservation of the global structure after imputation.
-Requires complete datasets - for developers/use in benchmark studies only.</p>
+    <p>Every <code>Modified sequence</code> - <code>Charge</code> is considered as a precursor feature.
+Only the feature with maximum intensity is retained. The columns are run names, the rows
+are peptide ids (in the <code>Modified.sequence_Charge</code> format)</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>CPD</span><span class='op'>(</span><span class='va'>xorigin</span>, <span class='va'>ximputed</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>evidenceToMatrix</span><span class='op'>(</span>
+  <span class='va'>evidence</span>,
+  run_id <span class='op'>=</span> <span class='st'>"Raw.file"</span>,
+  peptide_id <span class='op'>=</span> <span class='st'>"PeptideID"</span>,
+  return_MAList <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>xorigin</th>
-      <td><p>numeric matrix. The original log-intensity data. Can not contain missing values.</p></td>
+      <th>evidence</th>
+      <td><p>data.frame. The evidence table read from evidence.txt, or <code>mspip</code> output</p></td>
     </tr>
     <tr>
-      <th>ximputed</th>
-      <td><p>numeric matrix. The imputed log-intensity data. Can not contain missing values.</p></td>
+      <th>run_id</th>
+      <td><p>character. The name of the column of evidence containing the run/raw file name.
+These form the columns of the intensity data matrix.</p></td>
+    </tr>
+    <tr>
+      <th>peptide_id</th>
+      <td><p>character. The name of the column of evidence containing the peptide ids.
+These form the rows of the intensity data matrix.</p></td>
+    </tr>
+    <tr>
+      <th>return_MAList</th>
+      <td><p>logical. If TRUE, returns a <code>MAList</code> object storing both the
+intensity data matrix and observation-level weights from
+<code>mspip</code> (propagation confidence score), otherwise returns a matrix.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>numeric</p>
+    <p>a numeric matrix of intensity data, or a <code>MAList</code> object containing
+such data and observation-level weights from <code>mspip</code></p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='op'>]</span></span>
-<span class='r-in'><span class='co'># for demonstration we use same y for xorigin and ximputed</span></span>
-<span class='r-in'><span class='fu'>CPD</span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>y</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
-<span class='r-in'></span>
-</code></pre></div>
+    <div class='dont-index'><p>mspip</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Soroor Hediyeh-zadeh</p>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

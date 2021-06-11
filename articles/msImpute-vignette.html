@@ -454,9 +454,9 @@ Dropout pattern of informative peptides
 <code class="sourceCode R"><span class="va">y_msImpute_mar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msImpute.html">msImpute</a></span><span class="op">(</span><span class="va">y</span>, method <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span> <span class="co"># no need to specify group if data is MAR.</span></code></pre></div>
 <pre><code>## Running msImpute version 2</code></pre>
 <pre><code>## Estimate distribution under MAR assumption</code></pre>
-<pre><code>## rank is 3</code></pre>
+<pre><code>## rank is 4</code></pre>
 <pre><code>## computing lambda0 ...</code></pre>
-<pre><code>## lambda0 is 7.00105001906051</code></pre>
+<pre><code>## lambda0 is 9.67386430005289</code></pre>
 <pre><code>## fit the low-rank model ...</code></pre>
 <pre><code>## model fitted. 
 ## Imputting missing entries ...</code></pre>
@@ -482,10 +482,10 @@ Dropout pattern of informative peptides
 <code class="sourceCode R"><span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mar</span>, <span class="va">group</span>, y<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <pre><code>## $withinness
 ##      Gfi1  R412Xhet R412Xhomo     K403R 
-##  8.906889  9.157768  7.259084  6.446989 
+##  8.904170  9.163056  7.251242  6.446903 
 ## 
 ## $betweenness
-## [1] 9.905195</code></pre>
+## [1] 9.908576</code></pre>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/computeStructuralMetrics.html">computeStructuralMetrics</a></span><span class="op">(</span><span class="va">y_msImpute_mnar</span>, <span class="va">group</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <pre><code>## $withinness
@@ -530,62 +530,69 @@ Dropout pattern of informative peptides
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-##  [1] grid      parallel  stats4    stats     graphics  grDevices utils    
-##  [8] datasets  methods   base     
+## [1] grid      stats4    stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
 ##  [1] ComplexHeatmap_2.9.0 imputeLCMD_2.0       impute_1.67.0       
-##  [4] pcaMethods_1.85.0    Biobase_2.53.0       BiocGenerics_0.39.0 
+##  [4] pcaMethods_1.85.0    Biobase_2.53.0       BiocGenerics_0.39.1 
 ##  [7] norm_1.0-9.5         tmvtnorm_1.4-10      gmm_1.6-6           
-## [10] sandwich_3.0-1       Matrix_1.3-3         mvtnorm_1.1-1       
+## [10] sandwich_3.0-1       Matrix_1.3-3         mvtnorm_1.1-2       
 ## [13] limma_3.49.0         msImpute_1.3.0       reticulate_1.20     
-## [16] BiocStyle_2.21.1    
+## [16] BiocStyle_2.21.2    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-7                matrixStats_0.59.0         
-##  [3] fs_1.5.0                    RColorBrewer_1.1-2         
-##  [5] doParallel_1.0.16           rprojroot_2.0.2            
-##  [7] GenomeInfoDb_1.29.0         tools_4.1.0                
-##  [9] bslib_0.2.5.1               R6_2.5.0                   
-## [11] irlba_2.3.3                 colorspace_2.0-1           
-## [13] GetoptLong_1.0.5            compiler_4.1.0             
-## [15] textshaping_0.3.4           BiocNeighbors_1.11.0       
-## [17] Cairo_1.5-12.2              desc_1.3.0                 
-## [19] DelayedArray_0.19.0         bookdown_0.22              
-## [21] sass_0.4.0                  pkgdown_1.6.1.9001         
-## [23] systemfonts_1.0.2           stringr_1.4.0              
-## [25] digest_0.6.27               rmarkdown_2.8              
-## [27] XVector_0.33.0              pkgconfig_2.0.3            
-## [29] htmltools_0.5.1.1           sparseMatrixStats_1.5.0    
-## [31] MatrixGenerics_1.5.0        highr_0.9                  
-## [33] fastmap_1.1.0               pdist_1.2                  
-## [35] GlobalOptions_0.1.2         rlang_0.4.11               
-## [37] DelayedMatrixStats_1.15.0   shape_1.4.6                
-## [39] jquerylib_0.1.4             zoo_1.8-9                  
-## [41] jsonlite_1.7.2              BiocParallel_1.27.0        
-## [43] RCurl_1.98-1.3              magrittr_2.0.1             
-## [45] BiocSingular_1.9.0          GenomeInfoDbData_1.2.6     
-## [47] scuttle_1.3.0               Rcpp_1.0.6                 
-## [49] S4Vectors_0.31.0            stringi_1.6.2              
-## [51] yaml_2.2.1                  edgeR_3.35.0               
-## [53] SummarizedExperiment_1.23.0 zlibbioc_1.39.0            
-## [55] dqrng_0.3.0                 crayon_1.4.1               
-## [57] lattice_0.20-44             beachmat_2.9.0             
-## [59] circlize_0.4.12             locfit_1.5-9.4             
-## [61] metapod_1.1.0               knitr_1.33                 
-## [63] igraph_1.2.6                GenomicRanges_1.45.0       
-## [65] rjson_0.2.20                rdetools_1.0               
-## [67] softImpute_1.4-1            codetools_0.2-18           
-## [69] ScaledMatrix_1.1.0          evaluate_0.14              
-## [71] data.table_1.14.0           scran_1.21.1               
-## [73] BiocManager_1.30.15         png_0.1-7                  
-## [75] foreach_1.5.1               clue_0.3-59                
-## [77] cachem_1.0.5                xfun_0.23                  
-## [79] rsvd_1.0.5                  ragg_1.1.2                 
-## [81] SingleCellExperiment_1.15.1 iterators_1.0.13           
-## [83] memoise_2.0.0               IRanges_2.27.0             
-## [85] cluster_2.1.2               bluster_1.3.0              
-## [87] statmod_1.4.36</code></pre>
+##   [1] colorspace_2.0-1            rjson_0.2.20               
+##   [3] ellipsis_0.3.2              rprojroot_2.0.2            
+##   [5] circlize_0.4.13             scuttle_1.3.0              
+##   [7] bluster_1.3.0               XVector_0.33.0             
+##   [9] GenomicRanges_1.45.0        GlobalOptions_0.1.2        
+##  [11] BiocNeighbors_1.11.0        fs_1.5.0                   
+##  [13] clue_0.3-59                 fansi_0.5.0                
+##  [15] codetools_0.2-18            sparseMatrixStats_1.5.0    
+##  [17] doParallel_1.0.16           cachem_1.0.5               
+##  [19] knitr_1.33                  jsonlite_1.7.2             
+##  [21] Cairo_1.5-12.2              cluster_2.1.2              
+##  [23] png_0.1-7                   BiocManager_1.30.15        
+##  [25] compiler_4.1.0              dqrng_0.3.0                
+##  [27] fastmap_1.1.0               BiocSingular_1.9.1         
+##  [29] htmltools_0.5.1.1           tools_4.1.0                
+##  [31] rsvd_1.0.5                  igraph_1.2.6               
+##  [33] glue_1.4.2                  GenomeInfoDbData_1.2.6     
+##  [35] dplyr_1.0.6                 Rcpp_1.0.6                 
+##  [37] softImpute_1.4-1            jquerylib_0.1.4            
+##  [39] pkgdown_1.6.1.9001          vctrs_0.3.8                
+##  [41] iterators_1.0.13            DelayedMatrixStats_1.15.0  
+##  [43] xfun_0.23                   stringr_1.4.0              
+##  [45] beachmat_2.9.0              lifecycle_1.0.0            
+##  [47] irlba_2.3.3                 statmod_1.4.36             
+##  [49] edgeR_3.35.0                zlibbioc_1.39.0            
+##  [51] zoo_1.8-9                   ragg_1.1.3                 
+##  [53] MatrixGenerics_1.5.0        parallel_4.1.0             
+##  [55] SummarizedExperiment_1.23.0 RColorBrewer_1.1-2         
+##  [57] SingleCellExperiment_1.15.1 yaml_2.2.1                 
+##  [59] memoise_2.0.0               sass_0.4.0                 
+##  [61] stringi_1.6.2               highr_0.9                  
+##  [63] S4Vectors_0.31.0            desc_1.3.0                 
+##  [65] foreach_1.5.1               ScaledMatrix_1.1.0         
+##  [67] scran_1.21.1                BiocParallel_1.27.0        
+##  [69] shape_1.4.6                 GenomeInfoDb_1.29.0        
+##  [71] rlang_0.4.11                pkgconfig_2.0.3            
+##  [73] systemfonts_1.0.2           matrixStats_0.59.0         
+##  [75] bitops_1.0-7                evaluate_0.14              
+##  [77] lattice_0.20-44             purrr_0.3.4                
+##  [79] pdist_1.2                   tidyselect_1.1.1           
+##  [81] magrittr_2.0.1              bookdown_0.22              
+##  [83] R6_2.5.0                    IRanges_2.27.0             
+##  [85] generics_0.1.0              metapod_1.1.0              
+##  [87] DelayedArray_0.19.0         pillar_1.6.1               
+##  [89] RCurl_1.98-1.3              tibble_3.1.2               
+##  [91] crayon_1.4.1                utf8_1.2.1                 
+##  [93] rmarkdown_2.8               GetoptLong_1.0.5           
+##  [95] locfit_1.5-9.4              data.table_1.14.0          
+##  [97] FNN_1.1.3                   digest_0.6.27              
+##  [99] tidyr_1.1.3                 textshaping_0.3.5          
+## [101] bslib_0.2.5.1</code></pre>
 </div>
 <div class="footnotes">
 <hr>

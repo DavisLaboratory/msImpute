@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CPD — CPD • msImpute</title>
+<title>Fills missing values by Peptide Identity Propagation (PIP) — mspip • msImpute</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,11 @@
 
 
 
-<meta property="og:title" content="CPD — CPD" />
-<meta property="og:description" content="Spearman correlation between pairwise distances in the original data and imputed data.
-CPD quantifies preservation of the global structure after imputation.
-Requires complete datasets - for developers/use in benchmark studies only." />
+<meta property="og:title" content="Fills missing values by Peptide Identity Propagation (PIP) — mspip" />
+<meta property="og:description" content="Peptide identity is propagated from MS-MS or PASEF identified features in evidence.txt to
+MS1 features in allPeptides.txt that are detected but not identified. A confidence score (probability)
+is assigned to every propagation. The confidence scores can be used as observation-level weights
+in limma::lmFit to account for uncertainty in propagation." />
 
 
 
@@ -124,45 +125,65 @@ Requires complete datasets - for developers/use in benchmark studies only." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>CPD</h1>
-    <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/CPD.R'><code>R/CPD.R</code></a></small>
-    <div class="hidden name"><code>CPD.Rd</code></div>
+    <h1>Fills missing values by Peptide Identity Propagation (PIP)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/DavisLaboratory/msImpute/blob/master/R/mspip.R'><code>R/mspip.R</code></a></small>
+    <div class="hidden name"><code>mspip.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Spearman correlation between pairwise distances in the original data and imputed data.
-CPD quantifies preservation of the global structure after imputation.
-Requires complete datasets - for developers/use in benchmark studies only.</p>
+    <p>Peptide identity is propagated from MS-MS or PASEF identified features in evidence.txt to
+MS1 features in allPeptides.txt that are detected but not identified. A confidence score (probability)
+is assigned to every propagation. The confidence scores can be used as observation-level weights
+in <code><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>limma::lmFit</a></code> to account for uncertainty in propagation.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>CPD</span><span class='op'>(</span><span class='va'>xorigin</span>, <span class='va'>ximputed</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>mspip</span><span class='op'>(</span><span class='va'>path_txt</span>, k <span class='op'>=</span> <span class='fl'>10</span>, thresh <span class='op'>=</span> <span class='fl'>0</span>, skip_weights <span class='op'>=</span> <span class='cn'>TRUE</span>, tims_ms <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>xorigin</th>
-      <td><p>numeric matrix. The original log-intensity data. Can not contain missing values.</p></td>
+      <th>path_txt</th>
+      <td><p>character. The path to MaxQuant <code>txt</code> directory</p></td>
     </tr>
     <tr>
-      <th>ximputed</th>
-      <td><p>numeric matrix. The imputed log-intensity data. Can not contain missing values.</p></td>
+      <th>k</th>
+      <td><p>numeric. The <code>k</code> nearest neighbors to be used for identity propagation. default to 10.</p></td>
+    </tr>
+    <tr>
+      <th>thresh</th>
+      <td><p>numeric. The uncertainty threshold for calling a Identity Transfer as confident. Sequence to peptide
+feature assignments with confidence score (probability) less than <code>thresh</code> are considered as confident assignments.
+The rest of the assignments are discarded and not reported in the output.</p></td>
+    </tr>
+    <tr>
+      <th>skip_weights</th>
+      <td><p>logical. If TRUE, the propagation confidence scores are also reported.
+The confidence scores can be used as observation-level weights in <code>limma</code> linear models
+to improve differential expression test statistics. default to FALSE.</p></td>
+    </tr>
+    <tr>
+      <th>tims_ms</th>
+      <td><p>logical. Is data acquired by TIMS-MS? default to FALSE.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>numeric</p>
+    <p>Data completeness is maximised by Peptide Identity Propagation (PIP) from runs where
+a peptide is identified by MSMS or PASEF, to runs where peptide is not fragmented
+(hence MS2 information is not available) but is detected at the MS1 level. <code>mspip</code> reports a
+confidence score for each peptide that was identified by PIP. The intensity values of PIP peptides
+can be used to reduce missing values, while the reported confidence scores can be used to
+weight the contribution of these peptides to variance estimation in linear models fitted in
+<code>limma</code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>pxd007959</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>pxd007959</span><span class='op'>$</span><span class='va'>y</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>,<span class='op'>]</span></span>
-<span class='r-in'><span class='co'># for demonstration we use same y for xorigin and ximputed</span></span>
-<span class='r-in'><span class='fu'>CPD</span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>y</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
-<span class='r-in'></span>
-</code></pre></div>
+    <div class='dont-index'><p>evidenceToMatrix</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Soroor Hediyeh-zadeh</p>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

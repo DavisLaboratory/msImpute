@@ -28,6 +28,9 @@
     <loc>/reference/computeStructuralMetrics.html</loc>
   </url>
   <url>
+    <loc>/reference/evidenceToMatrix.html</loc>
+  </url>
+  <url>
     <loc>/reference/findVariableFeatures.html</loc>
   </url>
   <url>
@@ -35,6 +38,9 @@
   </url>
   <url>
     <loc>/reference/msImpute.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mspip.html</loc>
   </url>
   <url>
     <loc>/reference/plotCV2.html</loc>

@@ -61,7 +61,6 @@ Users can use this plot as a diagnostic plot to determine if filtering by averag
 
 
 
-
   
 
   
@@ -138,7 +137,7 @@ Outlier observations (possibly originated from incorrect match between runs), ar
 Users can use this plot as a diagnostic plot to determine if filtering by average intensity is required.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>plotCV2</span><span class='op'>(</span><span class='va'>y</span>, trend <span class='op'>=</span> <span class='cn'>TRUE</span>, outlier <span class='op'>=</span> <span class='cn'>FALSE</span>, sigma <span class='op'>=</span> <span class='fl'>1</span>, eps <span class='op'>=</span> <span class='fl'>0.001</span>, main <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>plotCV2</span><span class='op'>(</span><span class='va'>y</span>, trend <span class='op'>=</span> <span class='cn'>TRUE</span>, main <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,18 +149,6 @@ Users can use this plot as a diagnostic plot to determine if filtering by averag
     <tr>
       <th>trend</th>
       <td><p>logical. Should a loess trend be fitted to CV^2 and mean values. Default to TRUE.</p></td>
-    </tr>
-    <tr>
-      <th>outlier</th>
-      <td><p>logical. Should outlier points be highlighted? Defaults to FALSE.</p></td>
-    </tr>
-    <tr>
-      <th>sigma</th>
-      <td><p>numeric. Kernel width in RBF kernel. Default to 1.</p></td>
-    </tr>
-    <tr>
-      <th>eps</th>
-      <td><p>numeric. This is threshold used to call a data point as an outlier. Default to 0.001</p></td>
     </tr>
     <tr>
       <th>main</th>
