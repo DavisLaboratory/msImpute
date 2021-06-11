@@ -4,18 +4,12 @@
 \alias{plotCV2}
 \title{Plot mean-CV^2 trend}
 \usage{
-plotCV2(y, trend = TRUE, outlier = FALSE, sigma = 1, eps = 0.001, main = NULL)
+plotCV2(y, trend = TRUE, main = NULL)
 }
 \arguments{
 \item{y}{numeric matrix of log-intensity}
 
 \item{trend}{logical. Should a loess trend be fitted to CV^2 and mean values. Default to TRUE.}
-
-\item{outlier}{logical. Should outlier points be highlighted? Defaults to FALSE.}
-
-\item{sigma}{numeric. Kernel width in RBF kernel. Default to 1.}
-
-\item{eps}{numeric. This is threshold used to call a data point as an outlier. Default to 0.001}
 
 \item{main}{character string. Title of the plot. Default  to NULL}
 }

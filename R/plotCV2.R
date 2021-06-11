@@ -12,9 +12,6 @@
 #'
 #' @param y numeric matrix of log-intensity
 #' @param trend logical. Should a loess trend be fitted to CV^2 and mean values. Default to TRUE.
-#' @param outlier logical. Should outlier points be highlighted? Defaults to FALSE.
-#' @param sigma numeric. Kernel width in RBF kernel. Default to 1.
-#' @param eps numeric. This is threshold used to call a data point as an outlier. Default to 0.001
 #' @param main character string. Title of the plot. Default  to NULL
 #'
 #' @return A plot is created on the current graphics device.
@@ -26,10 +23,9 @@
 #'
 #' @importFrom limma loessFit
 #' @importFrom matrixStats rowSds
-#' @importFrom rdetools rbfkernel
 #' @importFrom graphics plot lines points
 #' @export
-plotCV2 <- function(y, trend = TRUE, outlier = FALSE, sigma=1, eps = 0.001, main=NULL){
+plotCV2 <- function(y, trend = TRUE, main=NULL){
   A <- rowMeans(y, na.rm = TRUE)
   CV <- (matrixStats::rowSds(data.matrix(y), na.rm = TRUE)/A)^2
   res <- data.frame(mean = A, CV = CV)
@@ -39,13 +35,6 @@ plotCV2 <- function(y, trend = TRUE, outlier = FALSE, sigma=1, eps = 0.001, main
     fit <- limma::loessFit(CV, A)
     o <- order(A)
     lines(A[o], fit$fitted[o], lwd =2, col = "red")
-  }
-
-  if(outlier){
-    m <- rdetools::rbfkernel(X=data.matrix(res), sigma = sigma, Y=data.matrix(res))
-    res$RBF <- rowMeans(m)
-    points(A[res$RBF < eps], CV[res$RBF < eps], col = "red", cex = 0.5, pch = 16)
-    res$outlier <- ifelse(res$RBF < eps, TRUE, FALSE)
   }
 
   return(res)
