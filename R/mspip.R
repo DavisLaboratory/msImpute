@@ -57,20 +57,42 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
   message("Extracting unidentified MS1 peptide features")
 
-  # do we need RT for matching here?
-  unidentified_peptides <- dplyr::anti_join(allPeptides, evidence,
-                                            by = c("Retention.time","Raw.file","Charge",
-                                                   "Number.of.isotopic.peaks","Intensity"))
+
+  ms1_anchors_pasef <- c("Raw.file","Charge", "Intensity",
+                         #"Number.of.isotopic.peaks",
+                         "Ion.mobility.index")
+
+  ## MSMS types are problematic here. They aren't proper idents though, so all good.
+  ms1_anchors_msms <- c("Raw.file","Charge", "Intensity",
+                        # "Number.of.isotopic.peaks",
+                        "Number.of.scans")
+
+  ms1_anchors <- ms1_anchors_msms
+  if(tims_ms) ms1_anchors <- ms1_anchors_pasef
+
+
 
   identified_peptides <- dplyr::semi_join(evidence, allPeptides,
-                                          by = c(#"Retention.time",
-                                            "Raw.file","Charge",
-                                            "Number.of.scans","Number.of.data.points",
-                                            "Number.of.isotopic.peaks","Intensity"))
+                                          by = ms1_anchors)
 
 
-  attrs <- c("Retention.time","Charge","m.z","Mass","Number.of.isotopic.peaks",
-             "Intensity")
+  # do we need RT for matching here? not in PASEF
+  unidentified_peptides <- dplyr::anti_join(allPeptides, identified_peptides,
+                                            by = ms1_anchors)
+
+
+
+
+  attr_msms <- c("Retention.time","Charge","m.z",
+                 "Mass","Number.of.isotopic.peaks",
+                 "Intensity")
+
+  attr_pasef <- c("Retention.time","Charge","m.z",
+                 "Mass","Number.of.isotopic.peaks",
+                 "Ion.mobility.index",
+                 "Intensity")
+  attrs <- attr_msms
+  if(tims_ms) attrs <- attr_pasef
 
   query_data <- unidentified_peptides
   transfered_idents <- list()
@@ -102,6 +124,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
     # identifications
     run_prototypes <- identified_peptides[keep_idents, attrs]
+
 
     ident_labels <- identified_peptides[keep_idents, "PeptideID"]
     prototype_charges <- as.numeric(run_prototypes$Charge)
@@ -151,7 +174,14 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
     normalised_probs <- p3
 
-    nn_indices <- knn_prototypes$nn.index
+    if(sum(!complete.cases(normalised_probs)) > 0 ) {
+      message("Warning: No MS1 feature was found for some identifications.You may wish to increase k.")
+    }
+
+    valid_features <- rowSums(is.finite(normalised_probs)) > 1
+
+    normalised_probs <- normalised_probs[valid_features,]
+    nn_indices <- knn_prototypes$nn.index[valid_features,]
 
     idxs <- apply(normalised_probs, 1, FUN= function(x) {
       z <- logical(length(x)); z[which.max(x)] <- TRUE; return(z)
@@ -167,7 +197,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     df_query_idents <- cbind(
       Raw.file = run_id,
       query_embedding[query_max_probs,],
-      data.frame(probability = max_probs, PeptideID = ident_labels)
+      data.frame(probability = max_probs, PeptideID = ident_labels[valid_features])
     )
 
     rownames(df_query_idents) <- NULL
