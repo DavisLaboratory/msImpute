@@ -139,7 +139,7 @@ are peptide ids (in the <code>Modified.sequence_Charge</code> format)</p>
   <span class='va'>evidence</span>,
   run_id <span class='op'>=</span> <span class='st'>"Raw.file"</span>,
   peptide_id <span class='op'>=</span> <span class='st'>"PeptideID"</span>,
-  return_MAList <span class='op'>=</span> <span class='cn'>FALSE</span>
+  return_EList <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -160,8 +160,8 @@ These form the columns of the intensity data matrix.</p></td>
 These form the rows of the intensity data matrix.</p></td>
     </tr>
     <tr>
-      <th>return_MAList</th>
-      <td><p>logical. If TRUE, returns a <code>MAList</code> object storing both the
+      <th>return_EList</th>
+      <td><p>logical. If TRUE, returns a <code>EListRaw</code> object storing both the
 intensity data matrix and observation-level weights from
 <code>mspip</code> (propagation confidence score), otherwise returns a matrix.</p></td>
     </tr>
@@ -169,7 +169,7 @@ intensity data matrix and observation-level weights from
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a numeric matrix of intensity data, or a <code>MAList</code> object containing
+    <p>a numeric matrix of intensity data, or a <code>EListRaw</code> object containing
 such data and observation-level weights from <code>mspip</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
