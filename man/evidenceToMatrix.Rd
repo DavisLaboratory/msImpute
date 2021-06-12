@@ -8,7 +8,7 @@ evidenceToMatrix(
   evidence,
   run_id = "Raw.file",
   peptide_id = "PeptideID",
-  return_MAList = FALSE
+  return_EList = FALSE
 )
 }
 \arguments{
@@ -20,12 +20,12 @@ These form the columns of the intensity data matrix.}
 \item{peptide_id}{character. The name of the column of evidence containing the peptide ids.
 These form the rows of the intensity data matrix.}
 
-\item{return_MAList}{logical. If TRUE, returns a \code{MAList} object storing both the
+\item{return_EList}{logical. If TRUE, returns a \code{EListRaw} object storing both the
 intensity data matrix and observation-level weights from
 \code{mspip} (propagation confidence score), otherwise returns a matrix.}
 }
 \value{
-a numeric matrix of intensity data, or a \code{MAList} object containing
+a numeric matrix of intensity data, or a \code{EListRaw} object containing
 such data and observation-level weights from \code{mspip}
 }
 \description{
