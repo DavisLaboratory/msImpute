@@ -170,7 +170,14 @@ intensity data matrix and observation-level weights from
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a numeric matrix of intensity data, or a <code>EListRaw</code> object containing
-such data and observation-level weights from <code>mspip</code></p>
+such data and observation-level weights from <code>mspip</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <code>EListRaw</code> object created by the function is intended to bridge <code>msImpute</code> and statistical
+methods of <code>limma</code>. The object can be passed to <code>normalizeBetweenArrays</code> for normalisation, which can then
+be passed to <code>lmFit</code> and <code>eBayes</code> for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
+respectively. The <code>weights</code> slot is recognized by <code>lmFit</code>, which incorporates the uncertainty in intensity values
+inferred by PIP into the test statistic.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>mspip</p></div>

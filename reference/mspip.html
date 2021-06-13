@@ -40,10 +40,10 @@
 
 
 <meta property="og:title" content="Fills missing values by Peptide Identity Propagation (PIP) — mspip" />
-<meta property="og:description" content="Peptide identity is propagated from MS-MS or PASEF identified features in evidence.txt to
+<meta property="og:description" content="Peptide identity (sequence and charge) is propagated from MS-MS or PASEF identified features in evidence.txt to
 MS1 features in allPeptides.txt that are detected but not identified. A confidence score (probability)
 is assigned to every propagation. The confidence scores can be used as observation-level weights
-in limma::lmFit to account for uncertainty in propagation." />
+in limma::lmFit to account for uncertainty in inferred peptide intensity values." />
 
 
 
@@ -131,10 +131,10 @@ in limma::lmFit to account for uncertainty in propagation." />
     </div>
 
     <div class="ref-description">
-    <p>Peptide identity is propagated from MS-MS or PASEF identified features in evidence.txt to
+    <p>Peptide identity (sequence and charge) is propagated from MS-MS or PASEF identified features in evidence.txt to
 MS1 features in allPeptides.txt that are detected but not identified. A confidence score (probability)
 is assigned to every propagation. The confidence scores can be used as observation-level weights
-in <code><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>limma::lmFit</a></code> to account for uncertainty in propagation.</p>
+in <code><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>limma::lmFit</a></code> to account for uncertainty in inferred peptide intensity values.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>mspip</span><span class='op'>(</span><span class='va'>path_txt</span>, k <span class='op'>=</span> <span class='fl'>10</span>, thresh <span class='op'>=</span> <span class='fl'>0</span>, skip_weights <span class='op'>=</span> <span class='cn'>TRUE</span>, tims_ms <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></code></pre></div>
@@ -153,14 +153,14 @@ in <code><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>limma::lmFit</a></co
     <tr>
       <th>thresh</th>
       <td><p>numeric. The uncertainty threshold for calling a Identity Transfer as confident. Sequence to peptide
-feature assignments with confidence score (probability) less than <code>thresh</code> are considered as confident assignments.
-The rest of the assignments are discarded and not reported in the output.</p></td>
+feature assignments with confidence score (probability) above a threshold (specified by <code>thresh</code>) are
+considered as confident assignments.The rest of the assignments are discarded and not reported in the output.</p></td>
     </tr>
     <tr>
       <th>skip_weights</th>
       <td><p>logical. If TRUE, the propagation confidence scores are also reported.
 The confidence scores can be used as observation-level weights in <code>limma</code> linear models
-to improve differential expression test statistics. default to FALSE.</p></td>
+to improve differential expression testing. default to FALSE.</p></td>
     </tr>
     <tr>
       <th>tims_ms</th>
@@ -171,11 +171,11 @@ to improve differential expression test statistics. default to FALSE.</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Data completeness is maximised by Peptide Identity Propagation (PIP) from runs where
-a peptide is identified by MSMS or PASEF, to runs where peptide is not fragmented
-(hence MS2 information is not available) but is detected at the MS1 level. <code>mspip</code> reports a
+a peptide is identified by MSMS or PASEF to runs where peptide is not fragmented
+(hence MS2 information is not available), but is detected at the MS1 level. <code>mspip</code> reports a
 confidence score for each peptide that was identified by PIP. The intensity values of PIP peptides
 can be used to reduce missing values, while the reported confidence scores can be used to
-weight the contribution of these peptides to variance estimation in linear models fitted in
+weight the contribution of these peptide intensity values to variance estimation in linear models fitted in
 <code>limma</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
