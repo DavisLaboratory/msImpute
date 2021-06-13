@@ -12,28 +12,28 @@ mspip(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = FALSE)
 \item{k}{numeric. The \code{k} nearest neighbors to be used for identity propagation. default to 10.}
 
 \item{thresh}{numeric. The uncertainty threshold for calling a Identity Transfer as confident. Sequence to peptide
-feature assignments with confidence score (probability) less than \code{thresh} are considered as confident assignments.
-The rest of the assignments are discarded and not reported in the output.}
+feature assignments with confidence score (probability) above a threshold (specified by \code{thresh}) are
+considered as confident assignments.The rest of the assignments are discarded and not reported in the output.}
 
 \item{skip_weights}{logical. If TRUE, the propagation confidence scores are also reported.
 The confidence scores can be used as observation-level weights in \code{limma} linear models
-to improve differential expression test statistics. default to FALSE.}
+to improve differential expression testing. default to FALSE.}
 
 \item{tims_ms}{logical. Is data acquired by TIMS-MS? default to FALSE.}
 }
 \description{
-Peptide identity is propagated from MS-MS or PASEF identified features in evidence.txt to
+Peptide identity (sequence and charge) is propagated from MS-MS or PASEF identified features in evidence.txt to
 MS1 features in allPeptides.txt that are detected but not identified. A confidence score (probability)
 is assigned to every propagation. The confidence scores can be used as observation-level weights
-in \code{limma::lmFit} to account for uncertainty in propagation.
+in \code{limma::lmFit} to account for uncertainty in inferred peptide intensity values.
 }
 \details{
 Data completeness is maximised by Peptide Identity Propagation (PIP) from runs where
-a peptide is identified by MSMS or PASEF, to runs where peptide is not fragmented
-(hence MS2 information is not available) but is detected at the MS1 level. \code{mspip} reports a
+a peptide is identified by MSMS or PASEF to runs where peptide is not fragmented
+(hence MS2 information is not available), but is detected at the MS1 level. \code{mspip} reports a
 confidence score for each peptide that was identified by PIP. The intensity values of PIP peptides
 can be used to reduce missing values, while the reported confidence scores can be used to
-weight the contribution of these peptides to variance estimation in linear models fitted in
+weight the contribution of these peptide intensity values to variance estimation in linear models fitted in
 \code{limma}.
 }
 \seealso{

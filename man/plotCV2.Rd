@@ -4,14 +4,16 @@
 \alias{plotCV2}
 \title{Plot mean-CV^2 trend}
 \usage{
-plotCV2(y, trend = TRUE, main = NULL)
+plotCV2(y, trend = TRUE, main = NULL, ...)
 }
 \arguments{
 \item{y}{numeric matrix of log-intensity}
 
 \item{trend}{logical. Should a loess trend be fitted to CV^2 and mean values. Default to TRUE.}
 
-\item{main}{character string. Title of the plot. Default  to NULL}
+\item{main}{character string. Title of the plot. Default  to NULL.}
+
+\item{...}{any parameter passed to \code{plot}.}
 }
 \value{
 A plot is created on the current graphics device.

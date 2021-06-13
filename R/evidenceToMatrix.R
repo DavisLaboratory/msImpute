@@ -15,7 +15,13 @@
 #'
 #'
 #' @return a numeric matrix of intensity data, or a \code{EListRaw} object containing
-#' such data and observation-level weights from \code{mspip}
+#' such data and observation-level weights from \code{mspip}.
+#'
+#' @details The \code{EListRaw} object created by the function is intended to bridge \code{msImpute} and statistical
+#' methods of \code{limma}. The object can be passed to \code{normalizeBetweenArrays} for normalisation, which can then
+#' be passed to \code{lmFit} and \code{eBayes} for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
+#' respectively. The \code{weights} slot is recognized by \code{lmFit}, which incorporates the uncertainty in intensity values
+#' inferred by PIP into the test statistic.
 #'
 #' @importFrom stats aggregate
 #' @importFrom tidyr spread
@@ -55,7 +61,7 @@ evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "Peptid
     weights <- weights[,-1]
     weights[is.na(weights)] <- 0 # when pip idents are filtered, NAs will appear in weight matrix.
 
-    return(new("EList", list(E=E, weights=weights)))
+    return(new("EListRaw", list(E=E, weights=weights)))
   } else {
     return(E)
   }

@@ -12,7 +12,8 @@
 #'
 #' @param y numeric matrix of log-intensity
 #' @param trend logical. Should a loess trend be fitted to CV^2 and mean values. Default to TRUE.
-#' @param main character string. Title of the plot. Default  to NULL
+#' @param main character string. Title of the plot. Default  to NULL.
+#' @param ... any parameter passed to \code{plot}.
 #'
 #' @return A plot is created on the current graphics device.
 #' @examples
@@ -25,12 +26,12 @@
 #' @importFrom matrixStats rowSds
 #' @importFrom graphics plot lines points
 #' @export
-plotCV2 <- function(y, trend = TRUE, main=NULL){
+plotCV2 <- function(y, trend = TRUE, main=NULL, ...){
   A <- rowMeans(y, na.rm = TRUE)
   CV <- (matrixStats::rowSds(data.matrix(y), na.rm = TRUE)/A)^2
   res <- data.frame(mean = A, CV = CV)
   plot(A, CV, cex = 0.3, pch = 16,
-       xlab="Average log-intensity", ylab=expression("CV"^2), main=main)
+       xlab="Average log-intensity", ylab=expression("CV"^2), main=main, ...)
   if(trend){
     fit <- limma::loessFit(CV, A)
     o <- order(A)

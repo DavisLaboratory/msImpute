@@ -26,12 +26,19 @@ intensity data matrix and observation-level weights from
 }
 \value{
 a numeric matrix of intensity data, or a \code{EListRaw} object containing
-such data and observation-level weights from \code{mspip}
+such data and observation-level weights from \code{mspip}.
 }
 \description{
 Every \code{Modified sequence} - \code{Charge} is considered as a precursor feature.
 Only the feature with maximum intensity is retained. The columns are run names, the rows
 are peptide ids (in the \code{Modified.sequence_Charge} format)
+}
+\details{
+The \code{EListRaw} object created by the function is intended to bridge \code{msImpute} and statistical
+methods of \code{limma}. The object can be passed to \code{normalizeBetweenArrays} for normalisation, which can then
+be passed to \code{lmFit} and \code{eBayes} for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
+respectively. The \code{weights} slot is recognized by \code{lmFit}, which incorporates the uncertainty in intensity values
+inferred by PIP into the test statistic.
 }
 \seealso{
 mspip
