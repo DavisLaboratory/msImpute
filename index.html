@@ -85,22 +85,22 @@
 <a href="#msimpute---methods-for-label-free-mass-spectrometry-proteomics-imputation" class="anchor" aria-hidden="true"></a>msImpute - Methods for label-free mass spectrometry proteomics imputation</h1></div>
 <p>MsImpute is a R package for imputation of peptide intensity in proteomics experiments. It additionally contains tools for MAR/MNAR diagnosis and assessment of distortions to the probability distribution of the data post imputation.</p>
 <p>The missing values are imputed by low-rank approximation of the underlying data matrix if they are MAR (method = “v2”), by Barycenter approach if missingness is MNAR (“v2-mnar”), or by Peptide Identity Propagation (PIP). While “v2” approach is more appropriate for imputation of data acquired by DIA, “v2-mnar” is designed for imputation of DDA, TMT and time-series datasets. However, the true dynamic range can not be reliably recovered by imputation, particularly in datasets with small sample sizes (for example, 3-5 replicates per experimental condition).</p>
-<p>Our PIP approach infers the missing intensity values for an identification based on similarity of LC-MS features of peptide-like signals detected in MS1 (e.g. by a feature detector) and the identified peptides. We currently support MaxQuant outputs, including DDA-PASEF datasets. <strong>We strongly recommend the PIP approach for imputation of time-series, or datasets which suffer from large (&gt; 50%) missing values per run</strong>. Our PIP enhances data completeness, while reporting <em>weights</em> that measure the confidence in propagation. These can be used as observation-level weights in <em>limma</em> linear models to improve differential expression testing, by incorporating the uncertainty in intensity values that are inferred by PIP into the model. <strong>We have given a demo of PIP approach on a published DDA dataset below.</strong></p>
+<p>Our PIP approach infers the missing intensity values for an identification based on similarity of LC-MS features of peptide-like signals detected in MS1 (e.g. by a feature detector) and the identified peptides. We currently support MaxQuant outputs, including DDA-PASEF datasets. <strong>We strongly recommend the PIP approach for imputation of time-series, or datasets which suffer from large (&gt; 50%) missing values per run</strong>. Our PIP enhances data completeness, while reporting <em>weights</em> that measure the confidence in propagation. These can be used as observation-level weights in <em>limma</em> linear models to improve differential abundance testing, by incorporating the uncertainty in intensity values that are inferred by PIP into the model. <strong>We have given a demo of PIP approach on a published DDA dataset below.</strong></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
 <p>Install from Github:</p>
-<pre><code>install.packages("devtools") # devtools is required to download and install the package
+<pre class="{r}"><code>install.packages("devtools") # devtools is required to download and install the package
 devtools::install_github("DavisLaboratory/msImpute")</code></pre>
 <p>Install from Bioconductor:</p>
-<pre><code>if(!requireNamespace("BiocManager", quietly = TRUE))
+<pre class="{r}"><code>if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("msImpute")</code></pre>
 </div>
 <div id="quick-start" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quick-start" class="anchor" aria-hidden="true"></a>Quick Start</h2>
-<pre><code><a href="https://github.com/rstudio/reticulate" class="external-link">library(reticulate)
+<pre class="{r}"><code><a href="https://github.com/rstudio/reticulate" class="external-link">library(reticulate)
 library(msImpute)
 
 # xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
@@ -139,11 +139,24 @@ computeStructuralMetrics(xcomplete,
 <p>Figure: The proportion of missing peptides per sample in PASS00589 DDA dataset before and after PIP.</p>
 <p><img src="https://user-images.githubusercontent.com/7257233/121839424-5c3a4380-cd1d-11eb-84fa-437a387c44f2.png" width="700px" align="center"></p>
 <p><strong>PIP recovers the low abundance peptides and re-constructs the true dynamic range</strong></p>
-<p>Low-abundance peptides not quantified by MaxQuant are recovered, and differential expression results are improved. Note down regulated peptides that are not present in the volcano plot of DE test on MQ-reported data (bottom left), that are recovered by PIP (bottom right volcano plot) for the same experimental contrast.</p>
+<p>Low-abundance peptides not quantified by MaxQuant are recovered, and differential abundance results are improved. Note down regulated peptides that are not present in the volcano plot of DE test on MQ-reported data (bottom left), that are recovered by PIP (bottom right volcano plot) for the same experimental contrast.</p>
 <p><img src="https://user-images.githubusercontent.com/7257233/121839859-55600080-cd1e-11eb-998e-f7e60896b1bf.png" width="700px" align="center"></p>
-<p>Need more help to start? We have collected a number of <strong>case studies</strong> <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf" class="external-link">here</a></p>
-<p><strong>Reference</strong></p>
-<p>Please consider to cite our <a href="https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1" class="external-link">preprint</a></p>
+<p>The PIP workflow involves the following two function calls:</p>
+<pre class="{r}"><code>dda_pip &lt;- mspip("/path/to/combined/txt", k=3, thresh = 0.0, tims_ms = FALSE, skip_weights = FALSE)
+y_pip &lt;- evidenceToMatrix(dda_pip, return_EList = TRUE)</code></pre>
+<p>Test for differential abundance in <em>limma</em>:</p>
+<pre class="{r}"><code>y_pip &lt;- normalizeBetweenArrays(y_pip, method = "quantile")
+design &lt;- model.matrix(~ group)
+fit &lt;- lmFit(y_pip, design)
+fit &lt;- eBayes(fit)
+summary(decideTests(fit))</code></pre>
+<p><em>limma</em> automatically recognizes the <code>EListRaw</code> object created by <code>evidenceToMatrix</code>, applies log2 transformation to intensity values, and passes the PIP confidence scores as observation-level weights to <code>lmFit</code>.</p>
+<p>Need more help to start? Please see documentation. We have also collected a number of <strong>case studies</strong> <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf" class="external-link">here</a></p>
+</div>
+<div id="reference" class="section level2">
+<h2 class="hasAnchor">
+<a href="#reference" class="anchor" aria-hidden="true"></a>Reference</h2>
+<p>Our old <a href="https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1" class="external-link">preprint</a> will be updated soon.</p>
 </div>
 </div>
 
