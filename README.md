@@ -6,6 +6,11 @@
 msImpute - Methods for label-free mass spectrometry proteomics imputation
 ========================================
 
+MsImpute is a R package for imputation of peptide intensity in proteomics experiments.
+It additionally contains tools for MAR/MNAR diagnosis and assessment of distortions to the probability 
+distribution of the data post imputation.  
+
+The missing values are imputed by low-rank approximation of the underlying data matrix if they are MAR (method = "v2"), by Barycenter approach if missingness is MNAR ("v2-mnar"), or by Peptide Identity Propagation (PIP). While "v2" approach is more appropriate for imputation of data acquired by DIA, "v2-mnar" is designed for imputation of DDA, TMT and time-series datasets. However, the true dynamic range can not be reliably recovered by imputation, particularly in datasets with small sample sizes (for example, 3-5 replicates per experimental condition). Our PIP approach infers the missing intensity values for an identification based on similarity of LC-MS features of peptide-like signals detected in MS1 (e.g. by a feature detector) to identified peptides. We currently support MaxQuant outputs, including DDA-PASEF datasets.
 
 
 Installation
