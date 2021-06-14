@@ -147,7 +147,7 @@ are peptide ids (in the <code>Modified.sequence_Charge</code> format)</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>evidence</th>
-      <td><p>data.frame. The evidence table read from evidence.txt, or <code>mspip</code> output</p></td>
+      <td><p>data.frame. The evidence table read from evidence.txt, or data.frame created by <code>mspip</code>.</p></td>
     </tr>
     <tr>
       <th>run_id</th>
@@ -177,7 +177,8 @@ such data and observation-level weights from <code>mspip</code>.</p>
 methods of <code>limma</code>. The object can be passed to <code>normalizeBetweenArrays</code> for normalisation, which can then
 be passed to <code>lmFit</code> and <code>eBayes</code> for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
 respectively. The <code>weights</code> slot is recognized by <code>lmFit</code>, which incorporates the uncertainty in intensity values
-inferred by PIP into the test statistic.</p>
+inferred by PIP into the test statistic.
+The function is also a generic tool to create a matrix from the evidence table of MaxQuant.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>mspip</p></div>
