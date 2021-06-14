@@ -74,9 +74,12 @@ computeStructuralMetrics(xcomplete,
 New feature : msPIP
 ---------------------
 
+We applied the PIP framework to a DDA dataset.The dataset consists of eight experimental condition, each with three replicates (total of 24 runs). Twelve non-human proteins were spiked at known concentrations into constant HEK-293 background. 
+We examined proportion of missing peptides per run before and after PIP. The volcano plots represent data for comparing group 8 vs group 1. 
+
 **PIP reduces the proportion of missing values substantially, almost to zero.**
 
-Figure: The proportion of missing peptides per sample in PASS00589 DDA dataset before and after PIP.
+Figure: The proportion of missing peptides per sample in PASS00589 DDA dataset before and after PIP. 
 
 <img src="https://user-images.githubusercontent.com/7257233/121839424-5c3a4380-cd1d-11eb-84fa-437a387c44f2.png" width="700px" align="center">
 
@@ -108,6 +111,8 @@ values, and passes the PIP confidence scores as observation-level weights to `lm
 
 
 Need more help to start? Please see documentation. We have also collected a number of **case studies** [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
+
+**Questions?** Please consider openning an issue.
 
 
 Reference
