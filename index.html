@@ -78,13 +78,14 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="msimpute" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#msimpute" class="anchor" aria-hidden="true"></a>msImpute</h1></div>
-<!-- badges: start -->
 
-<p>Methods for label-free mass spectrometry proteomics imputation</p>
-<p><strong>Installation (R)</strong></p>
+
+<div id="msimpute---methods-for-label-free-mass-spectrometry-proteomics-imputation" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#msimpute---methods-for-label-free-mass-spectrometry-proteomics-imputation" class="anchor" aria-hidden="true"></a>msImpute - Methods for label-free mass spectrometry proteomics imputation</h1></div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
 <p>Install from Github:</p>
 <pre><code>install.packages("devtools") # devtools is required to download and install the package
 devtools::install_github("DavisLaboratory/msImpute")</code></pre>
@@ -92,7 +93,10 @@ devtools::install_github("DavisLaboratory/msImpute")</code></pre>
 <pre><code>if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("msImpute")</code></pre>
-<p><strong>Quick Start</strong></p>
+</div>
+<div id="quick-start" class="section level2">
+<h2 class="hasAnchor">
+<a href="#quick-start" class="anchor" aria-hidden="true"></a>Quick Start</h2>
 <pre><code><a href="https://github.com/rstudio/reticulate" class="external-link">library(reticulate)
 library(msImpute)
 
@@ -124,10 +128,22 @@ computeStructuralMetrics(xcomplete,
                          k = 2) 
 
 </a></code></pre>
+</div>
+<div id="new-feature--mspip" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-feature--mspip" class="anchor" aria-hidden="true"></a>New feature : msPIP</h2>
+<p><strong>PIP reduces the proportion of missing values substantially, almost to zero.</strong></p>
+<p>Figure: The proportion of missing peptides per sample in PASS00589 DDA dataset before and after PIP.</p>
+<p><img src="https://user-images.githubusercontent.com/7257233/121839424-5c3a4380-cd1d-11eb-84fa-437a387c44f2.png" width="700px" align="center"></p>
+<p><strong>PIP recovers the low abundance peptides and re-constructs the true dynamic range</strong></p>
+<p>Low-abundance peptides not quantified by MaxQuant are recovered, and differential expression results are improved. Note down regulated peptides that are not present in the volcano plot of DE test on MQ-reported data (bottom left), that are recovered by PIP (bottom right volcano plot) for the same experimental contrast.</p>
+<p><img src="https://user-images.githubusercontent.com/7257233/121839859-55600080-cd1e-11eb-998e-f7e60896b1bf.png" width="700px" align="center"></p>
 <p>Need more help to start? We have collected a number of <strong>case studies</strong> <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf" class="external-link">here</a></p>
 <p><strong>Reference</strong></p>
 <p>Please consider to cite our <a href="https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1" class="external-link">preprint</a></p>
 </div>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
