@@ -135,6 +135,7 @@ computeStructuralMetrics(xcomplete,
 <div id="new-feature--mspip" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-feature--mspip" class="anchor" aria-hidden="true"></a>New feature : msPIP</h2>
+<p>We applied the PIP framework to a DDA dataset.The dataset consists of eight experimental condition, each with three replicates (total of 24 runs). Twelve non-human proteins were spiked at known concentrations into constant HEK-293 background. We examined proportion of missing peptides per run before and after PIP. The volcano plots represent data for comparing group 8 vs group 1.</p>
 <p><strong>PIP reduces the proportion of missing values substantially, almost to zero.</strong></p>
 <p>Figure: The proportion of missing peptides per sample in PASS00589 DDA dataset before and after PIP.</p>
 <p><img src="https://user-images.githubusercontent.com/7257233/121839424-5c3a4380-cd1d-11eb-84fa-437a387c44f2.png" width="700px" align="center"></p>
@@ -152,6 +153,7 @@ fit &lt;- eBayes(fit)
 summary(decideTests(fit))</code></pre>
 <p><em>limma</em> automatically recognizes the <code>EListRaw</code> object created by <code>evidenceToMatrix</code>, applies log2 transformation to intensity values, and passes the PIP confidence scores as observation-level weights to <code>lmFit</code>.</p>
 <p>Need more help to start? Please see documentation. We have also collected a number of <strong>case studies</strong> <a href="https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf" class="external-link">here</a></p>
+<p><strong>Questions?</strong> Please consider openning an issue.</p>
 </div>
 <div id="reference" class="section level2">
 <h2 class="hasAnchor">
