@@ -12,7 +12,7 @@ evidenceToMatrix(
 )
 }
 \arguments{
-\item{evidence}{data.frame. The evidence table read from evidence.txt, or \code{mspip} output}
+\item{evidence}{data.frame. The evidence table read from evidence.txt, or data.frame created by \code{mspip}.}
 
 \item{run_id}{character. The name of the column of evidence containing the run/raw file name.
 These form the columns of the intensity data matrix.}
@@ -39,6 +39,7 @@ methods of \code{limma}. The object can be passed to \code{normalizeBetweenArray
 be passed to \code{lmFit} and \code{eBayes} for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
 respectively. The \code{weights} slot is recognized by \code{lmFit}, which incorporates the uncertainty in intensity values
 inferred by PIP into the test statistic.
+The function is also a generic tool to create a matrix from the evidence table of MaxQuant.
 }
 \seealso{
 mspip
