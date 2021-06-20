@@ -172,7 +172,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     p3 <- wprobs/rowSums(wprobs)
 
 
-    normalised_probs <- p3
+    normalised_probs <- p2
 
     if(sum(!complete.cases(normalised_probs)) > 0 ) {
       message("Warning: No MS1 feature was found for some identifications.You may wish to increase k.")

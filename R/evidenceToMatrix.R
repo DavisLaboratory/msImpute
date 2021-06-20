@@ -12,6 +12,8 @@
 #' @param return_EList logical. If TRUE, returns a \code{EListRaw} object storing both the
 #' intensity data matrix and observation-level weights from
 #' \code{mspip} (propagation confidence score), otherwise returns a matrix.
+#' @param weights character. The name of the column of evidence containing weights from \code{mspip}. default to NULL.
+#' Set this to "weight" if you want the weights from PIP stored in the \code{weights} slot of the \code{EListRaw} object.
 #'
 #'
 #' @return a numeric matrix of intensity data, or a \code{EListRaw} object containing
@@ -22,7 +24,7 @@
 #' be passed to \code{lmFit} and \code{eBayes} for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
 #' respectively. The \code{weights} slot is recognized by \code{lmFit}, which incorporates the uncertainty in intensity values
 #' inferred by PIP into the test statistic.
-#' The function is also a generic tool to create a matrix from the evidence table of MaxQuant.
+#' The function is also a generic tool to create a matrix or \code{limma}-compatible objects from the evidence table of MaxQuant.
 #'
 #' @importFrom stats aggregate
 #' @importFrom tidyr spread
@@ -32,7 +34,7 @@
 #' @export
 #' @author Soroor Hediyeh-zadeh
 evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "PeptideID",
-                             return_EList = FALSE){
+                             return_EList = FALSE, weights = NULL){
 
 
 
@@ -52,17 +54,34 @@ evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "Peptid
   E <- data.matrix(E)
 
   if(return_EList){
-    if (!"weight" %in% colnames(evidence)) stop("No weight column in the input.")
-    idx <- match(paste0(y[,run_id], y[,peptide_id],y[,"Intensity"]),
-                 paste0(evidence[,run_id], evidence[,peptide_id], evidence[,"Intensity"])
-                 )
-    w <- evidence[idx, c(run_id, peptide_id, "weight")]
-    weights <- tidyr::spread(w, key = 1, value = 3)
-    rownames(weights) <- weights[,1]
-    weights <- weights[,-1]
-    weights[is.na(weights)] <- 0 # when pip idents are filtered, NAs will appear in weight matrix.
+    genes <- data[,c( peptide_id, "Sequence", "Length", "Modifications",
+                      "Modified.sequence",
+                      "Leading.Razor.Protein","Gene.Names", "Protein.Names",
+                      "Charge")]
+    genes <- genes[!duplicated(genes),]
+    genes <- genes[match(rownames(E), genes[,peptide_id]),]
 
-    return(new("EListRaw", list(E=E, weights=weights)))
+
+    if(!is.null(weights)){
+      if (!weights %in% colnames(evidence)) {
+        message("No weight column in the input. Returning an EList without the weights slot")
+        return(new("EListRaw", list(E=E, genes = genes)))
+      } else{
+        idx <- match(paste0(y[,run_id], y[,peptide_id],y[,"Intensity"]),
+                     paste0(evidence[,run_id], evidence[,peptide_id], evidence[,"Intensity"])
+        )
+        w <- evidence[idx, c(run_id, peptide_id, "weight")]
+        weights <- tidyr::spread(w, key = 1, value = 3)
+        rownames(weights) <- weights[,1]
+        weights <- weights[,-1]
+        weights[is.na(weights)] <- 0 # when pip idents are filtered, NAs will appear in weight matrix.
+
+        return(new("EListRaw", list(E=E, weights=weights, genes = genes)))
+      }
+
+    } else{
+      return(new("EListRaw", list(E=E, genes = genes)))
+    }
   } else {
     return(E)
   }

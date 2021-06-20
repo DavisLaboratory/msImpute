@@ -8,7 +8,8 @@ evidenceToMatrix(
   evidence,
   run_id = "Raw.file",
   peptide_id = "PeptideID",
-  return_EList = FALSE
+  return_EList = FALSE,
+  weights = NULL
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ These form the rows of the intensity data matrix.}
 \item{return_EList}{logical. If TRUE, returns a \code{EListRaw} object storing both the
 intensity data matrix and observation-level weights from
 \code{mspip} (propagation confidence score), otherwise returns a matrix.}
+
+\item{weights}{character. The name of the column of evidence containing weights from \code{mspip}. default to NULL.
+Set this to "weight" if you want the weights from PIP stored in the \code{weights} slot of the \code{EListRaw} object.}
 }
 \value{
 a numeric matrix of intensity data, or a \code{EListRaw} object containing
@@ -39,7 +43,7 @@ methods of \code{limma}. The object can be passed to \code{normalizeBetweenArray
 be passed to \code{lmFit} and \code{eBayes} for fitting linear models per peptide and Empirical Bayes moderation of t-statistics
 respectively. The \code{weights} slot is recognized by \code{lmFit}, which incorporates the uncertainty in intensity values
 inferred by PIP into the test statistic.
-The function is also a generic tool to create a matrix from the evidence table of MaxQuant.
+The function is also a generic tool to create a matrix or \code{limma}-compatible objects from the evidence table of MaxQuant.
 }
 \seealso{
 mspip
