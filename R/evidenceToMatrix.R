@@ -54,7 +54,7 @@ evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "Peptid
   E <- data.matrix(E)
 
   if(return_EList){
-    genes <- data[,c( peptide_id, "Sequence", "Length", "Modifications",
+    genes <- evidence[,c( peptide_id, "Sequence", "Length", "Modifications",
                       "Modified.sequence",
                       "Leading.Razor.Protein","Gene.Names", "Protein.Names",
                       "Charge")]

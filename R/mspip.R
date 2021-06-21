@@ -103,21 +103,28 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     missing_idents <- setdiff(identified_peptides$PeptideID[!identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)],
                               identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
 
+    run_idents <- unique(identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
+
     message("Number of missing idents")
     message(length(missing_idents))
 
     # compute width of Random Walk
-    # quant_idents <- rownames(y_evidence)[!is.na(y_evidence[,run_id])]
-    # sigma <- median(FNN::get.knn(identified_peptides_hvg[identified_peptides_hvg$PeptideID %in% quant_idents,
-    #                                                      c("Retention.time","Charge",
-    #                                                       "m.z","Mass",
-    #                                                       "Mod..peptide.ID",
-    #                                                       "Number.of.isotopic.peaks","Intensity")],
-    #                            k = 12)$nn.dist)
-    #
-    #
-    # message("sigma")
-    # message(sigma)
+
+    sigma <- sd(FNN::get.knnx(identified_peptides[identified_peptides$PeptideID %in% run_idents & !identified_peptides$Raw.file %in% run_id,
+                                                         c("Retention.time","Charge",
+                                                          "m.z","Mass",
+                                                          "Mod..peptide.ID",
+                                                          "Number.of.isotopic.peaks","Intensity")],
+                                  identified_peptides[identified_peptides$PeptideID %in% run_idents & identified_peptides$Raw.file %in% run_id,
+                                                      c("Retention.time","Charge",
+                                                        "m.z","Mass",
+                                                        "Mod..peptide.ID",
+                                                        "Number.of.isotopic.peaks","Intensity")],
+                               k = 5)$nn.dist)
+
+
+    message("sigma")
+    message(sigma)
 
 
     keep_idents <- (identified_peptides$PeptideID %in% missing_idents) & (!identified_peptides$Raw.file %in% run_id)
@@ -147,12 +154,11 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
     # probs <- exp(-0.5*((knn_prototypes$nn.dist^2))) # i.e. sigma = 1
-
     # probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowSds(knn_prototypes$nn.dist)))
 
-    probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowMedians(knn_prototypes$nn.dist)))
+    #probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowMedians(knn_prototypes$nn.dist)))
 
-    # probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/sigma))
+    probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/sigma))
 
 
 
@@ -219,6 +225,14 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
                               c("Raw.file","PeptideID", "Intensity")],
             weight = transfered_idents$probability[transfered_idents$probability > thresh])
                           )
+
+
+    genes <- evidence[,c( "PeptideID", "Sequence", "Length", "Modifications",
+                          "Modified.sequence",
+                          "Leading.Razor.Protein","Gene.Names", "Protein.Names",
+                          "Charge")]
+    genes <- genes[!duplicated(genes),]
+    evidence_pip <- cbind(evidence_pip, genes[match(evidence_pip$PeptideID, genes$PeptideID), grep("PeptideID", colnames(genes), invert=TRUE)])
   }
   message("PIP completed")
   return(evidence_pip)
