@@ -54,10 +54,14 @@ evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "Peptid
   E <- data.matrix(E)
 
   if(return_EList){
-    genes <- evidence[,c( peptide_id, "Sequence", "Length", "Modifications",
-                      "Modified.sequence",
-                      "Leading.Razor.Protein","Gene.Names", "Protein.Names",
-                      "Charge")]
+
+    meta_attrs <- c( peptide_id, "Sequence", "Length", "Modifications",
+                     "Modified.sequence",
+                     "Leading.razor.protein","Gene.Names", "Protein.Names",
+                     "Charge")
+    evidence_colnames <- tolower(colnames(evidence))
+
+    genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
     genes <- genes[!duplicated(genes),]
     genes <- genes[match(rownames(E), genes[,peptide_id]),]
 
