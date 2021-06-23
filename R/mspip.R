@@ -129,7 +129,9 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
 
-    keep_idents <- (identified_peptides$PeptideID %in% missing_idents) & (!identified_peptides$Raw.file %in% run_id)
+    keep1 <- (identified_peptides$PeptideID %in% missing_idents) & (!identified_peptides$Raw.file %in% run_id)
+    keep2 <- complete.cases(identified_peptides[,attrs])
+    keep_idents <- keep1 & keep2
 
 
     # compute width of Random Walk
@@ -242,7 +244,12 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     #                                 query_embedding[, grep("Intensity", colnames(query_embedding), invert = TRUE)], k = 10) # nsamples - 1
 
 
-    message("Propagating identifications")
+
+
+    ### data can contain nan or missing values
+
+
+
     knn_prototypes <- FNN::get.knnx(
       query_embedding[, grep("Intensity", colnames(query_embedding), invert = TRUE)],
       run_prototypes[, grep("Intensity", colnames(run_prototypes), invert = TRUE)],
