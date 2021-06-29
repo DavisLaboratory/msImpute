@@ -184,13 +184,9 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
 
-
-
-
-
     # identifications
     run_prototypes <- identified_peptides[keep_idents, attrs]
-    #run_prototypes <- cbind(run_prototypes, coelute_idents)
+    # run_prototypes <- cbind(run_prototypes, coelute_idents)
 
     ident_labels <- identified_peptides[keep_idents, "PeptideID"]
     prototype_charges <- as.numeric(run_prototypes$Charge)
@@ -202,12 +198,14 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
     ### add coelution for query LC-MS features
-    # C1 <- identified_peptides[identified_peptides$Raw.file %in% run_id, c("Raw.file.id","Retention.time")]
-    # query_coelutions <- FNN::get.knnx(query_elutions,
-    #                                   query_data[query_data$Raw.file %in% run_id, c("Raw.file.id","Retention.time")],
-    #                                   k = 5)
-
-
+    # C1 <- identified_peptides[(identified_peptides$Raw.file %in% run_id) & is.finite(identified_peptides$Retention.time),
+    #                           c("Raw.file.id","Retention.time")]
+    #
+    # # query_coelutions <- FNN::get.knnx(query_elutions,
+    # #                                   query_data[query_data$Raw.file %in% run_id, c("Raw.file.id","Retention.time")],
+    # #                                   k = 5)
+    #
+    #
     # C2 <- query_data[query_data$Raw.file %in% run_id, c("Raw.file.id","Retention.time")]
     #
     # query_elutions <- rbind(C1, C2)
@@ -218,7 +216,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     # # NA indicies or those larger than nrow C1 are unidentified sNN and should be removed
     # snn_elutions_query_ids[snn_elutions_query_ids > nrow(C1) | is.na(snn_elutions_query_ids)] <- NA
     #
-    # query_coelute_idents <- matrix(pep_ids[identified_peptides$Raw.file %in% run_id][snn_elutions_query_ids],
+    # query_coelute_idents <- matrix(pep_ids[(identified_peptides$Raw.file %in% run_id)][snn_elutions_query_ids],
     #                          byrow=FALSE,
     #                          nrow = nrow(snn_elutions_query_ids),
     #                          ncol = ncol(snn_elutions_query_ids))
@@ -235,7 +233,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     #                          nrow = nrow(query_coelutions$nn.index),
     #                          ncol = ncol(query_coelutions$nn.index))
 
-    #query_embedding <- cbind(query_embedding, query_coelute_idents)
+    # query_embedding <- cbind(query_embedding, query_coelute_idents)
 
 
     message("Number of detected features available for PIP in the run")
@@ -336,7 +334,8 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
                      "Charge")
     evidence_colnames <- tolower(colnames(evidence))
 
-    genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
+    # genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
+    genes <- evidence[, evidence_colnames %in% tolower(meta_attrs)]
     genes <- genes[!duplicated(genes),]
     evidence_pip <- cbind(evidence_pip, genes[match(evidence_pip$PeptideID, genes$PeptideID), grep("PeptideID", colnames(genes), invert=TRUE)])
   }

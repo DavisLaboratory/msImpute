@@ -61,7 +61,8 @@ evidenceToMatrix <- function(evidence, run_id = "Raw.file", peptide_id = "Peptid
                      "Charge")
     evidence_colnames <- tolower(colnames(evidence))
 
-    genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
+    # genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
+    genes <- evidence[, evidence_colnames %in% tolower(meta_attrs)]
     genes <- genes[!duplicated(genes),]
     genes <- genes[match(rownames(E), genes[,peptide_id]),]
 
