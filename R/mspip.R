@@ -36,7 +36,7 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
   evidence_path <- list.files(path=path_txt, pattern = "evidence.txt", full.names = TRUE)
   allPeptides_path <- list.files(path=path_txt, pattern = "allPeptides.txt", full.names = TRUE)
 
-  if(!all(file.exists(allPeptides_path, allPeptides_path))) stop("Required MaxQuant tables are not found in the specified directory")
+  if(!isTRUE(file.exists(evidence_path)) | !isTRUE(file.exists(allPeptides_path))) stop("Required MaxQuant tables are not found in the specified directory")
 
   message("Reading evidence table")
   evidence <- read.delim(evidence_path,
@@ -120,6 +120,10 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     message(run_id)
     missing_idents <- setdiff(identified_peptides$PeptideID[!identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)],
                               identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
+
+
+
+
 
     # run_idents <- unique(identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
 
