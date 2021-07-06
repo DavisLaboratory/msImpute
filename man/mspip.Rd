@@ -4,7 +4,15 @@
 \alias{mspip}
 \title{Fills missing values by Peptide Identity Propagation (PIP)}
 \usage{
-mspip(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = FALSE)
+mspip(
+  path_txt,
+  k = 10,
+  thresh = 0,
+  skip_weights = TRUE,
+  tims_ms = FALSE,
+  group_restriction = NULL,
+  nlandmarks = 50
+)
 }
 \arguments{
 \item{path_txt}{character. The path to MaxQuant \code{txt} directory}
@@ -20,6 +28,11 @@ The confidence scores can be used as observation-level weights in \code{limma} l
 to improve differential expression testing. default to FALSE.}
 
 \item{tims_ms}{logical. Is data acquired by TIMS-MS? default to FALSE.}
+
+\item{group_restriction}{A data.frame with two columns named Raw.file and group, specifying run file and the (experimental) group to which the run belongs.
+Use this option for Unbalanced PIP}
+
+\item{nlandmarks}{numeric. Number of landmark peptides used for measuring neighborhood/coelution similarity. Default to 50.}
 }
 \description{
 Peptide identity (sequence and charge) is propagated from MS-MS or PASEF identified features in evidence.txt to

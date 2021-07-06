@@ -25,7 +25,7 @@
 #' @param tims_ms logical. Is data acquired by TIMS-MS? default to FALSE.
 #' @param group_restriction A data.frame with two columns named Raw.file and group, specifying run file and the (experimental) group to which the run belongs.
 #' Use this option for Unbalanced PIP
-#' @param nlandmarks numeric. Number of landmark peptides used for measuring neighborhood/coelution similarity.
+#' @param nlandmarks numeric. Number of landmark peptides used for measuring neighborhood/coelution similarity. Default to 50.
 #'
 #' @author Soroor Hediyeh-zadeh
 #' @seealso evidenceToMatrix
