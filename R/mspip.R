@@ -50,6 +50,9 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
   # create peptide id
   evidence$PeptideID <- paste0(evidence$Modified.sequence, evidence$Charge)
 
+  # remove mbr idents as they could be erroneous
+  # evidence <- evidence[grepl("MULTI-MSMS|MULTI-SECPEP", evidence$Type),]
+
   # keep only the most intense feature?
 
 
@@ -61,69 +64,166 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
   message("Extracting unidentified MS1 peptide features")
 
+#
+#   ms1_anchors_pasef <- c("Raw.file","Charge", "Intensity",
+#                          #"Number.of.isotopic.peaks",
+#                          "Ion.mobility.index")
+#
+#   ## MSMS types are problematic here. They aren't proper idents though, so all good.
+#   ms1_anchors_msms <- c("Raw.file","Charge", "Intensity",
+#                         # "Number.of.isotopic.peaks",
+#                         "Number.of.scans")
+#
+#   ms1_anchors <- ms1_anchors_msms
+#   if(tims_ms) ms1_anchors <- ms1_anchors_pasef
 
-  ms1_anchors_pasef <- c("Raw.file","Charge", "Intensity",
-                         #"Number.of.isotopic.peaks",
-                         "Ion.mobility.index")
 
-  ## MSMS types are problematic here. They aren't proper idents though, so all good.
-  ms1_anchors_msms <- c("Raw.file","Charge", "Intensity",
-                        # "Number.of.isotopic.peaks",
-                        "Number.of.scans")
 
-  ms1_anchors <- ms1_anchors_msms
-  if(tims_ms) ms1_anchors <- ms1_anchors_pasef
+  # identified_peptides <- dplyr::semi_join(evidence, allPeptides,
+  #                                         # by = ms1_anchors
+  #                                         by = c("Raw.file", "Charge", "Intensity")
+  #                                         )
 
 
 
-  identified_peptides <- dplyr::semi_join(evidence, allPeptides,
-                                          by = ms1_anchors)
-  identified_peptides$Raw.file.id <- as.numeric(as.factor(identified_peptides$Raw.file))
-  pep_ids <- as.numeric(as.factor(identified_peptides$PeptideID))
-  # pep_f <- as.factor(identified_peptides$PeptideID)
+  evidence$Raw.file.id <- as.numeric(as.factor(evidence$Raw.file))
+  allPeptides$Raw.file.id <-  as.numeric(as.factor(allPeptides$Raw.file))
+
+
+
+
+  # LC-MS of identified features
+  # identified_peptides <- dplyr::semi_join(allPeptides, evidence,
+  #                                         # by = ms1_anchors
+  #                                         by = c("Raw.file", "Charge",
+  #                                                "Number.of.isotopic.peaks",
+  #                                                "Intensity")
+  #                                         )
+
+
+
+
+
+
+  lc_ms_anchors  <- c("Raw.file.id", "Charge","m.z", "Mass", "Intensity","Retention.time")
+
+  attr_msms <- c(lc_ms_anchors[grep("Raw.file", lc_ms_anchors, invert=TRUE)]
+
+
+                 # "Min.scan.number",
+                 # "Max.scan.number",
+
+
+                 # "Retention.length",
+                 # "Retention.length..FWHM."
+                 )
+
+  attr_pasef <- c(lc_ms_anchors[grep("Raw.file", lc_ms_anchors, invert=TRUE)],
+
+                  c(
+                    # "Retention.length",
+                    # "Retention.length..FWHM.",
+                    "Min.frame.index",
+                    "Max.frame.index",
+
+                    "Ion.mobility.index",
+                    "Ion.mobility.index.length",
+                    "Ion.mobility.index.length..FWHM."))
+  anchors <- attr_msms
+  if(tims_ms) anchors <- attr_pasef
+
+
+
+  evidence <- evidence[complete.cases(evidence[,lc_ms_anchors]),]
+  allPeptides <- allPeptides[complete.cases(allPeptides[,lc_ms_anchors]),]
+
+  # identified_peptides <- evidence
+  # identified_peptides$Raw.file.id <- as.numeric(as.factor(identified_peptides$Raw.file))
+  # pep_ids <- as.numeric(as.factor(identified_peptides$PeptideID))
+  # # pep_f <- as.factor(identified_peptides$PeptideID)
+
+
+
+  dists <- FNN::get.knnx(allPeptides[, lc_ms_anchors], evidence[,lc_ms_anchors], k = 1)
+
+  identified_peptides <- allPeptides[dists$nn.index, tolower(colnames(allPeptides)) %in% tolower(c("Raw.file.id", anchors))]
+  identified_peptides$PeptideID <- evidence$PeptideID
+
+
+
+
 
   # do we need RT for matching here? not in PASEF
+  # LC-MS of unidentified features
   unidentified_peptides <- dplyr::anti_join(allPeptides, identified_peptides,
-                                            by = ms1_anchors)
+                                            by = lc_ms_anchors)
 
 
 
-  landmark_idents <- identified_peptides[,c("PeptideID", "Raw.file")]
+
+  unidentified_peptides <- unidentified_peptides[, tolower(colnames(unidentified_peptides)) %in% tolower(c("Raw.file.id", anchors))]
+
+  landmark_idents <- evidence[,c("PeptideID", "Raw.file")]
   landmark_idents <- landmark_idents[!duplicated(landmark_idents),]
   landmark_idents <- table(landmark_idents$PeptideID)
-  landmark_idents <- names(landmark_idents)[landmark_idents == max(identified_peptides$Raw.file.id)]
+  landmark_idents <- names(landmark_idents)[landmark_idents == max(evidence$Raw.file.id)]
 
-
-
-
-  attr_msms <- c("Retention.time","Charge","m.z",
-                 "Mass",
-                 #"Number.of.isotopic.peaks",
-                 "Intensity")
-
-  attr_pasef <- c("Retention.time","Charge","m.z",
-                 "Mass",
-                 #"Number.of.isotopic.peaks",
-                 "Ion.mobility.index",
-                 "Intensity")
-  attrs <- attr_msms
-  if(tims_ms) attrs <- attr_pasef
 
 
   # landmarks are randomly selected subset of data points
-  landmark_lcms <- identified_peptides[identified_peptides$PeptideID %in% landmark_idents, c(attrs, "Raw.file.id")]
-  landmark_lcms <- landmark_lcms[sample(seq_along(landmark_idents), nlandmarks, replace = FALSE),]
+  landmark_idents <- landmark_idents[sample(seq_along(landmark_idents), nlandmarks, replace = FALSE)]
+  landmark_lcms <- identified_peptides[identified_peptides$PeptideID %in% landmark_idents,
+                                       tolower(colnames(identified_peptides)) %in% tolower(c(anchors, "Raw.file.id"))]
+
 
 
   query_data <- unidentified_peptides
-  query_data$Raw.file.id <- as.numeric(as.factor(query_data$Raw.file))
-
-
 
 
   message("Computing distance of idents to landmarks")
-  identified_peptides <- identified_peptides[complete.cases(identified_peptides[,attrs]),]
-  ident_dist_to_landmarks <- FNN::get.knnx(landmark_lcms, identified_peptides[, c(attrs, "Raw.file.id")], k = nlandmarks)$nn.dist
+
+
+  mapping_features <- grep("Intensity", anchors, invert=TRUE, value = TRUE)
+
+  identified_peptides$index <- 1:nrow(identified_peptides)
+
+  # landmarklcms <- landmark_lcms[, c(mapping_features,"Raw.file.id")]
+  # landmarklcms <- cbind(landmarklcms, one_hot(as.factor(landmarklcms$Raw.file.id)))
+  # landmarklcms$Raw.file.id <- NULL
+  #
+  #
+  # idents <- identified_peptides[, c(mapping_features,"Raw.file.id")]
+  # idents <- cbind(idents, one_hot(as.factor(idents$Raw.file.id)))
+  # idents$Raw.file.id <- NULL
+  #
+  #
+  # ident_dist_to_landmarks <- FNN::get.knnx(landmarklcms, idents, k = nlandmarks)$nn.dist
+
+
+  ident_list <- list()
+  landmark_lcms <- landmark_lcms[, tolower(colnames(landmark_lcms)) %in% tolower(c(mapping_features,"Raw.file.id"))]
+
+  for (run in unique(evidence$Raw.file.id) ) {
+
+    landmarklcms <- landmark_lcms[landmark_lcms$Raw.file.id %in% run,]
+    idents <- identified_peptides[, tolower(colnames(identified_peptides)) %in% tolower(c(mapping_features,"Raw.file.id"))]
+    ident_index <- identified_peptides[identified_peptides$Raw.file.id %in% run, "index"]
+    idents <- idents[idents$Raw.file.id %in% run, ]
+
+
+    ident_dist_to_landmarks <- FNN::get.knnx(landmarklcms, idents,
+                                             k = nlandmarks)$nn.dist
+
+
+    colnames(ident_dist_to_landmarks) <- paste("N_", 1:nlandmarks, sep="")
+
+    ident_list[[run]] <- cbind(ident_dist_to_landmarks, index = ident_index)
+
+  }
+
+
+  ident_list <- do.call(rbind, ident_list)
+  ident_list <- ident_list[match(identified_peptides$index,ident_list[,"index"]),]
 
   # message("Computing one-hot encoding of identifications")
   # one_hot_idents_encoding <- model.matrix(~ 0 + pep_f)
@@ -142,22 +242,21 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
   message(paste("Propagating Peptide Identities within", k, "nearest neighbors per run"))
   for (run_id in unique(evidence$Raw.file)){
     message(run_id)
-    missing_idents <- setdiff(identified_peptides$PeptideID[!identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)],
-                              identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
+    id <- unique(evidence$Raw.file.id[evidence$Raw.file %in% run_id])
+    missing_idents <- setdiff(identified_peptides$PeptideID[!identified_peptides$Raw.file.id %in% id & !is.na(identified_peptides$Intensity)],
+                              identified_peptides$PeptideID[identified_peptides$Raw.file.id %in% id & !is.na(identified_peptides$Intensity)])
 
 
     if(!is.null(group_restriction)){ # group_restriction is the name of the column in evidence table specifying group/batch names (e.g. the Experiment column)
       experiments <- group_restriction
       reference_runs <- experiments$Raw.file[experiments[,"group"] == experiments[experiments$Raw.file == run_id, "group"]]
 
-      missing_idents <- setdiff(identified_peptides$PeptideID[identified_peptides$Raw.file %in% reference_runs & !is.na(identified_peptides$Intensity)],
-                                identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
+      reference_runs_ids <- unique(evidence$Raw.file.id[evidence$Raw.file %in% reference_runs])
+
+      missing_idents <- setdiff(identified_peptides$PeptideID[identified_peptides$Raw.file.id %in% reference_runs_ids & !is.na(identified_peptides$Intensity)],
+                                identified_peptides$PeptideID[identified_peptides$Raw.file.id %in% id & !is.na(identified_peptides$Intensity)])
 
     }
-
-
-
-
 
     # run_idents <- unique(identified_peptides$PeptideID[identified_peptides$Raw.file %in% run_id & !is.na(identified_peptides$Intensity)])
 
@@ -167,9 +266,10 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
 
-    keep1 <- (identified_peptides$PeptideID %in% missing_idents) & (!identified_peptides$Raw.file %in% run_id)
-    keep2 <- complete.cases(identified_peptides[,attrs])
-    keep_idents <- keep1 & keep2
+    keep1 <- (identified_peptides$PeptideID %in% missing_idents) & (!identified_peptides$Raw.file.id %in% id)
+    # keep2 <- complete.cases(identified_peptides[,anchors])
+    # keep_idents <- keep1 & keep2
+    keep_idents <- keep1
 
 
     # compute width of Random Walk
@@ -223,34 +323,69 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
     # identifications
-    run_prototypes <- identified_peptides[keep_idents, attrs]
+    run_prototypes <- identified_peptides[keep_idents, tolower(colnames(identified_peptides)) %in% tolower(anchors)]
     # run_prototypes <- cbind(run_prototypes, coelute_idents)
 
+    ident_dist_to_landmarks <- ident_list
+    ident_dist_to_landmarks_run <- ident_dist_to_landmarks[keep_idents, grep("index", colnames(ident_dist_to_landmarks), invert = TRUE)]
 
-    ident_dist_to_landmarks_run <- ident_dist_to_landmarks[keep_idents,]
+    # run_prototypes <- cbind(run_prototypes, ident_dist_to_landmarks_run)
+
+
     # ident_dist_to_landmarks_run <- (ident_dist_to_landmarks_run - rowMeans(ident_dist_to_landmarks_run))/matrixStats::rowSds(ident_dist_to_landmarks_run)
-
     # run_prototypes <- cbind(run_prototypes, exp(-(0.5/0.1)*(ident_dist_to_landmarks_run^2)))
+    # sigma <- 0.01
+    # A_idents <- exp(-0.5*((ident_dist_to_landmarks_run^2)/sigma))
+
     A_idents <- exp(-0.5*((ident_dist_to_landmarks_run^2)/matrixStats::rowSds(ident_dist_to_landmarks_run^2)))
     M_idents <- A_idents/rowSums(A_idents, na.rm=TRUE)
     run_prototypes <- cbind(run_prototypes, M_idents)
+
 
     ident_labels <- identified_peptides[keep_idents, "PeptideID"]
     prototype_charges <- as.numeric(run_prototypes$Charge)
 
 
     # detected features
-    query_embedding <- query_data[query_data$Raw.file %in% run_id, attrs]
+    query_embedding <- query_data[query_data$Raw.file.id %in% id, tolower(colnames(query_data)) %in% tolower(anchors)]
     query_charge <- as.numeric(query_embedding$Charge)
 
     message("Computing distance of queries to landmarks")
-    query_run_dist_to_landmarks <- FNN::get.knnx(landmark_lcms, query_data[query_data$Raw.file %in% run_id, c(attrs, "Raw.file.id")], k = nlandmarks)$nn.dist
-    # query_run_dist_to_landmarks <- (query_run_dist_to_landmarks - rowMeans(query_run_dist_to_landmarks))/matrixStats::rowSds(query_run_dist_to_landmarks)
-    #
-    # query_embedding <- cbind(query_embedding, exp(-(0.5/0.1)*(query_run_dist_to_landmarks^2)))
+    # query_run_dist_to_landmarks <- FNN::get.knnx(landmark_lcms[, c(mapping_features,"Raw.file.id")],
+    #                                              query_data[query_data$Raw.file.id %in% id, c(mapping_features,"Raw.file.id")],
+    #                                              k = nlandmarks)$nn.dist
+    # # query_run_dist_to_landmarks <- (query_run_dist_to_landmarks - rowMeans(query_run_dist_to_landmarks))/matrixStats::rowSds(query_run_dist_to_landmarks)
+    # #
+    # # query_embedding <- cbind(query_embedding, exp(-(0.5/0.1)*(query_run_dist_to_landmarks^2)))
+    # A_query <- exp(-0.5*((query_run_dist_to_landmarks^2)/matrixStats::rowSds(query_run_dist_to_landmarks^2)))
+    # M_query <- A_query/rowSums(A_query, na.rm=TRUE)
+    # query_embedding <- cbind(query_embedding, M_query)
+
+
+
+
+
+
+    landmarklcms_q <- landmark_lcms[landmark_lcms$Raw.file.id %in% id,]
+    queries <- query_data[query_data$Raw.file.id %in% id, tolower(colnames(query_data)) %in% tolower(c(mapping_features,"Raw.file.id"))]
+
+    query_run_dist_to_landmarks <- FNN::get.knnx(landmarklcms_q, queries,
+                                               k = nlandmarks)$nn.dist
+
+
+    colnames(query_run_dist_to_landmarks) <- paste("N_", 1:nlandmarks, sep="")
+
+
+    # query_embedding <- cbind(query_embedding, query_run_dist_to_landmarks)
+
     A_query <- exp(-0.5*((query_run_dist_to_landmarks^2)/matrixStats::rowSds(query_run_dist_to_landmarks^2)))
     M_query <- A_query/rowSums(A_query, na.rm=TRUE)
     query_embedding <- cbind(query_embedding, M_query)
+
+
+
+
+
 
 
 
@@ -307,10 +442,25 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     ### data can contain nan or missing values
 
 
-   message("Computing prototype-query distances")
+    query_features <- query_embedding[, grep("Intensity", colnames(query_embedding), invert = TRUE)]
+    # query_features <- apply(query_features, 1, FUN=function(x) x/sqrt(sum(x^2)))
+    # query_features <- t(query_features)
+
+    reference_features <- run_prototypes[, grep("Intensity", colnames(run_prototypes), invert = TRUE)]
+    # reference_features <- apply(reference_features, 1, FUN=function(x) x/sqrt(sum(x^2)))
+    # reference_features <- t(reference_features)
+
+
+    message("Computing prototype-query distances")
     knn_prototypes <- FNN::get.knnx(
-      query_embedding[, grep("Intensity", colnames(query_embedding), invert = TRUE)],
-      run_prototypes[, grep("Intensity", colnames(run_prototypes), invert = TRUE)],
+
+      # Propagation on Euclidean space
+      # query_embedding[, grep("Intensity", colnames(query_embedding), invert = TRUE)],
+      # run_prototypes[, grep("Intensity", colnames(run_prototypes), invert = TRUE)],
+
+      # On Cosine vector space
+      query_features,
+      reference_features,
       k = k) # nsamples - 1
 
 
@@ -321,9 +471,12 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
 
 
 
-    # probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowSds(knn_prototypes$nn.dist^2)))
+    probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowSds(knn_prototypes$nn.dist^2)))
+    # probs <- exp(-0.5*(knn_prototypes$nn.dist^2))
 
-    probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowMedians(knn_prototypes$nn.dist^2)))
+    # probs <- 1 - knn_prototypes$nn.dist^2
+
+    # probs <- exp(-0.5*((knn_prototypes$nn.dist^2)/matrixStats::rowMedians(knn_prototypes$nn.dist^2)))
     ww <- matrix(query_charge[knn_prototypes$nn.index], nrow = nrow(probs), ncol = ncol(probs))
     charge <- matrix(prototype_charges, nrow = nrow(ww), ncol = ncol(ww), byrow = FALSE)
 
@@ -364,6 +517,8 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
       data.frame(probability = max_probs, PeptideID = ident_labels[valid_features])
     )
 
+    # hist(df_query_idents$probability)
+
     rownames(df_query_idents) <- NULL
     transfered_idents[[run_id]] <- df_query_idents
 
@@ -385,16 +540,17 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
                           )
 
 
-    meta_attrs <- c( "PeptideID", "Sequence", "Length", "Modifications",
+    meta_anchors <- c( "PeptideID", "Sequence", "Length", "Modifications",
                      "Modified.sequence",
                      "Leading.razor.protein","Gene.Names", "Protein.Names",
                      "Charge")
     evidence_colnames <- tolower(colnames(evidence))
 
-    # genes <- evidence[,match(tolower(meta_attrs), evidence_colnames)]
-    genes <- evidence[, evidence_colnames %in% tolower(meta_attrs)]
+    # genes <- evidence[,match(tolower(meta_anchors), evidence_colnames)]
+    genes <- evidence[, evidence_colnames %in% tolower(meta_anchors)]
     genes <- genes[!duplicated(genes),]
-    evidence_pip <- cbind(evidence_pip, genes[match(evidence_pip$PeptideID, genes$PeptideID), grep("PeptideID", colnames(genes), invert=TRUE)])
+    evidence_pip <- cbind(evidence_pip, genes[match(evidence_pip$PeptideID, genes$PeptideID),
+                                              grep("PeptideID", colnames(genes), invert=TRUE)])
   }
   message("PIP completed")
   return(evidence_pip)
@@ -409,5 +565,6 @@ one_hot <- function(x){
     h[i, levels(x) == x[i]] <- 1
   }
 
+  return(h)
 
 }
