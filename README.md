@@ -110,7 +110,7 @@ summary(decideTests(fit))
 values, and passes the PIP confidence scores as observation-level weights to `lmFit`. 
 
 
-Need more help to start? Please see documentation. We have also collected a number of **case studies** [here](https://github.com/soroorh/proteomicscasestudies/blob/master/msImputeUsersGuide.pdf)
+Need more help to start? Please see documentation. We have also collected a number of **case studies** [here]()
 
 **Questions?** Please consider openning an issue.
 
