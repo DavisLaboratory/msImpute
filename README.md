@@ -17,7 +17,8 @@ Our PIP approach infers the missing intensity values for an identification based
 
 Installation
 --------------
-*Please note R version 4.1.1 or later is required*
+**Please note R version 4.1.1 or later is required**
+
 Install from Github:
 
 ```{r}
