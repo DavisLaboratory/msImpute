@@ -13,7 +13,7 @@ Description: MsImpute is a package for imputation of peptide intensity in proteo
     distribution of the data post imputation.  The missing values are imputed by low-rank approximation of
     the underlying data matrix if they are MAR (method = "v2"), by Barycenter approach if missingness is 
     MNAR ("v2-mnar"), or by Peptide Identity Propagation (PIP).
-Depends: R (>= 4.1.1)
+Depends: R (> 4.1.0)
 SystemRequirements: python
 Imports: softImpute, methods, stats, graphics, pdist, reticulate, 
             scran, data.table, FNN, matrixStats, limma, mvtnorm, 
