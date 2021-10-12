@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 
 
-\section{Version 1.4.0}{\itemize{
+\section{Version 1.3.0}{\itemize{
     \item Users can now specify the rank of the model to fit by \code{msImpute}
     \item Added \code{mspip} for identification transfer between runs using Maxquant results (Beta phase only)
     \item Added \code{evidenceToMatrix} which creates \code{limma} compatible objects from MaxQuant evidence table
