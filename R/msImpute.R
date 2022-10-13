@@ -29,7 +29,7 @@
 #' @param method character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
 #' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}
 #' @param group character or factor vector of length \code{ncol(y)}
-#' @param a numeric. the weight parameter. default to 0.2.
+#' @param a numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -46,6 +46,8 @@
 #' Applicable to "v1" only.
 #' @param biScale_maxit number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
 #' parameter only if you're running \code{method=v1}. Applicable to "v1" only.
+#' @param gauss_width numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param gauss_shift numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
 #' @return Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
 #' a numeric matrix of identical dimensions is returned.
 #'
@@ -68,7 +70,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      a = 0.2,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
-                     final.svd = TRUE, biScale_maxit=20) {
+                     final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
 
   method <- match.arg(method, c("v2-mnar","v2", "v1"))
 
@@ -99,7 +101,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
     if (method == "v2-mnar"){
       message(paste("Compute barycenter of MAR and NMAR distributions", method))
       if (is.null(group)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
-      ygauss <- gaussimpute(y)
+      ygauss <- gaussimpute(y, width = gauss_width, shift = gauss_shift)
       yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=a)
 
     }
