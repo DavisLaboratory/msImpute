@@ -16,7 +16,9 @@ msImpute(
   trace.it = FALSE,
   warm.start = NULL,
   final.svd = TRUE,
-  biScale_maxit = 20
+  biScale_maxit = 20,
+  gauss_width = 0.3,
+  gauss_shift = 1.8
 )
 }
 \arguments{
@@ -27,7 +29,7 @@ msImpute(
 
 \item{group}{character or factor vector of length \code{ncol(y)}}
 
-\item{a}{numeric. the weight parameter. default to 0.2.}
+\item{a}{numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.}
 
 \item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".}
 
@@ -52,6 +54,10 @@ Applicable to "v1" only.}
 
 \item{biScale_maxit}{number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
 parameter only if you're running \code{method=v1}. Applicable to "v1" only.}
+
+\item{gauss_width}{numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
+
+\item{gauss_shift}{numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
 }
 \value{
 Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
