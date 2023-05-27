@@ -80,9 +80,8 @@ computeStructuralMetrics(xcomplete,
 
 Tutorials 
 ---------------------
-Please see the notebooks provided in the [reproducibility repository](https://github.com/DavisLaboratory/msImpute-reproducibility).
+Example workflows can be found under `figures/` in the [reproducibility repository](https://github.com/DavisLaboratory/msImpute-reproducibility) associated with the manuscript.
 
-Example workflows can be found under `figures/`.
 
 New feature : msPIP
 ---------------------
