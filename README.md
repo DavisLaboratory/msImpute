@@ -78,6 +78,12 @@ computeStructuralMetrics(xcomplete,
 
 ```
 
+Tutorials 
+---------------------
+Please see the notebooks provided in the [reproducibility repository](https://github.com/DavisLaboratory/msImpute-reproducibility).
+
+Example workflows can be found under `figures/`.
+
 New feature : msPIP
 ---------------------
 
@@ -124,5 +130,14 @@ Need more help to start? Please see documentation. We have also collected a numb
 
 Reference
 -----------
-Our old [preprint](https://www.biorxiv.org/content/10.1101/2020.08.12.248963v1) will be updated soon.
+```
+@article{hediyeh2023msimpute,
+  title={MsImpute: Estimation of missing peptide intensity data in label-free quantitative mass spectrometry},
+  author={Hediyeh-Zadeh, Soroor and Webb, Andrew I and Davis, Melissa J},
+  journal={Molecular \& Cellular Proteomics},
+  pages={100558},
+  year={2023},
+  publisher={Elsevier}
+}
+```
 
