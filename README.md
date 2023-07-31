@@ -45,7 +45,7 @@ Quick Start
 ----------------
 
 ```{r}
-library(reticulate)
+
 library(msImpute)
 
 # xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
