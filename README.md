@@ -4,7 +4,7 @@
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/bioconductor-msimpute/badges/downloads.svg)](https://anaconda.org/bioconda/bioconductor-msimpute)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/bioconductor-msimpute/badges/license.svg)](https://anaconda.org/bioconda/bioconductor-msimpute)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/bioconductor-msimpute/badges/version.svg)](https://anaconda.org/bioconda/bioconductor-msimpute)
-[![Anaconda-Server Badge](https://anaconda.org/bioconda/bioconductor-msimpute/badges/installer/conda.svg)](https://conda.anaconda.org/bioconda)
+
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/bioconductor-msimpute/badges/latest_release_date.svg)](https://anaconda.org/bioconda/bioconductor-msimpute)
 <!-- badges: end -->
 
