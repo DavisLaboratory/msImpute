@@ -68,12 +68,7 @@ xcomplete <- msImpute(xna, method="v2")
 xcomplete <- msImpute(xna, method="v2-mnar", group=group)  
 
 
-# Requires python. See Manual for more information.
-top.hvp <- findVariableFeatures(xna)
-computeStructuralMetrics(xcomplete, 
-                         group, 
-                         xna[rownames(top.hvp)[1:50],], 
-                         k = 2) 
+
 
 
 ```
