@@ -16,7 +16,7 @@ Description: MsImpute is a package for imputation of peptide intensity in proteo
 Depends: R (> 4.1.0)
 SystemRequirements: python
 Imports: softImpute, methods, stats, graphics, pdist, reticulate, 
-            scran, data.table, FNN, matrixStats, limma, mvtnorm, 
+            data.table, FNN, matrixStats, limma, mvtnorm, 
             tidyr, dplyr
 License: GPL (>=2)
 Encoding: UTF-8
