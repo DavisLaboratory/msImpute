@@ -547,8 +547,8 @@ mspip <- function(path_txt, k = 10, thresh = 0, skip_weights = TRUE, tims_ms = F
     evidence_colnames <- tolower(colnames(evidence))
 
     # genes <- evidence[,match(tolower(meta_anchors), evidence_colnames)]
-    genes <- evidence[, evidence_colnames %in% tolower(meta_anchors)]
-    genes <- genes[!duplicated(genes),]
+    genes <- evidence[, evidence_colnames %in% tolower(meta_anchors), drop=FALSE]
+    genes <- genes[!duplicated(genes),, drop=FALSE]
     evidence_pip <- cbind(evidence_pip, genes[match(evidence_pip$PeptideID, genes$PeptideID),
                                               grep("PeptideID", colnames(genes), invert=TRUE)])
   }
