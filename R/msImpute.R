@@ -29,7 +29,7 @@
 #' @param method character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
 #' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}
 #' @param group character or factor vector of length \code{ncol(y)}
-#' @param a numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
+#' @param alpha numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -56,7 +56,7 @@
 #' data(pxd010943)
 #' y <- log2(data.matrix(pxd010943))
 #' group <- gsub("_[1234]","", colnames(y))
-#' yimp <- msImpute(y, method="v2-mnar", group=group)
+#' yimp <- msImpute(y, method="v2-mnar", group=group, max.rank=2)
 #' @seealso selectFeatures
 #' @author Soroor Hediyeh-zadeh
 #' @references
@@ -67,7 +67,8 @@
 #' @export
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
-                     a = 0.2,
+                     alpha = 0.2,
+		     relax_min_obs=FALSE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
                      final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
@@ -76,7 +77,15 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 
 
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
-  if(any(rowSums(!is.na(y)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
+  critical_obs <- NULL
+  if(relax_min_obs & any(rowSums(!is.na(y)) <= 3)) {
+	  
+	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")}
+  else{
+	  critical_obs <- which(rowSums(!is.na(y)) <= 3)
+	  message("Features with less than 4 non-missing measurements detected. These will be treated as MNAR.")
+  }
+  
   if(any(y < 0, na.rm = TRUE)){
     warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
   }
@@ -86,6 +95,10 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 
   if(method=="v1"){
     message(paste("Running msImpute version", method))
+    if (!is.null(critical_obs)) {
+	    y_critical_obs <- y[critical_obs,]
+	    y <- y[-critical_obs,]
+    }
     yimp <- scaleData(y, maxit = biScale_maxit)
     yimp <- msImputev1(yimp,
                        rank.max = rank.max, lambda = lambda, thresh = thresh,
@@ -102,15 +115,23 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
       message(paste("Compute barycenter of MAR and NMAR distributions", method))
       if (is.null(group)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
       ygauss <- gaussimpute(y, width = gauss_width, shift = gauss_shift)
-      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=a)
+      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=alpha)
 
     }
 
 
+
+  }
+
+  yimp[!is.na(y)] <- y[!is.na(y)]
+  if (!is.null(critical_obs)){
+	  yimp_critical_obs <- gaussimpute(y_critical_obs, width = gauss_width, shift = gauss_shift)
+	  yimp_critical_obs[!is.na(y_critical_obs)] <- y_critical_obs[!is.na(y_critical_obs)]
+	  yimp <- rbind(yimp,yimp_critical_obs)
   }
 
 
-  yimp[!is.na(y)] <- y[!is.na(y)]
+  
   return(yimp)
 
 
