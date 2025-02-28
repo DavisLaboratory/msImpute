@@ -221,13 +221,16 @@ estimateLambda <- function(y, rank=NULL) mean(matrixStats::colSds(y, na.rm = TRU
 #' @keywords internal
 l2bary <- function(y, ygauss, yerank, group, a=0.2){
 
-  pepVars <- matrixStats::rowSds(y, na.rm = TRUE)
-  varq75 <- quantile(pepVars, p = 0.75, na.rm=TRUE)
+  pepSds <- matrixStats::rowSds(y, na.rm = TRUE)
+  pepMeans <- rowMeans(y, na.rm = TRUE)
+  pepCVs <- pepSds/pepMeans
+  CV_cutoff <- min(0.2, median(pepCVs))
+  varq75 <- quantile(pepSds, p = 0.75, na.rm=TRUE)
   #varq75 <- mean(pepVars)
   EBM <- ebm(y, group)
 
-  # if entropy is nan and variance is high, it is most likely detection limit missing
-  w1 <- ifelse(is.nan(EBM) & (pepVars > varq75), 1-a, a)
+  # if entropy is nan and variance is low, it is most likely detection limit missing
+  w1 <- ifelse(is.nan(EBM) & (pepCVs < CV_cutoff), 1-a, a)
   w2 <- 1-w1
 
   yl2 <- list()
