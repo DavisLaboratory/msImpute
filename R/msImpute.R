@@ -91,14 +91,14 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
   }
 
 
-
+  if(!is.null(critical_obs)){
+	  y_critical_obs <- y[critical_obs,]
+          y <- y[-critical_obs,]
+  }
 
   if(method=="v1"){
     message(paste("Running msImpute version", method))
-    if (!is.null(critical_obs)) {
-	    y_critical_obs <- y[critical_obs,]
-	    y <- y[-critical_obs,]
-    }
+    
     yimp <- scaleData(y, maxit = biScale_maxit)
     yimp <- msImputev1(yimp,
                        rank.max = rank.max, lambda = lambda, thresh = thresh,
