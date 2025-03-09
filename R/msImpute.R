@@ -230,7 +230,8 @@ l2bary <- function(y, ygauss, yerank, group, a=0.2){
   EBM <- ebm(y, group)
 
   # if entropy is nan and variance is low, it is most likely detection limit missing
-  w1 <- ifelse(is.nan(EBM) & (pepCVs < CV_cutoff), 1-a, a)
+  # w1 <- ifelse(is.nan(EBM) & (pepCVs < CV_cutoff), 1-a, a)
+  w1 <- ifelse(is.nan(EBM), 1-a, a)
   w2 <- 1-w1
 
   yl2 <- list()
