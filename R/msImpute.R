@@ -68,7 +68,7 @@
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
                      alpha = 0.2,
-		     relax_min_obs=FALSE,
+		                 relax_min_obs=FALSE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
                      final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
@@ -77,13 +77,16 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 
 
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
-  critical_obs <- NULL
-  if(relax_min_obs & any(rowSums(!is.na(y)) <= 3)) {
+  
+  if(relax_min_obs | any(rowSums(!is.na(y)) <= 3)) {
 	  
-	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")}
-  else{
+	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")
+  }
+  ifelse(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
 	  critical_obs <- which(rowSums(!is.na(y)) <= 3)
 	  message("Features with less than 4 non-missing measurements detected. These will be treated as MNAR.")
+  }else{
+    critical_obs <- NULL
   }
   
   if(any(y < 0, na.rm = TRUE)){
@@ -92,8 +95,8 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 
 
   if(!is.null(critical_obs)){
-	  y_critical_obs <- y[critical_obs,]
-          y <- y[-critical_obs,]
+	  y_critical_obs <- y[critical_obs,, drop=FALSE]
+    y <- y[-critical_obs,, drop=FALSE]
   }
 
   if(method=="v1"){
