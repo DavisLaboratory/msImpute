@@ -8,7 +8,8 @@ msImpute(
   y,
   method = c("v2-mnar", "v2", "v1"),
   group = NULL,
-  a = 0.2,
+  alpha = 0.2,
+  relax_min_obs = FALSE,
   rank.max = NULL,
   lambda = NULL,
   thresh = 1e-05,
@@ -29,7 +30,7 @@ msImpute(
 
 \item{group}{character or factor vector of length \code{ncol(y)}}
 
-\item{a}{numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.}
+\item{alpha}{numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.}
 
 \item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".}
 
@@ -91,7 +92,7 @@ low-rank imputed values. The judgment of distribution of missing values is based
 data(pxd010943)
 y <- log2(data.matrix(pxd010943))
 group <- gsub("_[1234]","", colnames(y))
-yimp <- msImpute(y, method="v2-mnar", group=group)
+yimp <- msImpute(y, method="v2-mnar", group=group, max.rank=2)
 }
 \references{
 Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.

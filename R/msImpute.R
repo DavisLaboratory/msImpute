@@ -82,7 +82,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 	  
 	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")
   }
-  ifelse(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
+  else if(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
 	  critical_obs <- which(rowSums(!is.na(y)) <= 3)
 	  message("Features with less than 4 non-missing measurements detected. These will be treated as MNAR.")
   }else{
