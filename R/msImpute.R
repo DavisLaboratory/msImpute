@@ -68,7 +68,7 @@
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
                      alpha = 0.2,
-		                 relax_min_obs=FALSE,
+		                 relax_min_obs=TRUE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
                      final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
@@ -78,11 +78,11 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
   
-  if(relax_min_obs | any(rowSums(!is.na(y)) <= 3)) {
+  if(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)) {
 	  
 	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")
   }
-  else if(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
+  else if(relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
 	  critical_obs <- which(rowSums(!is.na(y)) <= 3)
 	  message("Features with less than 4 non-missing measurements detected. These will be treated as MNAR.")
   }else{
@@ -201,7 +201,7 @@ eigenpdf <- function(y, rank=NULL){
 #' @importFrom stats var sd
 #' @keywords internal
 estimateS0 <- function(y, rank=NULL){
-  set.seed(123)
+  # set.seed(123)
   s0 <- vector(length = 100L)
   for(i in seq_len(100)){
     s0[i] <- var(eigenpdf(y, rank=rank))
@@ -237,12 +237,13 @@ l2bary <- function(y, ygauss, yerank, group, a=0.2){
   w1 <- ifelse(is.nan(EBM), 1-a, a)
   w2 <- 1-w1
 
-  yl2 <- list()
-  for(j in colnames(y)){
-    yl2[[j]] <- rowSums(cbind(w1*ygauss[,j], w2*yerank[,j]))
-  }
+  # yl2 <- list()
+  # for(j in colnames(y)){
+  #   yl2[[j]] <- rowSums(cbind(w1*ygauss[,j], w2*yerank[,j]))
+  # }
 
-  yl2 <- do.call(cbind, yl2)
+  # yl2 <- do.call(cbind, yl2)
+  yl2 <- w1*ygauss + w2*yerank
   yl2[!is.na(y)] <- y[!is.na(y)]
   return(yl2)
 
