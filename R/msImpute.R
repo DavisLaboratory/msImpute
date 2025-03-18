@@ -80,6 +80,13 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
     set.seed(123)
   }
 
+  if (is.null(rownames(y))){
+    stop("Input row names are null. Please assign row names")
+  }else{
+    roworder <- rownames(y)
+  }
+  
+
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
   
   if(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)) {
@@ -135,6 +142,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 	  yimp_critical_obs <- gaussimpute(y_critical_obs, width = gauss_width, shift = gauss_shift)
 	  yimp_critical_obs[!is.na(y_critical_obs)] <- y_critical_obs[!is.na(y_critical_obs)]
 	  yimp <- rbind(yimp,yimp_critical_obs)
+    yimp <- yimp[match(roworder, rownames(yimp)),]
   }
 
 
