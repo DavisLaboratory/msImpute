@@ -26,10 +26,10 @@
 #'
 #'
 #' @param y Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.
-#' @param method character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
+#' @param method Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
 #' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}
-#' @param group character or factor vector of length \code{ncol(y)}
-#' @param alpha numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
+#' @param group Character or factor vector of length \code{ncol(y)}
+#' @param alpha Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -44,10 +44,11 @@
 #' @param final.svd  Logical. Shall final SVD object be saved?
 #' The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
 #' Applicable to "v1" only.
-#' @param biScale_maxit number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
+#' @param biScale_maxit Number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
 #' parameter only if you're running \code{method=v1}. Applicable to "v1" only.
-#' @param gauss_width numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
-#' @param gauss_shift numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param gauss_width Numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param gauss_shift Numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param use_seed Logical. Makes random draw from the lower Normal component of the mixture (corresponding to imputation by down-shift) deterministic, so that results are reproducible.
 #' @return Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
 #' a numeric matrix of identical dimensions is returned.
 #'
@@ -71,10 +72,13 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
 		                 relax_min_obs=TRUE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
-                     final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
+                     final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, 
+                     gauss_shift = 1.8, use_seed = TRUE) {
 
   method <- match.arg(method, c("v2-mnar","v2", "v1"))
-
+  if (use_seed){
+    set.seed(123)
+  }
 
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
   
