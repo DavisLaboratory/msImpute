@@ -65,7 +65,7 @@
 #' @references
 #' Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
 #' @references
-#' Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+#' Hediyeh-Zadeh, S., Webb, A. I., & Davis, M. J. (2023). MsImpute: Estimation of missing peptide intensity data in label-free quantitative mass spectrometry. Molecular & Cellular Proteomics, 22(8).
 #' @importFrom methods is
 #' @export
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
