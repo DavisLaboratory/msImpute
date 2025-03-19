@@ -68,6 +68,7 @@
 #' @export
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
+                     design = NULL,
                      alpha = 0.2,
 		                 relax_min_obs=TRUE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
@@ -127,9 +128,10 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
     yimp <- msImputev1(y, rank.max = rank.max , lambda = estimateLambda(y, rank = rank.max)) #
     if (method == "v2-mnar"){
       message(paste("Compute barycenter of MAR and NMAR distributions", method))
-      if (is.null(group)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
+      if (is.null(group) & is.null(design)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
       ygauss <- gaussimpute(y, width = gauss_width, shift = gauss_shift)
-      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=alpha)
+      # yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=alpha)
+      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, design = design, a=alpha)
 
     }
 
@@ -234,7 +236,7 @@ estimateLambda <- function(y, rank=NULL) mean(matrixStats::colSds(y, na.rm = TRU
 
 #' @importFrom stats quantile
 #' @keywords internal
-l2bary <- function(y, ygauss, yerank, group, a=0.2){
+l2bary <- function(y, ygauss, yerank, group, design = NULL, a=0.2){
 
   pepSds <- matrixStats::rowSds(y, na.rm = TRUE)
   pepMeans <- rowMeans(y, na.rm = TRUE)
@@ -242,12 +244,22 @@ l2bary <- function(y, ygauss, yerank, group, a=0.2){
   CV_cutoff <- min(0.2, median(pepCVs))
   varq75 <- quantile(pepSds, p = 0.75, na.rm=TRUE)
   #varq75 <- mean(pepVars)
-  EBM <- ebm(y, group)
+  # EBM <- ebm(y, group)
+  mv_design <- apply(design, 2, FUN=function(x) ebm(y, as.factor(x)))
+  dirich_alpha_1 <- rowSums(!is.nan(mv_design))
+  dirich_alpha_2 <- ncol(mv_design) - dirich_alpha_1
+  dirich_alpha <- cbind(dirich_alpha_1, dirich_alpha_2)
+
 
   # if entropy is nan and variance is low, it is most likely detection limit missing
   # w1 <- ifelse(is.nan(EBM) & (pepCVs < CV_cutoff), 1-a, a)
-  w1 <- ifelse(is.nan(EBM), 1-a, a)
-  w2 <- 1-w1
+  # w1 <- ifelse(is.nan(EBM), 1-a, a)
+  # w2 <- 1-w1
+
+  w <- apply(dirich_alpha, 1, FUN= function(alpha) LaplacesDemon::rdirichlet(1, alpha)) 
+  w <- t(w)
+  w1 <- w[,2]
+  w2 <- w[,1]
 
   # yl2 <- list()
   # for(j in colnames(y)){
