@@ -27,9 +27,10 @@
 #'
 #' @param y Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.
 #' @param method Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
-#' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}
-#' @param group Character or factor vector of length \code{ncol(y)}
-#' @param alpha Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
+#' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}.
+#' @param group Character or factor vector of length \code{ncol(y)}. DEPRICATED. Please specify the \code{design}.
+#' @param design Object from model.matrix(); A zero-intercept design matrix (see example). 
+#' @param alpha Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme. DEPRECATED
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -56,8 +57,9 @@
 #' @examples
 #' data(pxd010943)
 #' y <- log2(data.matrix(pxd010943))
-#' group <- gsub("_[1234]","", colnames(y))
-#' yimp <- msImpute(y, method="v2-mnar", group=group, max.rank=2)
+#' group <- as.factor(gsub("_[1234]","", colnames(y)))
+#' design <- model.matrix(~0+group)
+#' yimp <- msImpute(y, method="v2-mnar", design=design, max.rank=2)
 #' @seealso selectFeatures
 #' @author Soroor Hediyeh-zadeh
 #' @references
@@ -69,7 +71,7 @@
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
                      design = NULL,
-                     alpha = 0.2,
+                     alpha = NULL,
 		                 relax_min_obs=TRUE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
