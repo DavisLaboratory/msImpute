@@ -3,7 +3,6 @@
 export(CPD)
 export(KNC)
 export(KNN)
-export(computeStructuralMetrics)
 export(evidenceToMatrix)
 export(msImpute)
 export(mspip)
