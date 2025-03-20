@@ -28,7 +28,7 @@
 #' @param y Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.
 #' @param method Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
 #' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}.
-#' @param group Character or factor vector of length \code{ncol(y)}. DEPRICATED. Please specify the \code{design} argument.
+#' @param group Character or factor vector of length \code{ncol(y)}. DEPRECATED. Please specify the \code{design} argument.
 #' @param design Object from model.matrix(); A zero-intercept design matrix (see example). 
 #' @param alpha Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme. DEPRECATED
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
@@ -130,7 +130,7 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
     yimp <- msImputev1(y, rank.max = rank.max , lambda = estimateLambda(y, rank = rank.max)) #
     if (method == "v2-mnar"){
       message(paste("Compute barycenter of MAR and NMAR distributions", method))
-      if (!is.null(group) & is.null(design)) stop("'group' argument is depricated. Please specify the 'design' argument.")
+      if (!is.null(group) & is.null(design)) stop("'group' argument is deprecated. Please specify the 'design' argument.")
       if (is.null(group) & is.null(design)) stop("Please specify the 'design' argument. This is required for the 'v2-mnar' method.")
       ygauss <- gaussimpute(y, width = gauss_width, shift = gauss_shift)
       # yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=alpha)

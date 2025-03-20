@@ -24,7 +24,7 @@ betweenness (sum of squared distances between the phenotypes), and gromov-wasser
 if \code{group} is NULL only the GW distance is returned. All metrics are on log scale.
 }
 \description{
-DEPRICATED. For an imputed dataset, it computes within phenotype/experimental condition similarity
+DEPRECATED. For an imputed dataset, it computes within phenotype/experimental condition similarity
 (i.e. preservation of local structures), between phenotype distances
 (preservation of global structures), and the Gromov-Wasserstein (GW)
 distance between original (source) and imputed data.

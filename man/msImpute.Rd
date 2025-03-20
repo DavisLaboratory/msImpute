@@ -30,7 +30,7 @@ msImpute(
 \item{method}{Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
 \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}.}
 
-\item{group}{Character or factor vector of length \code{ncol(y)}. DEPRICATED. Please specify the \code{design} argument.}
+\item{group}{Character or factor vector of length \code{ncol(y)}. DEPRECATED. Please specify the \code{design} argument.}
 
 \item{design}{Object from model.matrix(); A zero-intercept design matrix (see example).}
 
