@@ -26,10 +26,11 @@
 #'
 #'
 #' @param y Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.
-#' @param method character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
-#' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}
-#' @param group character or factor vector of length \code{ncol(y)}
-#' @param a numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.
+#' @param method Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
+#' \code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}.
+#' @param group Character or factor vector of length \code{ncol(y)}. DEPRECATED. Please specify the \code{design} argument.
+#' @param design Object from model.matrix(); A zero-intercept design matrix (see example). 
+#' @param alpha Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme. DEPRECATED
 #' @param rank.max Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".
 #' @param lambda Numeric. Nuclear-norm regularization parameter. Controls the low-rank property of the solution
 #' to the matrix completion problem. By default, it is determined at the scaling step. If set to zero
@@ -44,10 +45,11 @@
 #' @param final.svd  Logical. Shall final SVD object be saved?
 #' The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
 #' Applicable to "v1" only.
-#' @param biScale_maxit number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
+#' @param biScale_maxit Number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
 #' parameter only if you're running \code{method=v1}. Applicable to "v1" only.
-#' @param gauss_width numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
-#' @param gauss_shift numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param gauss_width Numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param gauss_shift Numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.
+#' @param use_seed Logical. Makes random draw from the lower Normal component of the mixture (corresponding to imputation by down-shift) deterministic, so that results are reproducible.
 #' @return Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
 #' a numeric matrix of identical dimensions is returned.
 #'
@@ -55,37 +57,65 @@
 #' @examples
 #' data(pxd010943)
 #' y <- log2(data.matrix(pxd010943))
-#' group <- gsub("_[1234]","", colnames(y))
-#' yimp <- msImpute(y, method="v2-mnar", group=group)
+#' group <- as.factor(gsub("_[1234]","", colnames(y)))
+#' design <- model.matrix(~0+group)
+#' yimp <- msImpute(y, method="v2-mnar", design=design, max.rank=2)
 #' @seealso selectFeatures
 #' @author Soroor Hediyeh-zadeh
 #' @references
 #' Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
 #' @references
-#' Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+#' Hediyeh-Zadeh, S., Webb, A. I., & Davis, M. J. (2023). MsImpute: Estimation of missing peptide intensity data in label-free quantitative mass spectrometry. Molecular & Cellular Proteomics, 22(8).
 #' @importFrom methods is
 #' @export
 msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
                      group = NULL,
-                     a = 0.2,
+                     design = NULL,
+                     alpha = NULL,
+		                 relax_min_obs=TRUE,
                      rank.max = NULL, lambda = NULL, thresh = 1e-05,
                      maxit = 100, trace.it = FALSE, warm.start = NULL,
-                     final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, gauss_shift = 1.8) {
+                     final.svd = TRUE, biScale_maxit=20, gauss_width = 0.3, 
+                     gauss_shift = 1.8, use_seed = TRUE) {
 
   method <- match.arg(method, c("v2-mnar","v2", "v1"))
+  if (use_seed){
+    set.seed(123)
+  }
 
+  if (is.null(rownames(y))){
+    stop("Input row names are null. Please assign row names")
+  }else{
+    roworder <- rownames(y)
+  }
+  
 
   if(any(is.nan(y) | is.infinite(y))) stop("Inf or NaN values encountered.")
-  if(any(rowSums(!is.na(y)) <= 3)) stop("Peptides with excessive NAs are detected. Please revisit your fitering step. At least 4 non-missing measurements are required for any peptide.")
+  
+  if(!relax_min_obs & any(rowSums(!is.na(y)) <= 3)) {
+	  
+	  stop("Peptides with excessive NAs are detected. Please revisit your fitering step (at least 4 non-missing measurements are required for any peptide) or set relax_min_obs=TRUE.")
+  }
+  else if(relax_min_obs & any(rowSums(!is.na(y)) <= 3)){
+	  critical_obs <- which(rowSums(!is.na(y)) <= 3)
+	  message("Features with less than 4 non-missing measurements detected. These will be treated as MNAR.")
+  }else{
+    critical_obs <- NULL
+  }
+  
   if(any(y < 0, na.rm = TRUE)){
     warning("Negative values encountered in imputed data. Please consider revising filtering and/or normalisation steps.")
   }
 
 
-
+  if(!is.null(critical_obs)){
+	  y_critical_obs <- y[critical_obs,, drop=FALSE]
+    y <- y[-critical_obs,, drop=FALSE]
+  }
 
   if(method=="v1"){
     message(paste("Running msImpute version", method))
+    
     yimp <- scaleData(y, maxit = biScale_maxit)
     yimp <- msImputev1(yimp,
                        rank.max = rank.max, lambda = lambda, thresh = thresh,
@@ -100,17 +130,28 @@ msImpute <- function(y, method=c("v2-mnar", "v2", "v1"),
     yimp <- msImputev1(y, rank.max = rank.max , lambda = estimateLambda(y, rank = rank.max)) #
     if (method == "v2-mnar"){
       message(paste("Compute barycenter of MAR and NMAR distributions", method))
-      if (is.null(group)) stop("Please specify the 'group' argument. This is required for the 'v2-mnar' method.")
+      if (!is.null(group) & is.null(design)) stop("'group' argument is deprecated. Please specify the 'design' argument.")
+      if (is.null(group) & is.null(design)) stop("Please specify the 'design' argument. This is required for the 'v2-mnar' method.")
       ygauss <- gaussimpute(y, width = gauss_width, shift = gauss_shift)
-      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=a)
+      # yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, group = group, a=alpha)
+      yimp <- l2bary(y=y, ygauss = ygauss, yerank = yimp, design = design, a=alpha)
 
     }
 
 
+
+  }
+
+  yimp[!is.na(y)] <- y[!is.na(y)]
+  if (!is.null(critical_obs)){
+	  yimp_critical_obs <- gaussimpute(y_critical_obs, width = gauss_width, shift = gauss_shift)
+	  yimp_critical_obs[!is.na(y_critical_obs)] <- y_critical_obs[!is.na(y_critical_obs)]
+	  yimp <- rbind(yimp,yimp_critical_obs)
+    yimp <- yimp[match(roworder, rownames(yimp)),]
   }
 
 
-  yimp[!is.na(y)] <- y[!is.na(y)]
+  
   return(yimp)
 
 
@@ -177,7 +218,7 @@ eigenpdf <- function(y, rank=NULL){
 #' @importFrom stats var sd
 #' @keywords internal
 estimateS0 <- function(y, rank=NULL){
-  set.seed(123)
+  # set.seed(123)
   s0 <- vector(length = 100L)
   for(i in seq_len(100)){
     s0[i] <- var(eigenpdf(y, rank=rank))
@@ -198,23 +239,38 @@ estimateLambda <- function(y, rank=NULL) mean(matrixStats::colSds(y, na.rm = TRU
 
 #' @importFrom stats quantile
 #' @keywords internal
-l2bary <- function(y, ygauss, yerank, group, a=0.2){
+l2bary <- function(y, ygauss, yerank, group, design = NULL, a=0.2){
 
-  pepVars <- matrixStats::rowSds(y, na.rm = TRUE)
-  varq75 <- quantile(pepVars, p = 0.75, na.rm=TRUE)
+  pepSds <- matrixStats::rowSds(y, na.rm = TRUE)
+  pepMeans <- rowMeans(y, na.rm = TRUE)
+  pepCVs <- pepSds/pepMeans
+  CV_cutoff <- min(0.2, median(pepCVs))
+  varq75 <- quantile(pepSds, p = 0.75, na.rm=TRUE)
   #varq75 <- mean(pepVars)
-  EBM <- ebm(y, group)
+  # EBM <- ebm(y, group)
+  mv_design <- apply(design, 2, FUN=function(x) ebm(y, as.factor(x)))
+  dirich_alpha_1 <- rowSums(!is.nan(mv_design))
+  dirich_alpha_2 <- ncol(mv_design) - dirich_alpha_1
+  dirich_alpha <- cbind(dirich_alpha_1, dirich_alpha_2)
 
-  # if entropy is nan and variance is high, it is most likely detection limit missing
-  w1 <- ifelse(is.nan(EBM) & (pepVars > varq75), 1-a, a)
-  w2 <- 1-w1
 
-  yl2 <- list()
-  for(j in colnames(y)){
-    yl2[[j]] <- rowSums(cbind(w1*ygauss[,j], w2*yerank[,j]))
-  }
+  # if entropy is nan and variance is low, it is most likely detection limit missing
+  # w1 <- ifelse(is.nan(EBM) & (pepCVs < CV_cutoff), 1-a, a)
+  # w1 <- ifelse(is.nan(EBM), 1-a, a)
+  # w2 <- 1-w1
 
-  yl2 <- do.call(cbind, yl2)
+  w <- apply(dirich_alpha, 1, FUN= function(alpha) LaplacesDemon::rdirichlet(1, alpha)) 
+  w <- t(w)
+  w1 <- w[,2]
+  w2 <- w[,1]
+
+  # yl2 <- list()
+  # for(j in colnames(y)){
+  #   yl2[[j]] <- rowSums(cbind(w1*ygauss[,j], w2*yerank[,j]))
+  # }
+
+  # yl2 <- do.call(cbind, yl2)
+  yl2 <- w1*ygauss + w2*yerank
   yl2[!is.na(y)] <- y[!is.na(y)]
   return(yl2)
 

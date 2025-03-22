@@ -1,6 +1,6 @@
-#' Metrics for the assessment of post-imputation structural preservation
+#' Metrics for the assessment of post-imputation structural preservation 
 #'
-#' For an imputed dataset, it computes within phenotype/experimental condition similarity
+#' DEPRECATED. For an imputed dataset, it computes within phenotype/experimental condition similarity
 #' (i.e. preservation of local structures), between phenotype distances
 #' (preservation of global structures), and the Gromov-Wasserstein (GW)
 #' distance between original (source) and imputed data.
@@ -52,7 +52,7 @@
 #' group <- as.factor(gsub("_[1234]", "", colnames(y)))
 #' computeStructuralMetrics(y, group, y=NULL)
 #'
-#' @export
+#' 
 computeStructuralMetrics <- function(x, group=NULL, y = NULL, k=2){
   if(!is.null(group)){
     out <- list(withinness = log(withinness(x, group)),
@@ -114,8 +114,8 @@ gromov_wasserstein <- function(x, y, k, min.mean = 0.1){
 
 
   cat("Computing GW distance using k=", k, "Principal Components\n")
-  reticulate::source_python(system.file("python", "gw.py", package = "msImpute"))
-  return(gw(C1,C2, ncol(x)))
+  # reticulate::source_python(system.file("python", "gw.py", package = "msImpute"))
+  # return(gw(C1,C2, ncol(x)))
 }
 
 

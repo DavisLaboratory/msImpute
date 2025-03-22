@@ -1,7 +1,7 @@
 Package: msImpute
 Type: Package
 Title: Imputation of label-free mass spectrometry peptides
-Version: 1.7.0
+Version: 1.17.0
 Authors@R: 
     person(given = "Soroor",
            family = "Hediyeh-zadeh",
@@ -15,14 +15,14 @@ Description: MsImpute is a package for imputation of peptide intensity in proteo
     MNAR ("v2-mnar"), or by Peptide Identity Propagation (PIP).
 Depends: R (> 4.1.0)
 SystemRequirements: python
-Imports: softImpute, methods, stats, graphics, pdist, reticulate, 
-            scran, data.table, FNN, matrixStats, limma, mvtnorm, 
+Imports: softImpute, methods, stats, graphics, pdist, LaplacesDemon, 
+            data.table, FNN, matrixStats, limma, mvtnorm, 
             tidyr, dplyr
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 BugReports: https://github.com/DavisLaboratory/msImpute/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Suggests: BiocStyle, knitr, rmarkdown, ComplexHeatmap, imputeLCMD
 VignetteBuilder: knitr
 biocViews: MassSpectrometry, Proteomics, Software

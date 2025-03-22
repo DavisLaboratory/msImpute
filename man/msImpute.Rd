@@ -8,7 +8,9 @@ msImpute(
   y,
   method = c("v2-mnar", "v2", "v1"),
   group = NULL,
-  a = 0.2,
+  design = NULL,
+  alpha = NULL,
+  relax_min_obs = TRUE,
   rank.max = NULL,
   lambda = NULL,
   thresh = 1e-05,
@@ -18,18 +20,21 @@ msImpute(
   final.svd = TRUE,
   biScale_maxit = 20,
   gauss_width = 0.3,
-  gauss_shift = 1.8
+  gauss_shift = 1.8,
+  use_seed = TRUE
 )
 }
 \arguments{
 \item{y}{Numeric matrix giving log-intensity where missing values are denoted by NA. Rows are peptides, columns are samples.}
 
-\item{method}{character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
-\code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}}
+\item{method}{Character. Allowed values are \code{"v2"} for \code{msImputev2} imputation (enhanced version) for MAR.
+\code{method="v2-mnar"} (modified low-rank approx for MNAR), and \code{"v1"} initial release of \code{msImpute}.}
 
-\item{group}{character or factor vector of length \code{ncol(y)}}
+\item{group}{Character or factor vector of length \code{ncol(y)}. DEPRECATED. Please specify the \code{design} argument.}
 
-\item{a}{numeric. the weight parameter. default to 0.2. Weights the MAR-imputed distribution in the imputation scheme.}
+\item{design}{Object from model.matrix(); A zero-intercept design matrix (see example).}
+
+\item{alpha}{Numeric. The weight parameter. Default to 0.2. Weights the MAR-imputed distribution in the imputation scheme. DEPRECATED}
 
 \item{rank.max}{Numeric. This restricts the rank of the solution. is set to min(dim(\code{y})-1) by default in "v1".}
 
@@ -52,12 +57,14 @@ Applicable to "v1" only.}
 The solutions to the matrix completion problems are computed from U, D and V components of final SVD.
 Applicable to "v1" only.}
 
-\item{biScale_maxit}{number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
+\item{biScale_maxit}{Number of iteration for the scaling algorithm to converge . See \code{scaleData}. You may need to change this
 parameter only if you're running \code{method=v1}. Applicable to "v1" only.}
 
-\item{gauss_width}{numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
+\item{gauss_width}{Numeric. The width parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
 
-\item{gauss_shift}{numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
+\item{gauss_shift}{Numeric. The shift parameter of the Gaussian distribution to impute the MNAR peptides (features). This the width parameter in the down-shift imputation method.}
+
+\item{use_seed}{Logical. Makes random draw from the lower Normal component of the mixture (corresponding to imputation by down-shift) deterministic, so that results are reproducible.}
 }
 \value{
 Missing values are imputed by low-rank approximation of the input matrix. If input is a numeric matrix,
@@ -90,13 +97,14 @@ low-rank imputed values. The judgment of distribution of missing values is based
 \examples{
 data(pxd010943)
 y <- log2(data.matrix(pxd010943))
-group <- gsub("_[1234]","", colnames(y))
-yimp <- msImpute(y, method="v2-mnar", group=group)
+group <- as.factor(gsub("_[1234]","", colnames(y)))
+design <- model.matrix(~0+group)
+yimp <- msImpute(y, method="v2-mnar", design=design, max.rank=2)
 }
 \references{
 Hastie, T., Mazumder, R., Lee, J. D., & Zadeh, R. (2015). Matrix completion and low-rank SVD via fast alternating least squares. The Journal of Machine Learning Research, 16(1), 3367-3402.
 
-Hediyeh-zadeh, S., Webb, A. I., & Davis, M. J. (2020). MSImpute: Imputation of label-free mass spectrometry peptides by low-rank approximation. bioRxiv.
+Hediyeh-Zadeh, S., Webb, A. I., & Davis, M. J. (2023). MsImpute: Estimation of missing peptide intensity data in label-free quantitative mass spectrometry. Molecular & Cellular Proteomics, 22(8).
 }
 \seealso{
 selectFeatures

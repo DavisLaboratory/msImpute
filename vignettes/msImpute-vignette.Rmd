@@ -43,8 +43,6 @@ The package consists of the following main functions:
 
 - `findVariableFeatures`: finds peptide with high biological variance. We use this in `computeStructuralMetrics`
 
-- `computeStructuralMetrics`: returns a number of metrics that measure distortions into the data after imputation.
-
 - `plotCV2`: Plots the square of coefficient of variation versus average log-expression i.e. mean-$CV^2$ plot
 
 
@@ -59,7 +57,6 @@ The data was acquired in two batches (over two days). We are interested to know 
 
 
 ```{r setup, message=FALSE}
-library(reticulate)
 library(msImpute)
 library(limma)
 library(imputeLCMD)
@@ -236,80 +233,16 @@ condition of each sample.
 
 y_qrilc <- impute.QRILC(y)[[1]]
 
-y_msImpute <- msImpute(y, method = "v2-mnar", group = group)
-
-
-
 group <- as.factor(sample_annot$group)
+design <- model.matrix(~0+group)
+y_msImpute <- msImpute(y, method = "v2-mnar", design = design)
 
 ```
 
-## Assessment of preservation of local and global structures 
-
-If you've installed python, and have set up a python environment in your session, you can run this section to compute the GW distance. Please see the user's guide for setup instructions. Note that you can still run `computeStructuralMetrics` by setting `y=NULL`, if there are no python environments setup.
-
-**Withinness, betweenness and Gromov-Wasserstein (GW) distance**
-
-`computeStructuralMerics` returns three metrics that can be used to compare various imputation procedures:
-
-- `withinness` is the sum of the squared distances between samples from the same experimental group (e.g. control, treatment, Het, WT). More specifically the similarity of the samples is measured by the distance of the  (expression profile of the) sample from group centroid. This is a measure of preservation of local structures.
-
-- `betweenness` is the sum of the squared distances between the experimental groups, more specifically the distance between group centroids. This is a measure of preservation of global structures.
-
-- `gw_dist` is the Gromov-Wasserstein distance computed between Principal Components of imputed and source data. It is a measure of how well the structures are overall preserved over all principal axis of variation in the data. Hence, it captures preservation of both local and global structures. PCs of the source data are computed using highly variable peptides (i.e. peptides with high biological variance).
-
-An ideal imputation method results in smaller `withinness`, larger `withinness` and smaller `gw_dist` among other imputation methods.
-
-```{r eval=FALSE}
-virtualenv_create('msImpute-reticulate')
-virtualenv_install("msImpute-reticulate","scipy")
-virtualenv_install("msImpute-reticulate","cython")
-virtualenv_install("msImpute-reticulate","POT")
-
-use_virtualenv("msImpute-reticulate")
-
-top.hvp <- findVariableFeatures(y)
-
-computeStructuralMetrics(y_msImpute, group, y[rownames(top.hvp)[1:50],], k = 16)
-```
-
-```
-Computing GW distance using k= 16 Principal Components
-$withinness
-    Mild  Control Moderate   Severe 
-10.39139 11.53781 10.54993 10.46477 
-
-$betweenness
-[1] 11.50008
-
-$gw_dist
-[1] 0.01717915
-```
-
-
-```{r eval=FALSE}
-computeStructuralMetrics(y_qrilc, group, y[rownames(top.hvp)[1:50],], k = 16)
-```
-
-```
-Computing GW distance using k= 16 Principal Components
-$withinness
-    Mild  Control Moderate   Severe 
-10.34686 11.84049 10.62378 10.73958 
-
-$betweenness
-[1] 11.62664
-
-$gw_dist
-[1] 0.008877501
-```
 
 
 
-`Withinness` tends to be smaller by `msImpute`, which indicates that local structures are better preserved by these two methods. The `gw_dist` over all PCs for the two methods is very similar (rounded to 2 decimals). This suggests the enhancements in `v2-mnar` is just as good as left-censored MNAR methods such as `QRILC`.  Note that `k` is set to the number of samples to capture all dimensions of the data. 
-
-
-Also note that that, unlike `QRILC`, msImpute `v2-mnar` dose not drastically increase the variance of peptides (measured by squared coefficient of variation) post imputation.
+Note that that, unlike `QRILC`, msImpute `v2-mnar` dose not drastically increase the variance of peptides (measured by squared coefficient of variation) post imputation.
 ```{r}
 par(mfrow=c(2,2))
 pcv <- plotCV2(y, main = "data")
@@ -395,24 +328,14 @@ missing peptides exhibit structured missing out of total number of partially obs
 
 
 ```{r}
-y_msImpute_mar <- msImpute(y, method = "v2") # no need to specify group if data is MAR.
-y_msImpute_mnar <- msImpute(y, method = "v2-mnar", group = group)
+design <- model.matrix(~0+group)
+y_msImpute_mar <- msImpute(y, method = "v2") # no need to specify group/design if data is MAR.
+y_msImpute_mnar <- msImpute(y, method = "v2-mnar", design = design)
+
+# rank-2 approximation allowing peptides with less than 4 measurements
+y_msImpute_mnar <- msImpute(y, method = "v2-mnar", design = design, rank.max = 2, relax_min_obs = TRUE)
 ```
 
-## Assessment of preservation of local and global structures
-
-In this example, we do not compute `gw_dist` and only rely on `withinness` and `betweenness` metrics to assess imputation.
-```{r}
-
-computeStructuralMetrics(y_msImpute_mar, group, y=NULL)
-```
-
-
-```{r}
-computeStructuralMetrics(y_msImpute_mnar, group, y = NULL)
-```
-
-There do not appear to be substantial difference between the two methods.
 
 
 Additionally, both of the method preserve variations in the data well:

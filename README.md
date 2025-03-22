@@ -48,10 +48,12 @@ Quick Start
 
 library(msImpute)
 
-# xna is a numeric matrix with NAs (for MAR/MNAR diagnosis only)
-# "group" defines experimental condition (e.g. control, treatment etc).
+# Let xna be a numeric matrix of (unormalised) log-intensity with NAs 
+# Let "group" defines a single experimental condition (e.g. control, treatment etc).
+# Let "design" defines the experimental design (e.g. model.matrix(~0+group+batch)).
 
 # select peptides missing in at least one experimental group
+group <- factor(c('control','control','conditionA','conditionA'))
 selectFeatures(xna, method="ebm", group=group) 
 
 
@@ -60,16 +62,43 @@ selectFeatures(xna, method="ebm", group=group)
 selectFeatures(xna, method="hvp", n_features=500) 
 
 
-# impute MAR data by low-rank models (v2 is enhanced version of v1 implementation)
+# Impute MAR data by low-rank approximation (v2 is enhanced version of v1 implementation tailored to small data)
 xcomplete <- msImpute(xna, method="v2") 
 
 
-# impute MNAR data by low-rank models (adaptation of low-rank models for MNAR data)
-xcomplete <- msImpute(xna, method="v2-mnar", group=group)  
+# Impute complex MV mechanims (MNAR and MAR) as mixture of two normal distributions (known as the Barycenter approach) 
+design <- model.matrix(~0+group+batch)
+xcomplete <- msImpute(xna, method="v2-mnar", design=design)  
 
 
+# Allow for features with very few (less than 4) measurements
+xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE)
+
+# Rank-2 approximation for the modeling MAR MVs in small sample regimes
+xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE, rank.max = 2)
+
+
+# Disable seed generator such that the lower component of the mixture corresponding to MNAR is stochastic and returns a different results with each call (Note this is not recommended for reproducibility)
+xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE, rank.max = 2, use_seed = FALSE)
 
 ```
+
+News
+---------------------
+**22.03.2025**
+
+The following changes have been made to function calls:
+- The use of 'group' is now deprecated. msImpute now allows specifying a design matrix (which has to have zero intercept) to accommodate more complex missing value (MV) data generation processes such as LC batch.
+- The new version models log-intensity as a mixture of two normal distributions, one for the MAR and one for the MNAR component. The weights of the mixture (equivalent to `a` or `alpha` in the old API) are determined according to a Dirichlet distribution learned from mv patterns, so you no longer need to specify the weights of the two distributions manually.
+- The new version also allows for retaining peptides/proteins with very few measurements (e.g. less than 4) via `relax_min_obs`.
+- In the old API, imputation was set to be deterministic for reproducibility purposes. If you wish to keep it stochastic for the lower component of the mixture that corresponds to MNAR distribution (sampling from down-shifted distribution) please set the use_seed argument.
+
+The following dependencies were removed:
+- reticulate
+- scran
+
+The following functions are deprecated:
+- computeStructuralMetrics()
 
 Tutorials 
 ---------------------
