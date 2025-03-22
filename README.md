@@ -48,7 +48,7 @@ Quick Start
 
 library(msImpute)
 
-# Let xna be a numeric matrix of log-intensity with NAs 
+# Let xna be a numeric matrix of (unormalised) log-intensity with NAs 
 # Let "group" defines a single experimental condition (e.g. control, treatment etc).
 # Let "design" defines the experimental design (e.g. model.matrix(~0+group+batch)).
 
@@ -89,6 +89,7 @@ xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE
 News
 ---------------------
 **22.03.2025**
+
 The following changes have been made to function calls:
 - The use of 'group' is now deprecated. msImpute now allows specifying a design matrix (which has to have zero intercept) to accommodate more complex missing value (MV) data generation processes such as LC batch.
 - The new version models log-intensity as a mixture of two normal distributions, one for the MAR and one for the MNAR component. The weights of the mixture (equivalent to `a` or `alpha` in the old API) are determined according to a Dirichlet distribution learned from mv patterns, so you no longer need to specify the weights of the two distributions manually.
@@ -100,7 +101,7 @@ The following dependencies were removed:
 - scran
 
 The following functions are deprecated:
-- `computeStructuralMetrics`
+- computeStructuralMetrics()
 
 Tutorials 
 ---------------------
