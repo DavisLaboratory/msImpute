@@ -49,8 +49,8 @@ Quick Start
 library(msImpute)
 
 # Let xna be a numeric matrix of (unormalised) log-intensity with NAs 
-# Let "group" defines a single experimental condition (e.g. control, treatment etc).
-# Let "design" defines the experimental design (e.g. model.matrix(~0+group+batch)).
+# Let "group" define a single experimental condition (e.g. control, treatment etc).
+# Let "design" define the experimental design (e.g. model.matrix(~0+group+batch)).
 
 # select peptides missing in at least one experimental group
 group <- factor(c('control','control','conditionA','conditionA'))
@@ -91,10 +91,10 @@ News
 **22.03.2025**
 
 The following changes have been made to function calls:
-- The use of 'group' is now deprecated. msImpute now allows specifying a design matrix (which has to have zero intercept) to accommodate more complex missing value (MV) data generation processes such as LC batch.
+- The use of `group` is now deprecated. msImpute now allows specifying a design matrix (which has to have zero intercept) to accommodate more complex missing value (MV) data generation processes such as LC batch.
 - The new version models log-intensity as a mixture of two normal distributions, one for the MAR and one for the MNAR component. The weights of the mixture (equivalent to `a` or `alpha` in the old API) are determined according to a Dirichlet distribution learned from mv patterns, so you no longer need to specify the weights of the two distributions manually.
 - The new version also allows for retaining peptides/proteins with very few measurements (e.g. less than 4) via `relax_min_obs`.
-- In the old API, imputation was set to be deterministic for reproducibility purposes. If you wish to keep it stochastic for the lower component of the mixture that corresponds to MNAR distribution (sampling from down-shifted distribution) please set the use_seed argument.
+- In the old API, imputation was set to be deterministic for reproducibility purposes. If you wish to keep it stochastic for the lower component of the mixture that corresponds to MNAR distribution (sampling from down-shifted distribution) please set the `use_seed` argument.
 
 The following dependencies were removed:
 - reticulate
