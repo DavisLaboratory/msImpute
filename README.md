@@ -81,9 +81,6 @@ xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE
 # Disable seed generator such that the lower component of the mixture corresponding to MNAR is stochastic and returns a different results with each call (Note this is not recommended for reproducibility)
 xcomplete <- msImpute(xna, method="v2-mnar", design=design, relax_min_obs = TRUE, rank.max = 2, use_seed = FALSE)
 
-
-
-
 ```
 
 News
