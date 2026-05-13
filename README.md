@@ -21,6 +21,9 @@ The missing values are imputed by low-rank approximation of the underlying data 
 Our PIP approach infers the missing intensity values for an identification based on similarity of LC-MS features of peptide-like signals detected in MS1 (e.g. by a feature detector) and the identified peptides. We currently support MaxQuant outputs, including DDA-PASEF datasets. **We strongly recommend the PIP approach for imputation of time-series, or datasets which suffer from large (> 50%) missing values per run**. Our PIP enhances data completeness, while reporting *weights* that measure the confidence in propagation. These can be used as observation-level weights in *limma* linear models to improve differential abundance testing, by incorporating the uncertainty in intensity values that are inferred by PIP into the model. **We have given a demo of PIP approach on a published DDA dataset below.**
 
 
+<img width="680" height="1044" alt="msImpute_model_graphic_landscape_slide" src="https://github.com/user-attachments/assets/ec51caf8-52f0-4e28-ade0-71975cbe0017" />
+
+
 Installation
 --------------
 **Please note R version 4.1.1 or later is required**
